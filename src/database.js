@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-const URI = 'mongodb://localhost/tiendaonline';
+
+const URI = process.env.MONGODB_URI ? process.env.MONGODB_URI : 'mongodb://localhost/databasefiled';
 
 
 mongoose.connect(URI, {
