@@ -16,5 +16,7 @@ app.use('/api/pedidos', require('./routes/pedidos'));
 app.use('/api/admin', require('./routes/administrador'));
 app.use('/api/pago', require('./routes/pagos'));
 app.use('/api/detalle-de-pedido', require('./routes/detallePedido'));
+//routes
+app.use('/api/productos', require('./routes/productos'));
 
 module.exports = app;
