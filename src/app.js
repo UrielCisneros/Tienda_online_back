@@ -9,4 +9,7 @@ app.set('port', process.env.PORT || 4000);
 app.use(cors());
 app.use(express.json());
 
+//routes
+app.use('/api/productos' , require('./routes/productos'));
+
 module.exports = app;

@@ -12,6 +12,14 @@ const ProductoSchema = new Schema({
         required: true,
         trim: true
     },
+    talla: {
+        type: String,
+        required: false
+    },
+    numero: {
+        type: String,
+        required: false
+    },
     cantidad: {
         type: Number,
         required: true
@@ -28,7 +36,7 @@ const ProductoSchema = new Schema({
         imagen: String,
         precio: Number
     },
-    description: {
+    descripcion: {
         type: String,
         trim: true
     },
