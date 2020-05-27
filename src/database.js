@@ -1,10 +1,13 @@
 const mongoose = require('mongoose');
 
-const URI = 'mongodb://localhost/tiendaonline';
 
+const URI = process.env.MONGODB_URI ? process.env.MONGODB_URI : 'mongodb://localhost/databasefiled';
 
 mongoose.connect(URI, {
-    useNewUrlParser: true, useUnifiedTopology: true
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false
 });
 
 const connection = mongoose.connection;
