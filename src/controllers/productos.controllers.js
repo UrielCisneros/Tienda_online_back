@@ -6,6 +6,7 @@ productosCtrl.getProductos = async (req, res) => {
     res.json(productos);
 }
 
+
 productosCtrl.createProducto = async (req, res) => {
     const { nombre, categoria, cantidad, precio, imagen, promocion, descripcion, estado = false } = req.body;
     const newProducto = new Producto({ nombre, categoria, cantidad, precio, imagen, promocion, descripcion, estado });
