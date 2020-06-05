@@ -2,6 +2,8 @@ const { Schema, model } = require('mongoose');
 
 const CarritoSchema = new Schema({
     cliente: {
+        /* type: Schema.ObjectId,
+        ref: 'Cliente' */
         type: String,
         required: true
     },
@@ -14,11 +16,11 @@ const CarritoSchema = new Schema({
             type: String,
             required: true
         },
-        cantidad: {
+        precio: {
             type: Number,
             required: true
         },
-        precio: {
+        cantidad: {
             type: Number,
             required: true
         },
@@ -27,10 +29,6 @@ const CarritoSchema = new Schema({
             required: true
         }
     }],
-    unidades: {
-        type: Number,
-        required: true
-    },
     total: {
         type: Number,
         required: true
