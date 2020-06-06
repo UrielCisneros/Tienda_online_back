@@ -1,52 +1,62 @@
 const { Schema, model } = require('mongoose');
 
-const ClienteSchema = new Schema({
-    nombre: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    telefono: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    direccion: {
-        calle_numero: {
-            type: String,
-            required: true
-        },
-        entre_calles: {
-            type: String,
-            required: true
-        },
-        cp: {
-            type: String,
-            required: true
-        },
-        colonia: {
-            type: String,
-            required: true
-        },
-        ciudad: {
-            type: String,
-            required: true
-        },
-        estado: {
-            type: String,
-            required: true
-        }
+const bcript = require('bcrypt');
 
-    },
-    contrasena: {
-        type: String,
-        required: true
-    },
-    imagen: String
+const ClienteSchema = new Schema({
+	nombre: {
+		type: String,
+		required: true,
+		trim: true
+	},
+	apellido: {
+		type: String,
+		required: true
+	},
+	email: {
+		type: String,
+		required: true,
+		unique: true
+	},
+	telefono: {
+		type: String
+	},
+	active: Boolean,
+	direccion: [
+		{
+			calle_numero: {
+				type: String
+			},
+			entre_calles: {
+				type: String
+			},
+			cp: {
+				type: String
+			},
+			colonia: {
+				type: String
+			},
+			ciudad: {
+				type: String
+			},
+			estado: {
+				type: String
+			}
+		}
+	],
+	contrasena: {
+		type: String,
+		required: true
+	},
+	imagen: String
 });
+
+ClienteSchema.methods.encrypPassword = async (password) => {
+	const salt = await bcript.genSalt(10);
+	return await bcript.hash(password, salt);
+};
+
+ClienteSchema.methods.matchPassword = async function(password) {
+	return await bcript.compare(password, this.password);
+};
+
 module.exports = model('cliente', ClienteSchema);
