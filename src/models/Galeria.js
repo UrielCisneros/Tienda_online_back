@@ -6,7 +6,6 @@ const GaleriaSchema = new Schema({
         ref: 'Producto'
     },
     imagenes: [{
-        numero_imagen: Number,
         url: String
     }]
 });

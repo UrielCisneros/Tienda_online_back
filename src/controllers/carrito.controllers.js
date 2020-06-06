@@ -25,25 +25,26 @@ carritoCtrl.obtenerCarrito = async (req, res, next) => {
 }
 
 carritoCtrl.agregarArticulo = async (req, res, next) => {
+    const { articulos:[{ idarticulo, nombre, precio, cantidad, subtotal }] } = req.body    
     try {
         await Carrito.updateOne(
         {
             _id: req.params.idCarrito
         },
-        { $addToSet: 
+        { $push: 
             {
-                articulos: 
-                {
-                    idarticulo: req.body.idarticulo,
-                    nombre: req.body.nombre,
-                    precio: req.body.precio,
-                    cantidad: req.body.cantidad,
-                    subtotal: req.body.subtotal
-                }
+                articulos: [
+                    {
+                        idarticulo,
+                        nombre,
+                        precio,
+                        cantidad,
+                        subtotal
+                    }
+                ]
             }
         });
         res.json({ message: 'Articulo agregado' })
-        console.log(req.body)
     } catch (error) {
         console.log(error)
         res.json({ message: 'Error al agregar articulo' });
