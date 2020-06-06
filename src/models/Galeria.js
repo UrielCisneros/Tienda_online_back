@@ -1,12 +1,11 @@
 const { Schema, model } = require('mongoose');
 
 const GaleriaSchema = new Schema({
-    iddocumento: {
-        type: String,
-        required: true
+    producto: {
+        type: Schema.ObjectId,
+        ref: 'Producto'
     },
     imagenes: [{
-        numero_imagen: Number,
         url: String
     }]
 });

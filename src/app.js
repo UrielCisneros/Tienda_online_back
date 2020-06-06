@@ -21,5 +21,10 @@ app.use('/api/detalle-de-pedido', require('./routes/detallePedido'));
 app.use('/api/cliente', require('./routes/cliente'));
 //routes
 app.use('/api/productos', require('./routes/productos'));
+app.use('/api/galeria', require('./routes/galeria'));
+/* app.use('/api/tienda', require('./routes/tienda')); */
+app.use('/api/apartado', require('./routes/apartado'));
+/* app.use('/api/cliente', require('./routes/cliente')); */
+app.use('/api/carrito', require('./routes/carrito'));
 
 module.exports = app;

@@ -2,18 +2,22 @@ const { Schema, model } = require('mongoose');
 
 const ApartadoSchema = new Schema({
     producto: {
-        type: String,
-        required: true
+        type: Schema.ObjectId,
+        ref: 'Producto'
     },
     cliente: {
-        type: String,
-        required: true
+        type: Schema.ObjectId,
+        ref: 'Cliente'
     },
     cantidad: {
         type: Number,
         required: true
     },
-    estado: Boolean
+    estado: {
+        type: String,
+        enum: ['PEDIDO', 'EN PROCESO', 'ENVIADO'],
+        default: 'APARTADO'
+    }
 
 });
 
