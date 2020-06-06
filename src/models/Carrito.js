@@ -10,15 +10,7 @@ const CarritoSchema = new Schema({
             type: String,
             required: true
         },
-        nombre: {
-            type: String,
-            required: true
-        },
         cantidad: {
-            type: Number,
-            required: true
-        },
-        precio: {
             type: Number,
             required: true
         },
@@ -27,10 +19,6 @@ const CarritoSchema = new Schema({
             required: true
         }
     }],
-    unidades: {
-        type: Number,
-        required: true
-    },
     total: {
         type: Number,
         required: true
