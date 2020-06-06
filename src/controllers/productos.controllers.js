@@ -1,9 +1,11 @@
 const productosCtrl = {};
-const imagen = require('./uploadFile.controllers');
-const Producto = require('../models/Producto');
-const path = require('path');
 
+const imagen = require('./uploadFile.controllers');
+const path = require('path');
 const fs = require('fs');
+
+const Producto = require('../models/Producto');
+
 
 
 

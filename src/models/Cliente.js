@@ -1,7 +1,5 @@
 const { Schema, model } = require('mongoose');
 
-const bcript = require('bcrypt');
-
 const ClienteSchema = new Schema({
 	nombre: {
 		type: String,
@@ -49,14 +47,5 @@ const ClienteSchema = new Schema({
 	},
 	imagen: String
 });
-
-ClienteSchema.methods.encrypPassword = async (password) => {
-	const salt = await bcript.genSalt(10);
-	return await bcript.hash(password, salt);
-};
-
-ClienteSchema.methods.matchPassword = async function(password) {
-	return await bcript.compare(password, this.password);
-};
 
 module.exports = model('cliente', ClienteSchema);
