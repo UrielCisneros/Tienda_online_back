@@ -2,6 +2,7 @@ const subir = {};
 const path = require('path');
 const multer = require('multer');
 const shortid = require('shortid');
+const fs = require('fs');
 
 
 
@@ -24,7 +25,19 @@ const configuracionMulter = {
     }
 };
 
+subir.eliminarImagen = (infoBase) => {
+    const imagenAnterior = path.join(__dirname, `/../public/img/${infoBase.imagen}`);
+    fs.unlink(imagenAnterior, (error) => {
+        if (error) {
+            console.log(error);
+        }
+        return
+    });
+}
+
 subir.upload = multer(configuracionMulter).single('imagen');
+
+
 
 
 module.exports = subir;

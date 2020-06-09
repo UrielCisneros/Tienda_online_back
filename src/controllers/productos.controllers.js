@@ -58,19 +58,9 @@ productosCtrl.updateProducto = async (req, res, next) => {
 		//Construir nuevo producto
 		const nuevoProducto = req.body;
 		//Verificar si mandaron imagen
-		/* 		if (req.file && productoDeBase.imagen) {
-					const imagenAnterior = await path.join(__dirname, `/../public/img/${productoDeBase.imagen}`);
-					console.log("Rita se imagen de la base: " + imagenAnterior);
-					await fs.unlink(imagenAnterior, (error) => {
-						if (error) {
-							console.log(error);
-						}
-						return
-					});
-				} */
-
 		if (req.file) {
 			nuevoProducto.imagen = req.file.filename;
+			await imagen.eliminarImagen(productoDeBase);
 		} else {
 			nuevoProducto.imagen = productoDeBase.imagen;
 		}
@@ -111,13 +101,7 @@ productosCtrl.updateProductoCantidad = async (req, res) => {
 productosCtrl.deleteProducto = async (req, res, next) => {
 	const productoDeBase = await Producto.findById(req.params.id);
 	if (productoDeBase.imagen) {
-		const imagenAnterior = path.join(__dirname, `/../public/img/${productoDeBase.imagen}`);
-		await fs.unlink(imagenAnterior, (error) => {
-			if (error) {
-				console.log(error);
-			}
-			return
-		});
+		await imagen.eliminarImagen(productoDeBase);
 	}
 
 	const producto = await Producto.findByIdAndDelete(req.params.id);

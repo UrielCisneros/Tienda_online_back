@@ -7,14 +7,12 @@ const {
 	createCliente,
 	updateCliente,
 	deleteCliente,
-	uploadAvatar,
 	subirImagen
 } = require('../controllers/cliente.controllers');
 
-router.route('/').get(getClientes).post(subirImagen, createCliente);
+router.route('/').get(getClientes).post(createCliente);
 
-router.route('/:id').get(getCliente).put(updateCliente).delete(deleteCliente);
+router.route('/:id').get(getCliente).put(subirImagen, updateCliente).delete(deleteCliente);
 
-router.route('/upload-image/:id').put(uploadAvatar);
 
 module.exports = router;
