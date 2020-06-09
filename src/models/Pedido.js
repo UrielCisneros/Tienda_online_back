@@ -3,7 +3,8 @@ const { Schema, model } = require('mongoose');
 const pedidosSchema = new Schema(
 	{
 		cliente: {
-			type: Schema.ObjectId
+			type: Schema.ObjectId,
+			ref: 'cliente'
 		},
 		telefono: {
 			type: String
@@ -16,7 +17,7 @@ const pedidosSchema = new Schema(
 			type: String,
 			required: false
 		},
-		direccion: {
+		direccion: [{
 			calle_numero: {
 				type: String,
 				required: true
@@ -41,19 +42,19 @@ const pedidosSchema = new Schema(
 				type: String,
 				required: true
 			}
-		},
+		}],
 		referencia: [
 			{
 				producto: {
 					type: Schema.ObjectId,
-					ref: 'Producto'
+					ref: 'producto'
 				},
-				cantidad: Number
+				cantidad: Number,
+				total: {
+					type: Number
+				}
 			}
 		],
-		total: {
-			type: Number
-		},
 		estado_pedido: {
 			type: String,
 			required: true

@@ -4,16 +4,8 @@ const imagen = require('./uploadFile.controllers');
 const path = require('path');
 const fs = require('fs');
 
-galeriaCtrl.subirImagen = (req, res, next) => {
-	imagen.upload(req, res, function (error) {
-		if (error) {
-			res.json({ message: error });
-		}
-		return next();
-	});
-};
+galeriaCtrl.createGaleria = async (req, res, next) => {
 
-galeriaCtrl.createGaleria = async (req, res) => {
     const newGaleria = new Galeria(req.body);
     if (req.file.filename) {
 		newGaleria.imagenes.url = req.file.filename;
@@ -45,17 +37,32 @@ galeriaCtrl.getGaleria = async (req, res, next) => {
         res.json(galeria);
     } catch (error) {
         console.log(error)
-        res.json({mensaje : 'Esta galeria no existe'});
+        res.json({ mensaje: 'Esta galeria no existe' });
         next()
-    }   
+    }
 }
 
-galeriaCtrl.createImagen = async (req, res) => {
-    console.log(req.body)
-    const { imagen:[{ url }] } = req.body   
-    console.log(url)
-    if (req.file.filename) {
-        url = req.file.filename;
+galeriaCtrl.createImagen = async (req, res, next) => {
+    try {
+        await Galeria.updateOne(
+            {
+                _id: req.params.idGaleria
+            },
+            {
+                $push:
+                {
+                    imagenes:
+                    {
+                        numero_imagen: req.body.numero_imagen,
+                        url: req.body.url
+                    }
+                }
+            });
+        res.json({ message: 'Imagen guardada' })
+    } catch (error) {
+        console.log(error)
+        res.json({ message: 'Error al guardar imagen' });
+        next()
     }
     Galeria.updateOne({ _id: req.params.idGaleria},
     { $push: 
@@ -78,8 +85,8 @@ galeriaCtrl.updateGaleria = async (req, res, next) => {
             {
                 _id: req.params.idGaleria
             },
-            { 
-                $set: { imagenes : {numero_imagen: req.params.num_imagen, url: req.body.url }}
+            {
+                $set: { imagenes: { numero_imagen: req.params.num_imagen, url: req.body.url } }
             });
 
         res.json({ message: 'Galeria actualizada' });
@@ -88,7 +95,7 @@ galeriaCtrl.updateGaleria = async (req, res, next) => {
         console.log(error)
         res.json({ message: 'Error al actualizar la galeria' });
         next()
-    }    
+    }
 }
 
 
@@ -98,13 +105,13 @@ galeriaCtrl.deleteImagen = async (req, res) => {
             {
                 _id: req.params.idGaleria
             },
-            { 
-                $pull: 
+            {
+                $pull:
                 {
-                    imagenes: 
+                    imagenes:
                     {
                         numero_imagen: req.params.num_imagen
-                    } 
+                    }
                 }
             });
         res.json({ message: 'Imagen eliminada' })
