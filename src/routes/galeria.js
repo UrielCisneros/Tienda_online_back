@@ -1,14 +1,14 @@
 const { Router } = require('express');
 const router = Router();
 
-const { getGaleria, getGalerias, createGaleria ,createImagen, updateGaleria, deleteGaleria, deleteImagen } = require('../controllers/galeria.controllers');
+const { subirImagen, getGaleria, createGaleria ,createImagen, updateGaleria, deleteGaleria, deleteImagen } = require('../controllers/galeria.controllers');
 
-router.route('/')
-    .post(createGaleria)  
+router.route('/:idProducto')
+    .post(subirImagen, createGaleria)
 
 router.route('/:idGaleria')
     .get(getGaleria)
-    .post(createImagen)  
+    .post(subirImagen, createImagen)  
 
 router.route('/:idGaleria/imagen/:num_imagen')
     .put(updateGaleria) //updateimage AUN FALTA

@@ -1,17 +1,25 @@
 const { Router } = require('express');
 const router = Router();
 
-const { crearCarrito, agregarArticulo, obtenerCarrito, actualizarCarrito, eliminarCarrito, eliminarArticulo } = require('../controllers/carrito.controllers');
+const { 
+    crearCarrito,
+    agregarArticulo,
+    obtenerCarrito,
+    eliminarCarrito, 
+    eliminarArticulo,
+    actualizarTotal 
+} = require('../controllers/carrito.controllers');
 
-router.route('/')
+
+router.route('/nuevo/:idCliente')
     .post(crearCarrito)
 
 router.route('/:idCarrito')
     .get(obtenerCarrito)
-    .post(agregarArticulo)
+    .post(agregarArticulo, actualizarTotal)
     .delete(eliminarCarrito)
 
-router.route('/:idCarrito/articulos/:idArticulo')
-    .delete(eliminarArticulo)
+router.route('/:idCarrito/articulo/:idArticulo')
+    .delete(eliminarArticulo, actualizarTotal)
 
 module.exports = router;

@@ -31,7 +31,7 @@ adminCtrl.createAdmin = async (req, res) => {
 							res.status(500).send({ messege: 'Ups, algo paso al registrar el usuario' });
 						} else {
 							if (!userStored) {
-								res.status(404).send({ message: 'Error al crear e; usuario' });
+								res.status(404).send({ message: 'Error al crear el usuario' });
 							} else {
 								res.status(200).send({ user: userStored });
 							}
