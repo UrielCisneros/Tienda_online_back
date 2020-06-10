@@ -1,28 +1,38 @@
 const carritoCtrl = {};
 const Carrito = require('../models/Carrito');
+const Producto = require('../models/Producto')
 
 carritoCtrl.crearCarrito = async (req, res) => {
-    const { cliente, articulos:[{ idarticulo, nombre, precio, cantidad }] } = req.body  
-    const subtotal = precio * cantidad
-    const total = subtotal
-    const newCarrito = new Carrito({cliente, articulos:[{ idarticulo, nombre, precio, cantidad, subtotal }], total});
+    const { cliente, articulos:[{ idarticulo, cantidad }] } = req.body  
+    const articulos = await Producto.find({_id: idarticulo})
+    articulos.map( async (productos) => {
+        if(cantidad > productos.cantidad){
+            res.status(500).send({ messege: 'cantidad de articulos es mayor al stock' });
+        }else{
+            const precio = productos.precio
+            const subtotal = precio * cantidad
+            const newCarrito = new Carrito({cliente, articulos:[{ idarticulo, cantidad, subtotal }] });
     
-    await newCarrito.save((err, response) => {
-        if (err) {
-            res.status(500).send({ messege: 'Ups, algo paso al crear el Carrito' });
-        } else {
-            if (!response) {
-                res.status(404).send({ message: 'Error al crear el Carrito' });
-            } else {
-                res.status(200).send({ message: 'Carrito creado' });
-            }
+            await newCarrito.save((err, response) => {
+                if (err) {
+                    res.status(500).send({ messege: 'Ups, algo paso al crear el Carrito' });
+                } else {
+                    if (!response) {
+                        res.status(404).send({ message: 'Error al crear el Carrito' });
+                    } else {
+                        res.status(200).send({ message: 'Carrito creado' });
+                    }
+                }
+            }); 
         }
-    });  
+    })    
 }
 
-carritoCtrl.obtenerCarrito = async (req, res, next) => {
+carritoCtrl.obtenerCarrito = async (req, res) => {
     try {
-        const carrito = await Carrito.findById(req.params.idCarrito).populate('cliente');
+        const carrito = await Carrito.findById(req.params.idCarrito)
+        .populate('cliente', 'nombre apellido')
+        .populate('articulos.idarticulo', 'nombre precio')
         if (!carrito) {
             res.json({ message: "Este carrito no existe" });
         }
@@ -30,44 +40,48 @@ carritoCtrl.obtenerCarrito = async (req, res, next) => {
     } catch (error) {
         console.log(error)
         res.json({mensaje : 'Error al obtener carrito'});
-        next()
     }   
 }
 
-carritoCtrl.agregarArticulo = async (req, res, next) => {
-    const { articulos:[{ idarticulo, nombre, precio, cantidad }] } = req.body    
-    const subtotal = precio * cantidad
-    await Carrito.updateOne(
-    {
-        _id: req.params.idCarrito
-    },
-    { $addToSet: 
-        {
-            articulos: [
+carritoCtrl.agregarArticulo = async (req, res) => {
+    const { articulos:[{ idarticulo, cantidad }] } = req.body    
+    const articulos = await Producto.find({_id: idarticulo})
+    articulos.map( async (productos) => {
+        if(cantidad > productos.cantidad){
+            res.status(500).send({ messege: 'cantidad de articulos es mayor al stock' });
+        }else{
+            const precio = productos.precio
+            const subtotal = precio * cantidad
+            await Carrito.updateOne(
+            {
+                _id: req.params.idCarrito
+            },
+            { $addToSet: 
                 {
-                    idarticulo,
-                    nombre,
-                    precio,
-                    cantidad,
-                    subtotal
+                    articulos: [
+                        {
+                            idarticulo,
+                            cantidad,
+                            subtotal
+                        }
+                    ]
                 }
-            ]
+            }, (err, response) => {
+                if (err) {
+                    res.status(500).send({ messege: 'Ups, algo paso al agregar articulo' });
+                } else {
+                    if (!response) {
+                        res.status(404).send({ message: 'Error al crear el articulo' });
+                    } else {
+                        res.status(200).send({ message: 'Articulo agregado' });
+                    }
+                }
+            });
         }
-    }, (err, response) => {
-        if (err) {
-            res.status(500).send({ messege: 'Ups, algo paso al agregar articulo' });
-        } else {
-            if (!response) {
-                res.status(404).send({ message: 'Error al crear el articulo' });
-            } else {
-                res.status(200).send({ message: 'Articulo agregado' });
-            }
-        }
-    });
-    next();
+    })
 }
 
-carritoCtrl.eliminarCarrito = async (req, res, next) => {
+carritoCtrl.eliminarCarrito = async (req, res) => {
     await Carrito.findByIdAndDelete(req.params.idCarrito, (err, response) => {
         if (err) {
             res.status(500).send({ messege: 'Ups, algo paso al eliminar el Carrito' });
@@ -81,7 +95,7 @@ carritoCtrl.eliminarCarrito = async (req, res, next) => {
     })
 }
 
-carritoCtrl.eliminarArticulo = async (req, res, next) => {
+carritoCtrl.eliminarArticulo = async (req, res) => {
     await Carrito.updateOne(
     {
         _id: req.params.idCarrito
@@ -97,54 +111,44 @@ carritoCtrl.eliminarArticulo = async (req, res, next) => {
             }
         }
     });
-    next();
 }
 
-carritoCtrl.modificarCantidadArticulo = async (req, res, next) => {
-    const { articulos: [{ idarticulo, nombre, precio }] } = await Carrito.findById(req.params.idCarrito)
-    const { cantidad } = req.body
-    const subtotal = cantidad * precio
-    await Carrito.updateOne(
-        {
-            "articulos._id" : req.params.idArticulo//Esto es para descomponer el Array en documentos.
-        },
-        { 
-            $set: { "articulos.$": { idarticulo, nombre, precio, cantidad, subtotal } }           
-        }, (err, response) => {
-            if(err){
-                res.status(500).send({ message: 'Ups, algo paso al modificar la cantidad' });
-            }else if(!response){
-                res.status(404).send({ message: 'Error al modificar la cantidad' });
+carritoCtrl.modificarCantidadArticulo = async (req, res) => {
+
+    const { articulos } = await Carrito.findById(req.params.idCarrito)
+    const articuloFiltrado = articulos.filter(x => x._id == req.params.idArticulo)
+
+    articuloFiltrado.map( async (articulo) => {
+
+        const idarticulo = articulo.idarticulo
+        const productos = await Producto.find({_id: idarticulo})
+        const { cantidad } = req.body
+        productos.map( async (producto) => {
+            if(cantidad > producto.cantidad){
+                res.status(500).send({ messege: 'cantidad de articulos es mayor al stock' });
             }else{
-                res.status(200).send({ message: 'Cantidad Modificada' });
+                const precio = producto.precio            
+                const subtotal = cantidad * precio
+                await Carrito.updateOne(
+                    {
+                        "articulos._id" : req.params.idArticulo
+                    },
+                    { 
+                        $set: { "articulos.$": { idarticulo, cantidad, subtotal } }           
+                    }, (err, response) => {
+
+                    if(err){
+                        res.status(500).send({ message: 'Ups, algo paso al modificar la cantidad' });
+                    }else if(!response){
+                        res.status(404).send({ message: 'Error al modificar la cantidad' });
+                    }else{
+                        res.status(200).send({ message: 'Cantidad Modificada' });
+                    }
+                })
             }
         })
-        next();
+    })
 }
 
-
-carritoCtrl.actualizarTotal = async (req, res) => {
-    const carrito = await Carrito.aggregate([
-        {
-            $unwind: '$articulos' //Esto es para descomponer el Array en documentos.
-        },
-        {
-            $group: {
-                _id: "$_id", //Agrupamos por cada _id (suponiendo que es única)
-                total: {"$sum": "$articulos.subtotal"} //Sumamos todos los precios de cada _id
-            }
-        }
-    ])
-    const datos = carrito.filter(x => x._id == req.params.idCarrito)
-    datos.map( async (id) => {
-        total = id.total
-        try {
-            await Carrito.updateOne({ _id: req.params.idCarrito }, 
-                { $set: {total: total}})
-        } catch (error) {
-            console.log(error)
-        }
-    })   
-}
 
 module.exports = carritoCtrl;

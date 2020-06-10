@@ -3,24 +3,12 @@ const { Schema, model } = require('mongoose');
 const CarritoSchema = new Schema({
     cliente: {
         type: Schema.ObjectId,
-        ref: 'Cliente'
-/*         type: String,
-        required: true */
+        ref: 'cliente'
     },
     articulos: [{
         idarticulo: {
-            /* type: String,
-            required: true */
             type: Schema.ObjectId,
-            ref: "Producto"
-        },
-        nombre: {
-            type: String,
-            required: true
-        },
-        precio: {
-            type: Number,
-            required: true
+            ref: "producto"
         },
         cantidad: {
             type: Number,
@@ -31,10 +19,10 @@ const CarritoSchema = new Schema({
             required: true
         }
     }],
-    total: {
+/*     total: {
         type: Number,
         required: true
-    }
+    } */
 });
 
 module.exports = model('carrito', CarritoSchema);
