@@ -22,7 +22,7 @@ carritoCtrl.crearCarrito = async (req, res) => {
 
 carritoCtrl.obtenerCarrito = async (req, res, next) => {
     try {
-        const carrito = await Carrito.findById(req.params.idCarrito);
+        const carrito = await Carrito.findById(req.params.idCarrito).populate('cliente');
         if (!carrito) {
             res.json({ message: "Este carrito no existe" });
         }
@@ -100,8 +100,26 @@ carritoCtrl.eliminarArticulo = async (req, res, next) => {
     next();
 }
 
-carritoCtrl.modificarCantidad = async (req, res, next) => {
-    
+carritoCtrl.modificarCantidadArticulo = async (req, res, next) => {
+    const { articulos: [{ idarticulo, nombre, precio }] } = await Carrito.findById(req.params.idCarrito)
+    const { cantidad } = req.body
+    const subtotal = cantidad * precio
+    await Carrito.updateOne(
+        {
+            "articulos._id" : req.params.idArticulo//Esto es para descomponer el Array en documentos.
+        },
+        { 
+            $set: { "articulos.$": { idarticulo, nombre, precio, cantidad, subtotal } }           
+        }, (err, response) => {
+            if(err){
+                res.status(500).send({ message: 'Ups, algo paso al modificar la cantidad' });
+            }else if(!response){
+                res.status(404).send({ message: 'Error al modificar la cantidad' });
+            }else{
+                res.status(200).send({ message: 'Cantidad Modificada' });
+            }
+        })
+        next();
 }
 
 

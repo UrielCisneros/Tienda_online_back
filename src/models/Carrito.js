@@ -2,15 +2,17 @@ const { Schema, model } = require('mongoose');
 
 const CarritoSchema = new Schema({
     cliente: {
-        /* type: Schema.ObjectId,
-        ref: 'Cliente' */
-        type: String,
-        required: true
+        type: Schema.ObjectId,
+        ref: 'Cliente'
+/*         type: String,
+        required: true */
     },
     articulos: [{
         idarticulo: {
-            type: String,
-            required: true
+            /* type: String,
+            required: true */
+            type: Schema.ObjectId,
+            ref: "Producto"
         },
         nombre: {
             type: String,
