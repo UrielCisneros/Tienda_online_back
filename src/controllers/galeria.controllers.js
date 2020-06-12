@@ -78,69 +78,71 @@ galeriaCtrl.crearImagen = async (req, res) => {
  
 }
 
-galeriaCtrl.eliminarGaleria = async (req, res) => {
-
-}
 
 galeriaCtrl.actualizarImagen = async (req, res) => {
         const datos = await Galeria.findById(req.params.idGaleria);        
         const imagenes = datos.imagenes
         const urlB = imagenes.filter(x => x._id == req.params.idImagen)
         urlB.map( async (urlBase) => {
-            console.log(urlBase.url)
-            try {
-                console.log(req.file)
-                if (req.file) {
-                    url = req.file.filename;
-                    await imagen.eliminarImagen(urlBase.url);
-                } else {
-                    url = urlBase.url;
-                }
-
-                console.log(url)
-                await Galeria.updateOne(
-                    {
-                        'imagenes._id': req.params.idImagen
-                    },
-                    {
-                        $set: { 'imagenes.$': { url : url } }
-                    });
-        
-                res.json({ message: 'Galeria actualizada' });
-
-            } catch (error) {
-                console.log(error)
-                res.json({ message: 'Error al actualizar la galeria' });
+            if (req.file) {
+                url = req.file.filename;
+                await imagen.eliminarImagen(urlBase.url);
+            } else {
+                url = urlBase.url;
             }
-        })
-        
-        
 
-    
+            await Galeria.updateOne(
+                {
+                    'imagenes._id': req.params.idImagen
+                },
+                {
+                    $set: { 'imagenes.$': { url : url } }
+                }, (err, response) => {
+                    if(err){
+                        res.status(500).send({message: 'Ups, algo paso al actualizar imagen'})
+                    }else{
+                        if(!response){
+                            res.status(404).send({message: 'error al actualizar imagen(404)'})
+                        }else{
+                            res.status(200).send({message: 'Imagen actualizada'})
+                        }
+                    }
+                }
+            ); 
+        })
 }
 
 
 galeriaCtrl.eliminarImagen = async (req, res) => {
-    try {
+    const datos = await Galeria.findById(req.params.idGaleria);  
+    const imagenes = datos.imagenes
+    const urlB = imagenes.filter(x => x._id == req.params.idImagen)
+    urlB.map( async (urlBase) => {
+        await imagen.eliminarImagen(urlBase.url);
         await Galeria.updateOne(
+        {
+            _id: req.params.idGaleria
+        },
+        {
+            $pull:
             {
-                _id: req.params.idGaleria
-            },
-            {
-                $pull:
+                imagenes:
                 {
-                    imagenes:
-                    {
-                        numero_imagen: req.params.num_imagen
-                    }
+                    _id: req.params.idImagen
                 }
-            });
-        res.json({ message: 'Imagen eliminada' })
-    } catch (error) {
-        console.log(error)
-        res.json({ message: 'Error al eliminar imagen' });
-        next()
-    }
+            }
+        }, (err, response) => {
+            if(err){
+                res.status(500).send({message: 'Ups, algo paso al actualizar imagen'})
+            }else{
+                if(!response){
+                    res.status(404).send({message: 'error al eliminar imagen(404)'})
+                }else{
+                    res.status(200).send({message: 'Imagen Eliminada'})
+                }
+            }
+        });
+    })
 }
 
 module.exports = galeriaCtrl;

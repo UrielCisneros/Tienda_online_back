@@ -6,7 +6,6 @@ const {
     obtenerGaleria,
     crearImagen, 
     actualizarImagen, 
-    eliminarGaleria, 
     eliminarImagen, 
     subirImagen 
 } = require('../controllers/galeria.controllers');
@@ -17,7 +16,6 @@ router.route('/nueva/:idProducto')
 router.route('/:idGaleria')
     .get(obtenerGaleria)
     .post(subirImagen, crearImagen)
-    .delete(eliminarGaleria)
 
 router.route('/:idGaleria/imagen/:idImagen')
     .put(subirImagen, actualizarImagen) //updateimage AUN FALTA
