@@ -6,55 +6,25 @@ const pedidosSchema = new Schema(
 			type: Schema.ObjectId,
 			ref: 'cliente'
 		},
-		telefono: {
-			type: String
-		},
 		fecha_creacion: {
 			type: Date,
 			default: Date.now
 		},
 		fecha_envio: {
-			type: String,
-			required: false
+			type: Date
 		},
-		direccion: [{
-			calle_numero: {
-				type: String,
-				required: true
-			},
-			entre_calles: {
-				type: String,
-				required: true
-			},
-			cp: {
-				type: String,
-				required: true
-			},
-			colonia: {
-				type: String,
-				required: true
-			},
-			ciudad: {
-				type: String,
-				required: true
-			},
-			estado: {
-				type: String,
-				required: true
-			}
-		}],
-		referencia: [
+		pedido: [
 			{
 				producto: {
 					type: Schema.ObjectId,
 					ref: 'producto'
 				},
-				cantidad: Number,
-				total: {
-					type: Number
-				}
+				cantidad: Number
 			}
 		],
+		total: {
+			type: Number
+		},
 		estado_pedido: {
 			type: String,
 			required: true

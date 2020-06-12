@@ -78,7 +78,7 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 
 		if (req.file) {
 			nuevoCliente.imagen = req.file.filename;
-			await imagen.eliminarImagen(clienteBase);
+			await imagen.eliminarImagen(clienteBase.imagen);
 		} else {
 			nuevoCliente.imagen = clienteBase.imagen;
 		}
@@ -111,7 +111,7 @@ function verificarPass(nuevoCliente, contrasena, repeatContrasena) {
 clienteCtrl.deleteCliente = async (req, res) => {
 	const clienteDeBase = await clienteModel.findById(req.params.id);
 	if (clienteDeBase.imagen) {
-		await imagen.eliminarImagen(clienteDeBase);
+		await imagen.eliminarImagen(clienteDeBase.imagen);
 	}
 	await clienteModel.findByIdAndDelete(req.params.id);
 	res.json({ message: 'Cliente Deleted' });
