@@ -38,6 +38,9 @@ const ClienteSchema = new Schema({
 			},
 			estado: {
 				type: String
+			},
+			pais: {
+				type: String
 			}
 		}
 	],

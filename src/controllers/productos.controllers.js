@@ -1,9 +1,5 @@
 const productosCtrl = {};
-
 const imagen = require('./uploadFile.controllers');
-const path = require('path');
-const fs = require('fs');
-
 const Producto = require('../models/Producto');
 
 
@@ -60,7 +56,7 @@ productosCtrl.updateProducto = async (req, res, next) => {
 		//Verificar si mandaron imagen
 		if (req.file) {
 			nuevoProducto.imagen = req.file.filename;
-			await imagen.eliminarImagen(productoDeBase);
+			await imagen.eliminarImagen(productoDeBase.imagen);
 		} else {
 			nuevoProducto.imagen = productoDeBase.imagen;
 		}
@@ -101,7 +97,7 @@ productosCtrl.updateProductoCantidad = async (req, res) => {
 productosCtrl.deleteProducto = async (req, res, next) => {
 	const productoDeBase = await Producto.findById(req.params.id);
 	if (productoDeBase.imagen) {
-		await imagen.eliminarImagen(productoDeBase);
+		await imagen.eliminarImagen(productoDeBase.imagen);
 	}
 
 	const producto = await Producto.findByIdAndDelete(req.params.id);
