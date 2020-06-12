@@ -1,21 +1,36 @@
 const apartadoCtrl = {};
 const Apartado = require('../models/Apartado');
+const Producto = require('../models/Producto')
 
 apartadoCtrl.agregarApartado = async (req, res) => {
-	try {
-		const { producto, cliente, cantidad, estado = false } = req.body;
-		const newApartado = new Apartado({ producto, cliente, cantidad, estado });
-		await newApartado.save()
-		res.json({ message: 'Apartado Creado' });
-	} catch (error) {
-		console.log(error)
-		res.json({ message: 'Error al crear apartado' });
-	}
+	const { producto, cliente, cantidad, estado } = req.body;
+	const datosProducto = await Producto.find({_id: producto})
+	datosProducto.map( async (productos) => {
+		if(cantidad > productos.cantidad){
+			res.send({ message: 'no puedes apartar mas de la cantidad del stock del producto' });
+		}else{
+			const newApartado = new Apartado({ producto, cliente, cantidad, estado });
+			await newApartado.save((err, response) => {
+				if(err){
+					res.status(500).send({ message: 'Ups, algo paso al crear apartado' });
+				}else {
+					if(!response){
+						res.status(404).send({ message: 'Error al Crear apartado (404)' });
+					}else{
+						res.status(200).send({ message: 'Apartado creado' });
+					}
+				}
+			})
+		}
+	})
 };
 
 apartadoCtrl.obtenerApartado = async (req, res) => {
 	try {
-		const apartado = await Apartado.find();
+		const apartado = await Apartado.findById(req.params.idApartado).populate('cliente').populate('producto');
+		if(!apartado){
+			res.json({ message: 'El apartado que busca no existe' });
+		}
 		res.json(apartado);
 	} catch (error) {
 		res.json({ message: 'error al obtener apartado' });
@@ -24,21 +39,41 @@ apartadoCtrl.obtenerApartado = async (req, res) => {
 };
 
 apartadoCtrl.cambiarEstado = async (req, res) => {
-	await Apartado.findByIdAndUpdate(req.params.id, req.body, function(err, response) {
-        if (err) return res.status(500).send(err.message);
-		if (response.estado === 'ENVIADO') return res.json({ message: 'Estado: Enviado' });
-		res.json({ message: 'Estado Actualizado' });
+	await Apartado.findByIdAndUpdate(req.params.idApartado, req.body, function(err, response) {
+		if(err){
+			res.status(500).send({message: 'Hubo un error al cambiar el estado'});
+		}else{
+			if(!response){
+				res.status(404).send({ message: 'Error al cambiar estado (404)' });
+			}else{
+				res.status(200).send({message: 'Estado Actualizado'})
+			}
+		}
 	});
 };
 
 apartadoCtrl.actualizarApartado = async (req, res) => {
-	await Apartado.findByIdAndUpdate(req.params.id, req.body);
+	await Apartado.findByIdAndUpdate(req.params.id, req.body, (err, response) => {
+		if(err){
+			res.status(500).send({message: 'Ups, hubo un error al actualizar el apartado'})
+		}else{
+			if(!response){
+				res.status(404).send({message: 'Error al actualizar apartado (404)'})
+			}else{
+				res.status(200).send({message: 'Apartado Actualizado'})
+			}
+		}
+	});
 	res.json({ message: 'Apartado actualizado' });
 };
 
 apartadoCtrl.eliminarApartado = async (req, res) => {
-	await Apartado.findByIdAndDelete(req.params.id);
-	res.json({ message: 'Apartado eliminado' });
+	await Apartado.findByIdAndDelete(req.params.id, (err, response) => {
+		if(err){
+			res.status(500).send({message: 'Error al eliminar apartado'})
+		}
+		res.json({ message: 'Apartado eliminado' });
+	});
 };
 
 module.exports = apartadoCtrl;

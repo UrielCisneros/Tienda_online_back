@@ -5,35 +5,37 @@ const TiendaSchema = new Schema({
         type: String,
         required: true
     },
-    direccion: {
-        calle_numero: {
-            type: String,
-            required: true
-        },
-        entre_calles: {
-            type: String,
-            required: true
-        },
-        cp: {
-            type: String,
-            required: true
-        },
-        colonia: {
-            type: String,
-            required: true
-        },
-        ciudad: {
-            type: String,
-            required: true
-        },
-        estado: {
-            type: String,
-            required: true
+    direccion: [
+        {
+            calle_numero: {
+                type: String,
+                required: true
+            },
+            entre_calles: {
+                type: String,
+                required: true
+            },
+            cp: {
+                type: String,
+                required: true
+            },
+            colonia: {
+                type: String,
+                required: true
+            },
+            ciudad: {
+                type: String,
+                required: true
+            },
+            estado: {
+                type: String,
+                required: true
+            }
+    
         }
-
-    },
+    ],
     telefono: {
-        type: String,
+        type: Number,
         required: true
     },
     ubicacion: {
@@ -59,7 +61,8 @@ const TiendaSchema = new Schema({
     terminos: {
         type: String,
         required: true
-    }
+    },
+    activo: Boolean
 
 });
 

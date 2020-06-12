@@ -7,7 +7,7 @@ carritoCtrl.crearCarrito = async (req, res) => {
     const articulos = await Producto.find({_id: idarticulo})
     articulos.map( async (productos) => {
         if(cantidad > productos.cantidad){
-            res.status(500).send({ messege: 'cantidad de articulos es mayor al stock' });
+            res.send({ messege: 'cantidad de articulos es mayor al stock' });
         }else{
             const precio = productos.precio
             const subtotal = precio * cantidad
@@ -18,7 +18,7 @@ carritoCtrl.crearCarrito = async (req, res) => {
                     res.status(500).send({ messege: 'Ups, algo paso al crear el Carrito' });
                 } else {
                     if (!response) {
-                        res.status(404).send({ message: 'Error al crear el Carrito' });
+                        res.status(404).send({ message: 'Error al crear el Carrito (404)' });
                     } else {
                         res.status(200).send({ message: 'Carrito creado' });
                     }
@@ -32,7 +32,7 @@ carritoCtrl.obtenerCarrito = async (req, res) => {
     try {
         const carrito = await Carrito.findById(req.params.idCarrito)
         .populate('cliente', 'nombre apellido')
-        .populate('articulos.idarticulo', 'nombre precio')
+        .populate('articulos.idarticulo', 'nombre precio imagen')
         if (!carrito) {
             res.json({ message: "Este carrito no existe" });
         }
@@ -48,7 +48,7 @@ carritoCtrl.agregarArticulo = async (req, res) => {
     const articulos = await Producto.find({_id: idarticulo})
     articulos.map( async (productos) => {
         if(cantidad > productos.cantidad){
-            res.status(500).send({ messege: 'cantidad de articulos es mayor al stock' });
+            res.send({ messege: 'cantidad de articulos es mayor al stock' });
         }else{
             const precio = productos.precio
             const subtotal = precio * cantidad
@@ -71,7 +71,7 @@ carritoCtrl.agregarArticulo = async (req, res) => {
                     res.status(500).send({ messege: 'Ups, algo paso al agregar articulo' });
                 } else {
                     if (!response) {
-                        res.status(404).send({ message: 'Error al crear el articulo' });
+                        res.status(404).send({ message: 'Error al crear el articulo (404)' });
                     } else {
                         res.status(200).send({ message: 'Articulo agregado' });
                     }
@@ -87,7 +87,7 @@ carritoCtrl.eliminarCarrito = async (req, res) => {
             res.status(500).send({ messege: 'Ups, algo paso al eliminar el Carrito' });
         } else {
             if (!response) {
-                res.status(404).send({ message: 'Error al eliminar el Carrito' });
+                res.status(404).send({ message: 'Error al eliminar el Carrito (404)' });
             } else {
                 res.status(200).send({ message: 'Carrito eliminado' });
             }
@@ -105,7 +105,7 @@ carritoCtrl.eliminarArticulo = async (req, res) => {
             res.status(500).send({ messege: 'Ups, algo paso al eliminar articulo' });
         } else {
             if (!response) {
-                res.status(404).send({ message: 'Error al eliminar articulo' });
+                res.status(404).send({ message: 'Error al eliminar articulo (404)' });
             } else {
                 res.status(200).send({ message: 'Articulo eliminado' });
             }
@@ -125,7 +125,7 @@ carritoCtrl.modificarCantidadArticulo = async (req, res) => {
         const { cantidad } = req.body
         productos.map( async (producto) => {
             if(cantidad > producto.cantidad){
-                res.status(500).send({ messege: 'cantidad de articulos es mayor al stock' });
+                res.send({ messege: 'cantidad de articulos es mayor al stock' });
             }else{
                 const precio = producto.precio            
                 const subtotal = cantidad * precio
@@ -139,10 +139,12 @@ carritoCtrl.modificarCantidadArticulo = async (req, res) => {
 
                     if(err){
                         res.status(500).send({ message: 'Ups, algo paso al modificar la cantidad' });
-                    }else if(!response){
-                        res.status(404).send({ message: 'Error al modificar la cantidad' });
-                    }else{
-                        res.status(200).send({ message: 'Cantidad Modificada' });
+                    }else {
+                        if(!response){
+                            res.status(404).send({ message: 'Error al modificar la cantidad (404)' });
+                        }else{
+                            res.status(200).send({ message: 'Cantidad Modificada' });
+                        }
                     }
                 })
             }

@@ -1,18 +1,27 @@
 const { Router } = require('express');
 const router = Router();
 
-const { getGaleria, getGalerias, createGaleria, createImagen, updateGaleria, deleteGaleria, deleteImagen } = require('../controllers/galeria.controllers');
+const { 
+    crearGaleria,
+    obtenerGaleria,
+    crearImagen, 
+    actualizarImagen, 
+    eliminarGaleria, 
+    eliminarImagen, 
+    subirImagen 
+} = require('../controllers/galeria.controllers');
 
-router.route('/')
-    .post(createGaleria)
+router.route('/nueva/:idProducto')
+    .post(subirImagen, crearGaleria)
 
 router.route('/:idGaleria')
-    .get(getGaleria)
-    .post(createImagen)
+    .get(obtenerGaleria)
+    .post(subirImagen, crearImagen)
+    .delete(eliminarGaleria)
 
-router.route('/:idGaleria/imagen/:num_imagen')
-    .put(updateGaleria) //updateimage AUN FALTA
-    .delete(deleteImagen)
+router.route('/:idGaleria/imagen/:idImagen')
+    .put(subirImagen, actualizarImagen) //updateimage AUN FALTA
+    .delete(eliminarImagen)
 
 
 module.exports = router;
