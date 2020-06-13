@@ -25,5 +25,7 @@ app.use('/api/galeria', require('./routes/galeria'));
 app.use('/api/tienda', require('./routes/tienda'));
 app.use('/api/apartado', require('./routes/apartado'));
 app.use('/api/carrito', require('./routes/carrito'));
+app.use('/api/sugerencia', require('./routes/sugerencia'));
+app.use('/api/carousel', require('./routes/carousel'))
 
 module.exports = app;

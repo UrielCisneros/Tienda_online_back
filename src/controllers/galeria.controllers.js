@@ -40,7 +40,7 @@ galeriaCtrl.crearGaleria = async (req, res) => {
 
 galeriaCtrl.obtenerGaleria = async (req, res) => {
     try {
-        const galeria = await Galeria.findById(req.params.idGaleria);
+        const galeria = await Galeria.findById(req.params.idGaleria).populate('producto', 'nombre');
         if(!galeria){
             res.status(404).send({ message: 'Esta galeria no existe' });
         }
@@ -143,6 +143,24 @@ galeriaCtrl.eliminarImagen = async (req, res) => {
             }
         });
     })
+}
+
+galeriaCtrl.eliminarGaleria = async (req, res) => {
+    const datos = await Galeria.findById(req.params.idGaleria);  
+    datos.imagenes.map( async (imagenes) => {
+       try {
+            await imagen.eliminarImagen(imagenes.url);
+       } catch (error) {
+           res.json({message: 'Ups, algo paso al eliminar imagen'})
+       }
+    })
+    await Galeria.findByIdAndDelete(req.params.idGaleria, (err, response) => {
+        if(err){
+            res.json({message: 'Ups, algo paso al eliminar Galeria'})  
+        }else{
+            res.json({message: 'Galeria Eliminada'})
+        }
+    })  
 }
 
 module.exports = galeriaCtrl;
