@@ -18,11 +18,7 @@ const CarritoSchema = new Schema({
             type: Number,
             required: true
         }
-    }],
-/*     total: {
-        type: Number,
-        required: true
-    } */
+    }]
 });
 
 module.exports = model('carrito', CarritoSchema);

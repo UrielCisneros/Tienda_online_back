@@ -23,7 +23,7 @@ carouselCtrl.crearCarousel = async (req, res) => {
             if(!response){
                 res.status(404).send({message: 'Carousel NO creado (404)'})
             }else{
-                res.status(200).send({message: 'Carousel creado'})
+                res.status(200).json(response)
             }
         }
     })
@@ -44,17 +44,22 @@ carouselCtrl.obtenerCarousel = async (req, res) => {
 carouselCtrl.actualizarCarousel = async (req, res) => {
     try {
 		const carouselDeBase = await Carousel.findById(req.params.idCarousel);
-		//Construir nuevo producto
-		const nuevoCarousel = req.body;
-        //Verificar si mandaron imagen
-		if (req.file) {
-			nuevoCarousel.imagen = req.file.filename;
-			await imagen.eliminarImagen(carouselDeBase.imagen);
-		} else {
-			nuevoCarousel.imagen = carouselDeBase.imagen;
+		if(!carouselDeBase){
+			res.status(404).send({message: 'Este carousel no existe'})
+		}else{
+			//Construir nuevo producto
+			const nuevoCarousel = req.body;
+			//Verificar si mandaron imagen
+			if (req.file) {
+				nuevoCarousel.imagen = req.file.filename;
+				await imagen.eliminarImagen(carouselDeBase.imagen);
+			} else {
+				nuevoCarousel.imagen = carouselDeBase.imagen;
+			}
+			const carousel = await Carousel.findByIdAndUpdate(req.params.idCarousel, nuevoCarousel);
+			res.status(200).json(carousel)
 		}
-		await Carousel.findByIdAndUpdate(req.params.idCarousel, nuevoCarousel);
-		res.status(200).send({message: 'Carousel actualizado'})
+		
 	} catch (error) {
 		res.status(500).send({message: 'Error al actualizar Carousel'})
 	}
@@ -62,15 +67,23 @@ carouselCtrl.actualizarCarousel = async (req, res) => {
 
 carouselCtrl.eliminarCarousel = async (req, res) => {
     const carouselDeBase = await Carousel.findById(req.params.idCarousel);
-	if (carouselDeBase.imagen) {
-		await imagen.eliminarImagen(carouselDeBase.imagen);
+	try {
+		if (!carouselDeBase) {
+			res.status(404).json({ message: 'Este carousel no existe' });
+		}else{
+			if (carouselDeBase.imagen) {
+				await imagen.eliminarImagen(carouselDeBase.imagen);
+			}
+		
+			const carousel = await Carousel.findByIdAndDelete(req.params.idCarousel);
+			if (!carousel) {
+				res.status(404).json({ message: 'Este carousel no existe' });
+			}
+			res.status(200).json({ message: 'Carousel eliminado' });
+		}		
+	} catch (error) {
+		res.status(500).send({message: 'Error al eliminar Carousel'})
 	}
-
-	const carousel = await Carousel.findByIdAndDelete(req.params.idCarousel);
-	if (!carousel) {
-		res.json({ message: 'Este carousel no existe' });
-	}
-	res.json({ message: 'Carousel eliminado' });
 }
 
 module.exports = carouselCtrl;

@@ -12,7 +12,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 			const newApartado = new Apartado({ producto, cliente, cantidad, estado });
 			await newApartado.save((err, response) => {
 				if(err){
-					res.status(500).send({ message: 'Ups, algo paso al crear apartado' });
+					res.status(500).send({ message: 'Error, algo paso al crear apartado' });
 				}else {
 					if(!response){
 						res.status(404).send({ message: 'Error al Crear apartado (404)' });
@@ -38,7 +38,7 @@ apartadoCtrl.obtenerApartado = async (req, res) => {
 	
 };
 
-apartadoCtrl.cambiarEstado = async (req, res) => {
+/* apartadoCtrl.cambiarEstado = async (req, res) => {
 	await Apartado.findByIdAndUpdate(req.params.idApartado, req.body, function(err, response) {
 		if(err){
 			res.status(500).send({message: 'Hubo un error al cambiar el estado'});
@@ -50,29 +50,31 @@ apartadoCtrl.cambiarEstado = async (req, res) => {
 			}
 		}
 	});
-};
+}; */
 
 apartadoCtrl.actualizarApartado = async (req, res) => {
-	await Apartado.findByIdAndUpdate(req.params.id, req.body, (err, response) => {
+	await Apartado.findByIdAndUpdate(req.params.idApartado, req.body, (err, response) => {
 		if(err){
-			res.status(500).send({message: 'Ups, hubo un error al actualizar el apartado'})
+			res.status(500).send({message: 'Hubo un error al actualizar el apartado'})
 		}else{
 			if(!response){
 				res.status(404).send({message: 'Error al actualizar apartado (404)'})
 			}else{
-				res.status(200).send({message: 'Apartado Actualizado'})
+				res.status(200).json(response)
 			}
 		}
 	});
-	res.json({ message: 'Apartado actualizado' });
 };
 
 apartadoCtrl.eliminarApartado = async (req, res) => {
-	await Apartado.findByIdAndDelete(req.params.id, (err, response) => {
+	await Apartado.findByIdAndDelete(req.params.idApartado, (err, response) => {
 		if(err){
 			res.status(500).send({message: 'Error al eliminar apartado'})
-		}
-		res.json({ message: 'Apartado eliminado' });
+		}else if(!response){
+			res.status(404).send({message: 'El apartado no existe'})
+		}else{
+			res.json({ message: 'Apartado eliminado' });
+		}	
 	});
 };
 

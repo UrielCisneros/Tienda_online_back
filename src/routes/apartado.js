@@ -5,7 +5,7 @@ const {
     agregarApartado,
     obtenerApartado, 
     actualizarApartado, 
-    cambiarEstado, 
+/*     cambiarEstado, */ 
     eliminarApartado 
 } = require('../controllers/apartado.controllers');
 
@@ -14,7 +14,7 @@ router.route('/nuevo/:idCliente')
     
 router.route('/:idApartado')
     .get(obtenerApartado)
-    .patch(cambiarEstado)
+/*     .patch(cambiarEstado) */
     .put(actualizarApartado)
     .delete(eliminarApartado)
 
