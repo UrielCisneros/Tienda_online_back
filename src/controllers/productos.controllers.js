@@ -16,8 +16,24 @@ productosCtrl.subirImagen = (req, res, next) => {
 };
 
 productosCtrl.getProductos = async (req, res) => {
-	const productos = await Producto.find();
-	res.json(productos);
+	const { page = 1, limit = 10 } = req.query;
+
+	const options = {
+		page,
+		limit: parseInt(limit),
+		sort: { date: "desc" }
+	}
+	Producto.paginate({}, options, (err, postStored) => {
+		if (err) {
+			res.status(500).send({ code: 500, messege: "Error en el servidor" });
+		} else {
+			if (!postStored) {
+				res.status(404).send({ code: 404, messege: "Error al mostrar Blogs" })
+			} else {
+				res.status(200).send({ code: 200, posts: postStored });
+			}
+		}
+	});
 };
 
 productosCtrl.createProducto = async (req, res) => {

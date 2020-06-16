@@ -26,7 +26,7 @@ const configuracionMulter = {
 };
 
 subir.eliminarImagen = (infoBase) => {
-    const imagenAnterior = path.join(__dirname, `/../public/img/${infoBase}`);
+    const imagenAnterior = path.join(__dirname, `/../public/img/${infoBase.imagen}`);
     fs.unlink(imagenAnterior, (error) => {
         if (error) {
             console.log(error);

@@ -2,31 +2,26 @@ const { Schema, model } = require('mongoose');
 
 const pagoSchema = new Schema({
     id_objeto_sesion_stripe: {
-        type: String,
-        required: true
+        type: String
     },
     intento_pago: {
         type: String
     },
     orden: {
-        type: String,
-        required: true
+        type: String
     },
     cliente: {
-        type: String,
-        required: true
+        type: String
     },
     email_cliente: {
-        type: String,
-        required: true
+        type: String
     },
     fecha: {
         type: Date,
         default: Date.now
     },
     hora: {
-        type: TimeRanges,
-        required: true
+        type: TimeRanges
     }
 }, {
     timestamps: true

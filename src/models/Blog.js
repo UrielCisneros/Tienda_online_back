@@ -1,28 +1,28 @@
 const { Schema, model } = require('mongoose');
 
+const mongoodePaginate = require('mongoose-paginate-v2');
+
 const blogSchema = new Schema({
     nombre: {
-        type: String,
-        required: true
-    },
-    titulo: {
-        type: String,
-        required: true
+        type: String
     },
     administrador: {
-        type: String,
-        required: true
+        type: String
     },
     descripcion: {
-        type: String,
-        required: true
+        type: String
     },
-    fecha: {
-        type: Date,
-        default: Date.now
+    url: {
+        type: String,
+        unique: true
+    },
+    imagen: {
+        type: String
     }
 }, {
     timestamps: true
 });
+
+blogSchema.plugin(mongoodePaginate);
 
 module.exports = model('Blog', blogSchema);

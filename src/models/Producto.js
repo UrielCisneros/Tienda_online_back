@@ -1,5 +1,7 @@
 const { Schema, model } = require('mongoose');
 
+const mongoodePaginate = require('mongoose-paginate-v2');
+
 const ProductoSchema = new Schema({
 	nombre: {
 		type: String,
@@ -46,5 +48,7 @@ const ProductoSchema = new Schema({
 	},
 	activo: Boolean
 });
+
+ProductoSchema.plugin(mongoodePaginate);
 
 module.exports = model('producto', ProductoSchema);
