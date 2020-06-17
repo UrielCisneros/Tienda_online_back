@@ -12,11 +12,10 @@ const {
 
 
 router.route('/nuevo/:idCliente')
-    .post(crearCarrito)
+    .post(crearCarrito, agregarArticulo)
 
 router.route('/:idCarrito')
     .get(obtenerCarrito)
-    .post(agregarArticulo)
     .delete(eliminarCarrito)
 
 router.route('/:idCarrito/articulo/:idArticulo')

@@ -2,30 +2,35 @@ const carritoCtrl = {};
 const Carrito = require('../models/Carrito');
 const Producto = require('../models/Producto')
 
-carritoCtrl.crearCarrito = async (req, res) => {
-    const { cliente, articulos:[{ idarticulo, cantidad }] } = req.body  
-    const articulos = await Producto.find({_id: idarticulo})
-    articulos.map( async (productos) => {
-        if(cantidad > productos.cantidad){
-            res.send({ messege: 'cantidad de articulos es mayor al stock' });
-        }else{
-            const precio = productos.precio
-            const subtotal = precio * cantidad
-            const newCarrito = new Carrito({cliente, articulos:[{ idarticulo, cantidad, subtotal }] });
-    
-            await newCarrito.save((err, response) => {
-                if (err) {
-                    res.status(500).send({ messege: 'Ups, algo paso al crear el Carrito' });
-                } else {
-                    if (!response) {
-                        res.status(404).send({ message: 'Error al crear el Carrito (404)' });
+carritoCtrl.crearCarrito = async (req, res, next) => {
+    const carrito = await Carrito.findOne({ cliente: req.params.idCliente})
+    if(!carrito){
+        const { cliente, articulos:[{ idarticulo, cantidad }] } = req.body  
+        const articulos = await Producto.find({_id: idarticulo})
+        articulos.map( async (productos) => {
+            if(cantidad > productos.cantidad){
+                res.send({ messege: 'cantidad de articulos es mayor al stock' });
+            }else{
+                const precio = productos.precio
+                const subtotal = precio * cantidad
+                const newCarrito = new Carrito({cliente, articulos:[{ idarticulo, cantidad, subtotal }] });
+        
+                await newCarrito.save((err, response) => {
+                    if (err) {
+                        res.status(500).send({ messege: 'Ups, algo paso al crear el Carrito' });
                     } else {
-                        res.status(200).send({ message: 'Carrito creado' });
+                        if (!response) {
+                            res.status(404).send({ message: 'Error al crear el Carrito (404)' });
+                        } else {
+                            res.status(200).send({ message: 'Carrito creado' });
+                        }
                     }
-                }
-            }); 
-        }
-    })    
+                }); 
+            }
+        }) 
+    }else{
+        next()
+    }   
 }
 
 carritoCtrl.obtenerCarrito = async (req, res) => {
@@ -44,6 +49,7 @@ carritoCtrl.obtenerCarrito = async (req, res) => {
 }
 
 carritoCtrl.agregarArticulo = async (req, res) => {
+    const carrito = await Carrito.findOne({ cliente: req.params.idCliente})
     const { articulos:[{ idarticulo, cantidad }] } = req.body    
     const articulos = await Producto.find({_id: idarticulo})
     articulos.map( async (productos) => {
@@ -54,7 +60,7 @@ carritoCtrl.agregarArticulo = async (req, res) => {
             const subtotal = precio * cantidad
             await Carrito.updateOne(
             {
-                _id: req.params.idCarrito
+                _id: carrito._id
             },
             { $addToSet: 
                 {
