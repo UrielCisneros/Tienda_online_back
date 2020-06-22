@@ -1,5 +1,7 @@
 const { Router } = require('express');
+const auth = require('../middleware/auth')
 const router = Router();
+
 
 const { 
     crearCarrito,
@@ -14,7 +16,7 @@ const {
 router.route('/nuevo/:idCliente')
     .post(crearCarrito, agregarArticulo)
 
-router.route('/:idCarrito')
+router.route('/:idCarrito', auth)
     .get(obtenerCarrito)
     .delete(eliminarCarrito)
 

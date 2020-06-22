@@ -1,6 +1,7 @@
 const adminCtrl = {};
 const bcrypt = require('bcrypt-nodejs');
 const adminModel = require('../models/Administrador');
+const jwt = require('jsonwebtoken')
 
 adminCtrl.getAdmins = async (req, res) => {
 	const admins = await adminModel.find();
@@ -13,6 +14,7 @@ adminCtrl.createAdmin = async (req, res) => {
 
 	newAdmin.nombre = nombre;
 	newAdmin.email = email;
+	newAdmin.rol = true;
 	newAdmin.activo = false;
 
 	if (!contrasena || !repeatContrasena) {
@@ -74,5 +76,32 @@ adminCtrl.deleteAdmin = async (req, res) => {
 	await adminModel.findByIdAndDelete(req.params.id);
 	res.json({ message: 'Admin Deleted' });
 };
+
+adminCtrl.authAdmin = async (req, res, next) => {
+	const { email, contrasena } = req.body;
+	const admin = await adminModel.findOne({ email });
+
+	if(!admin){
+		await res.status(401).json({ message: 'Este usuario no existe' });
+	}else{
+		if(!bcrypt.compareSync(contrasena, admin.contrasena)){
+			await res.status(401).json({ message: 'Contraseña incorrecta' });
+			next();
+		}else{
+			const token = jwt.sign({
+				email : admin.email,
+				nombre: admin.nombre,
+				_id: admin._id,
+				rol: admin.rol
+			},
+			process.env.AUTH_KEY,
+			{
+				expiresIn : '1h'
+			});
+			//token
+			res.json(token);
+		}
+	}
+}
 
 module.exports = adminCtrl;

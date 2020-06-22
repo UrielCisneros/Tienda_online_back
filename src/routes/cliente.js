@@ -7,8 +7,11 @@ const {
 	createCliente,
 	updateCliente,
 	deleteCliente,
-	subirImagen
+	subirImagen,
+	authCliente
 } = require('../controllers/cliente.controllers');
+
+router.route('/auth').post(authCliente);
 
 router.route('/').get(getClientes).post(createCliente);
 

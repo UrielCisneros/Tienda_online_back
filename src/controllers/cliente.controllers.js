@@ -2,6 +2,7 @@ const clienteCtrl = {};
 const imagen = require('./uploadFile.controllers');
 const path = require('path');
 const bcrypt = require('bcrypt-nodejs');
+const jwt = require('jsonwebtoken')
 const clienteModel = require('../models/Cliente');
 
 
@@ -51,7 +52,7 @@ clienteCtrl.createCliente = (req, res) => {
 					newCliente.contrasena = hash;
 					newCliente.save((err, userStored) => {
 						if (err) {
-							res.status(500).send({ messege: 'Ups, algo paso al registrar el usuario' });
+							res.send({ messege: 'Ups, algo paso al registrar el usuario', err });
 						} else {
 							if (!userStored) {
 								res.status(404).send({ message: 'Error al crear el usuario' });
@@ -108,7 +109,7 @@ function verificarPass(nuevoCliente, contrasena, repeatContrasena) {
 	}
 }
 
-clienteCtrl.deleteCliente = async (req, res) => {
+clienteCtrl.deleteCliente = async (req, res, next) => {
 	const clienteDeBase = await clienteModel.findById(req.params.id);
 	if (clienteDeBase.imagen) {
 		await imagen.eliminarImagen(clienteDeBase.imagen);
@@ -116,5 +117,31 @@ clienteCtrl.deleteCliente = async (req, res) => {
 	await clienteModel.findByIdAndDelete(req.params.id);
 	res.json({ message: 'Cliente Deleted' });
 };
+
+clienteCtrl.authCliente = async (req, res, next) => {
+	const { email, contrasena } = req.body;
+	const cliente = await clienteModel.findOne({ email });
+
+	if(!cliente){
+		await res.status(401).json({ message: 'Este usuario no existe' });
+	}else{
+		if(!bcrypt.compareSync(contrasena, cliente.contrasena)){
+			await res.status(401).json({ message: 'Contraseña incorrecta' });
+			next();
+		}else{
+			const token = jwt.sign({
+				email : cliente.email,
+				nombre: cliente.nombre,
+				_id: cliente._id
+			},
+			process.env.AUTH_KEY,
+			{
+				expiresIn : '1h'
+			});
+			//token
+			res.json(token);
+		}
+	}
+}
 
 module.exports = clienteCtrl;
