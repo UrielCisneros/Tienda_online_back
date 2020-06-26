@@ -2,8 +2,175 @@ const productosCtrl = {};
 const imagen = require('./uploadFile.controllers');
 const Producto = require('../models/Producto');
 
+productosCtrl.actualizarNumero = async (req, res) => {
+	const datos = await Producto.findById(req.params.id);
+
+	const numerosProducto = datos.numeros;
+	const numeros = numerosProducto.filter(x => x._id == req.params.idnumero);
+	numeros.map(async (numerosArray) => {
+		console.log(req.body);
+		const { numero = numerosArray.numero, cantidad = numerosArray.cantidad } = req.body;
+		await Producto.updateOne(
+			{
+				'numeros._id': req.params.idnumero
+			},
+			{
+				$set: { 'numeros.$': { numero, cantidad } }
+			}, (err, response) => {
+				if (err) {
+					res.status(500).send({ message: 'Ups algo paso al actualizar' })
+				} else {
+					if (!response) {
+						res.status(404).send({ message: 'Este apartado no existe' })
+					} else {
+						res.status(200).send({ message: 'Se actualizo con exito' })
+					}
+				}
+			}
+		);
+	})
+}
+
+productosCtrl.actualizarTalla = async (req, res) => {
+	const datos = await Producto.findById(req.params.id);
+
+	const tallasProducto = datos.tallas;
+	const tallas = tallasProducto.filter(x => x._id == req.params.idtalla);
+	tallas.map(async (tallaArray) => {
+		console.log(req.body);
+		const { talla = tallaArray.talla, cantidad = tallaArray.cantidad } = req.body;
+		await Producto.updateOne(
+			{
+				'tallas._id': req.params.idtalla
+			},
+			{
+				$set: { 'tallas.$': { talla, cantidad } }
+			}, (err, response) => {
+				if (err) {
+					res.status(500).send({ message: 'Ups algo paso al actualizar' })
+				} else {
+					if (!response) {
+						res.status(404).send({ message: 'Este apartado no existe' })
+					} else {
+						res.status(200).send({ message: 'Se actualizo con exito' })
+					}
+				}
+			}
+		);
+	})
+}
+
+productosCtrl.eliminarTalla = async (req, res) => {
+	await Producto.updateOne(
+		{
+			_id: req.params.id
+		},
+		{
+			$pull:
+			{
+				tallas:
+				{
+					_id: req.params.idtalla
+				}
+			}
+		}, (err, response) => {
+			if (err) {
+				res.status(500).send({ message: 'Ups, also paso en la base' })
+			} else {
+				if (!response) {
+					res.status(404).send({ message: 'esa talla no existe' })
+				} else {
+					res.status(200).send({ message: 'Talla eliminada' })
+				}
+			}
+		});
+}
+
+productosCtrl.eliminarNumero = async (req, res) => {
+	await Producto.updateOne(
+		{
+			_id: req.params.id
+		},
+		{
+			$pull:
+			{
+				numeros:
+				{
+					_id: req.params.idnumero
+				}
+			}
+		}, (err, response) => {
+			if (err) {
+				res.status(500).send({ message: 'Ups, also paso en la base' })
+			} else {
+				if (!response) {
+					res.status(404).send({ message: 'esa talla no existe' })
+				} else {
+					res.status(200).send({ message: 'Talla eliminada' })
+				}
+			}
+		});
+}
 
 
+productosCtrl.addTalla = async (req, res, next) => {
+	const { talla, cantidad } = req.body;
+	console.log(req.body)
+	await Producto.updateOne(
+		{
+			_id: req.params.id
+		},
+		{
+			$addToSet:
+			{
+				tallas:
+				{
+					talla: talla,
+					cantidad: cantidad
+				}
+			}
+		}, (err, response) => {
+			if (err) {
+				res.status(500).send({ messege: 'Ups, algo al guardar talla' });
+			} else {
+				if (!response) {
+					res.status(404).send({ message: 'Error al guardar' });
+				} else {
+					res.status(200).send({ message: 'talla guardada' });
+				}
+			}
+		}
+	);
+}
+
+productosCtrl.addnumero = async (req, res, next) => {
+	const { numero, cantidad } = req.body;
+	await Producto.updateOne(
+		{
+			_id: req.params.id
+		},
+		{
+			$addToSet:
+			{
+				numeros:
+				{
+					numero: numero,
+					cantidad: cantidad
+				}
+			}
+		}, (err, response) => {
+			if (err) {
+				res.status(500).send({ messege: 'Ups, algo al guardar numero' });
+			} else {
+				if (!response) {
+					res.status(404).send({ message: 'Error al guardar' });
+				} else {
+					res.status(200).send({ message: 'numero guardado' });
+				}
+			}
+		}
+	);
+}
 
 
 productosCtrl.subirImagen = (req, res, next) => {
@@ -20,8 +187,7 @@ productosCtrl.getProductos = async (req, res) => {
 
 	const options = {
 		page,
-		limit: parseInt(limit),
-		sort: { date: "desc" }
+		limit: parseInt(limit)
 	}
 	Producto.paginate({}, options, (err, postStored) => {
 		if (err) {
@@ -44,7 +210,7 @@ productosCtrl.createProducto = async (req, res) => {
 	}
 	await newProducto.save((err, userStored) => {
 		if (err) {
-			res.status(500).send({ messege: 'Ups, algo paso al registrar el producto' });
+			res.status(500).send({ messege: err });
 		} else {
 			if (!userStored) {
 				res.status(404).send({ message: 'Error al crear el producto' });

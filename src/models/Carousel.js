@@ -1,13 +1,11 @@
 const { Schema, model } = require('mongoose');
 
-const GaleriaSchema = new Schema({
+const CarouselSchema = new Schema({
     producto: {
         type: Schema.ObjectId,
         ref: 'producto'
     },
-    imagenes: [{
-        url: String
-    }]
+    imagen: String
 });
 
-module.exports = model('galeria', GaleriaSchema);
+module.exports = model('carousel', CarouselSchema);

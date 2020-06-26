@@ -3,11 +3,11 @@ const { Schema, model } = require('mongoose');
 const ApartadoSchema = new Schema({
     producto: {
         type: Schema.ObjectId,
-        ref: 'Producto'
+        ref: 'producto'
     },
     cliente: {
         type: Schema.ObjectId,
-        ref: 'Cliente'
+        ref: 'cliente'
     },
     cantidad: {
         type: Number,
@@ -15,8 +15,8 @@ const ApartadoSchema = new Schema({
     },
     estado: {
         type: String,
-        enum: ['PEDIDO', 'EN PROCESO', 'ENVIADO'],
-        default: 'APARTADO'
+        enum: ['PEDIDO', 'ACEPTADO', 'RECHAZADO'],
+        default: 'PEDIDO'
     }
 
 });

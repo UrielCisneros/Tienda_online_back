@@ -19,9 +19,6 @@ const pagoSchema = new Schema({
     fecha: {
         type: Date,
         default: Date.now
-    },
-    hora: {
-        type: TimeRanges
     }
 }, {
     timestamps: true

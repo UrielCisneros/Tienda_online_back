@@ -10,17 +10,17 @@ const ProductoSchema = new Schema({
 	},
 	categoria: {
 		type: String,
-		required: true,
 		trim: true
 	},
-	talla: {
-		type: String,
-		required: false
-	},
-	numero: {
-		type: String,
-		required: false
-	},
+	tallas: [{
+		talla: String,
+		cantidad: Number
+	}],
+	numeros: [{
+		numero: String,
+		cantidad: Number
+	}],
+	color: String,
 	cantidad: {
 		type: Number,
 		required: true
