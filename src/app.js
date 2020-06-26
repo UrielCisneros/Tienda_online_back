@@ -26,6 +26,9 @@ app.use('/api/tienda', require('./routes/tienda'));
 app.use('/api/apartado', require('./routes/apartado'));
 app.use('/api/carrito', require('./routes/carrito'));
 app.use('/api/sugerencia', require('./routes/sugerencia'));
-app.use('/api/carousel', require('./routes/carousel'))
+app.use('/api/carousel', require('./routes/carousel'));
+
+//carpeta publica
+app.use(express.static('uploads'));
 
 module.exports = app;

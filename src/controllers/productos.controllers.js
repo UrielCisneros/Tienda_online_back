@@ -23,12 +23,12 @@ productosCtrl.getProductos = async (req, res) => {
 productosCtrl.createProducto = async (req, res) => {
 	const newProducto = new Producto(req.body);
 	newProducto.activo = true;
-	if (req.file.filename) {
+	if (req.file) {
 		newProducto.imagen = req.file.filename;
 	}
 	await newProducto.save((err, userStored) => {
 		if (err) {
-			res.status(500).send({ messege: 'Ups, algo paso al registrar el producto' });
+			res.send({ messege: 'Ups, algo paso al registrar el producto',err });
 		} else {
 			if (!userStored) {
 				res.status(404).send({ message: 'Error al crear el producto' });
