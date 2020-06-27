@@ -1,5 +1,7 @@
 const { Schema, model } = require('mongoose');
 
+const mongoodePaginate = require('mongoose-paginate-v2');
+
 const ProductoSchema = new Schema({
 	nombre: {
 		type: String,
@@ -8,17 +10,17 @@ const ProductoSchema = new Schema({
 	},
 	categoria: {
 		type: String,
-		required: true,
 		trim: true
 	},
-	talla: {
-		type: String,
-		required: false
-	},
-	numero: {
-		type: String,
-		required: false
-	},
+	tallas: [{
+		talla: String,
+		cantidad: Number
+	}],
+	numeros: [{
+		numero: String,
+		cantidad: Number
+	}],
+	color: String,
 	cantidad: {
 		type: Number,
 		required: true
@@ -46,5 +48,7 @@ const ProductoSchema = new Schema({
 	},
 	activo: Boolean
 });
+
+ProductoSchema.plugin(mongoodePaginate);
 
 module.exports = model('producto', ProductoSchema);

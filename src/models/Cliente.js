@@ -7,8 +7,7 @@ const ClienteSchema = new Schema({
 		trim: true
 	},
 	apellido: {
-		type: String,
-		required: true
+		type: String
 	},
 	email: {
 		type: String,

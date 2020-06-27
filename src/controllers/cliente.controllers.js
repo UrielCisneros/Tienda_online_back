@@ -1,6 +1,5 @@
 const clienteCtrl = {};
 const imagen = require('./uploadFile.controllers');
-const path = require('path');
 const bcrypt = require('bcrypt-nodejs');
 const jwt = require('jsonwebtoken')
 const clienteModel = require('../models/Cliente');
