@@ -9,7 +9,7 @@ const fs = require('fs');
 const configuracionMulter = {
     storage: fileStorage = multer.diskStorage({
         destination: (req, file, cb) => {
-            cb(null, path.join(__dirname, '../../uploads/'));
+            cb(null, path.join(__dirname, '../public/img/'));
         },
         filename: (req, file, cb) => {
             const extension = file.mimetype.split('/')[1];
