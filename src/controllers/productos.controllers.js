@@ -215,7 +215,7 @@ productosCtrl.createProducto = async (req, res) => {
 			if (!userStored) {
 				res.status(404).send({ message: 'Error al crear el producto' });
 			} else {
-				res.status(200).send({ message: 'Producto almacenado' });
+				res.status(200).send({ message: 'Producto almacenado', userStored});
 			}
 		}
 	});

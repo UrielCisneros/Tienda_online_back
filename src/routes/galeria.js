@@ -12,11 +12,11 @@ const {
 } = require('../controllers/galeria.controllers');
 
 router.route('/nueva/:idProducto')
-    .post(subirImagen, crearGaleria)
+    .post(subirImagen, crearGaleria, crearImagen)
 
 router.route('/:idGaleria')
     .get(obtenerGaleria)
-    .post(subirImagen, crearImagen)
+    /* .post(subirImagen, crearImagen) */
     .delete(eliminarGaleria)
 
 router.route('/:idGaleria/imagen/:idImagen')
