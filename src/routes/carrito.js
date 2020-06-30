@@ -14,14 +14,14 @@ const {
 
 
 router.route('/nuevo/:idCliente')
-    .post(crearCarrito, agregarArticulo)
+    .post(auth,crearCarrito, agregarArticulo)
 
 router.route('/:idCarrito', auth)
-    .get(obtenerCarrito)
-    .delete(eliminarCarrito)
+    .get(auth,obtenerCarrito)
+    .delete(auth,eliminarCarrito)
 
 router.route('/:idCarrito/articulo/:idArticulo')
-    .delete(eliminarArticulo)
-    .put(modificarCantidadArticulo)
+    .delete(auth,eliminarArticulo)
+    .put(auth,modificarCantidadArticulo)
 
 module.exports = router;

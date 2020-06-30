@@ -14,21 +14,26 @@ const {
 	eliminarTalla,
 	eliminarNumero,
 	actualizarTalla,
-	actualizarNumero
+	actualizarNumero,
+	agregarPromocion,
+	eliminarPromocion
 } = require('../controllers/productos.controllers');
+const auth = require('../middleware/auth')
 
-router.route('/').get(getProductos).post(subirImagen, createProducto);
+router.route('/').get(getProductos).post(auth,subirImagen, createProducto);
 
-router.route('/:id').get(getProducto).put(subirImagen, updateProducto).delete(deleteProducto);
+router.route('/:id').get(getProducto).put(auth,subirImagen, updateProducto).delete(auth,deleteProducto);
 
-router.route('/stock/:id').put(updateProductoCantidad);
+router.route('/stock/:id').put(auth,updateProductoCantidad);
 
-router.route('/addTalla/:id').post(addTalla);
+router.route('/addTalla/:id').post(auth,addTalla);
 
-router.route('/addNumero/:id').post(addnumero);
+router.route('/addNumero/:id').post(auth,addnumero);
 
-router.route('/action/:id/talla/:idtalla').delete(eliminarTalla).put(actualizarTalla);
+router.route('/action/:id/talla/:idtalla').delete(auth,eliminarTalla).put(auth,actualizarTalla);
 
-router.route('/action/:id/numero/:idnumero').delete(eliminarNumero).put(actualizarNumero);
+router.route('/action/:id/numero/:idnumero').delete(auth,eliminarNumero).put(auth,actualizarNumero);
+
+router.route('/promocion/:id/idPromo/:idPromocion').put(auth,subirImagen,agregarPromocion).delete(auth,eliminarPromocion);
 
 module.exports = router;

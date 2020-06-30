@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const router = Router();
+const auth = require('../middleware/auth');
 
 const { 
     agregarApartado,
@@ -10,12 +11,12 @@ const {
 } = require('../controllers/apartado.controllers');
 
 router.route('/nuevo/:idCliente')
-    .post(agregarApartado)
+    .post(auth,agregarApartado)
     
 router.route('/:idApartado')
-    .get(obtenerApartado)
+    .get(auth,obtenerApartado)
 /*     .patch(cambiarEstado) */
-    .put(actualizarApartado)
-    .delete(eliminarApartado)
+    .put(auth,actualizarApartado)
+    .delete(auth,eliminarApartado)
 
 module.exports = router;

@@ -9,7 +9,7 @@ const fs = require('fs');
 const configuracionMulter = {
     storage: fileStorage = multer.diskStorage({
         destination: (req, file, cb) => {
-            cb(null, path.join(__dirname, '../public/img/'));
+            cb(null, path.join(__dirname, '../../uploads'));
         },
         filename: (req, file, cb) => {
             const extension = file.mimetype.split('/')[1];
@@ -26,7 +26,7 @@ const configuracionMulter = {
 };
 
 subir.eliminarImagen = (infoBase) => {
-    const imagenAnterior = path.join(__dirname, `/../public/img/${infoBase.imagen}`);
+    const imagenAnterior = path.join(__dirname, `/../../uploads/${infoBase.imagen}`);
     fs.unlink(imagenAnterior, (error) => {
         if (error) {
             console.log(error);

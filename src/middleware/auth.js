@@ -14,12 +14,12 @@ module.exports = (req, res, next) => {
     const token = authHeader.split(' ')[1]
     let revisarToken;
     try {
-        revisarToken = jwt.verify(token, process.env.AUTH_KEY)
+        revisarToken = jwt.verify(token, 'HiXYE@Ay%39e;')
     } catch (error) {
         error.statusCode = 500;
         throw error;
     }
-    
+    console.log(revisarToken);
     //si es un token valido pero hay algun error
     if(!revisarToken){
         const error = new Error('No aunteticado');

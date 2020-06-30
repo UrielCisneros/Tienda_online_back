@@ -2,6 +2,69 @@ const productosCtrl = {};
 const imagen = require('./uploadFile.controllers');
 const Producto = require('../models/Producto');
 
+
+productosCtrl.agregarPromocion = async (req, res) => {
+	const datos = await Producto.findById(req.params.id);
+
+	const promocionProducto = datos.promocion;
+	const promocion = promocionProducto.filter(x => x._id == req.params.idPromocion);
+	
+	promocion.map(async (promocionArray) => {
+		let imagenPromocion = "";
+		console.log(promocionArray.precio);
+		const {precio = promocionArray.precio } = req.body;
+		if(req.file){
+			imagenPromocion = req.file.filename
+		}else{
+			imagenPromocion = promocionArray.imagen
+		}
+		await Producto.updateOne(
+			{
+				'promocion._id': req.params.idPromocion
+			},
+			{
+				$set: { 'promocion.$': { imagenPromocion, precio } }
+			}, (err, response) => {
+				if (err) {
+					res.status(500).send({ message: 'Ups algo paso al actualizar' })
+				} else {
+					if (!response) {
+						res.status(404).send({ message: 'Este apartado no existe' })
+					} else {
+						res.status(200).send({ message: 'Se actualizo con exito' })
+					}
+				}
+			}
+		);
+	})
+}
+
+productosCtrl.eliminarPromocion = async (req, res) => {
+	await Producto.updateOne(
+		{
+			_id: req.params.id
+		},
+		{
+			$pull:
+			{
+				promocion:
+				{
+					_id: req.params.idPromocion
+				}
+			}
+		}, (err, response) => {
+			if (err) {
+				res.status(500).send({ message: 'Ups, also paso en la base' })
+			} else {
+				if (!response) {
+					res.status(404).send({ message: 'Esta promocion no existe' })
+				} else {
+					res.status(200).send({ message: 'Promocion eliminada' })
+				}
+			}
+		});
+}
+
 productosCtrl.actualizarNumero = async (req, res) => {
 	const datos = await Producto.findById(req.params.id);
 
@@ -112,7 +175,6 @@ productosCtrl.eliminarNumero = async (req, res) => {
 		});
 }
 
-
 productosCtrl.addTalla = async (req, res, next) => {
 	const { talla, cantidad } = req.body;
 	console.log(req.body)
@@ -145,6 +207,7 @@ productosCtrl.addTalla = async (req, res, next) => {
 
 productosCtrl.addnumero = async (req, res, next) => {
 	const { numero, cantidad } = req.body;
+	console.log(req.body)
 	await Producto.updateOne(
 		{
 			_id: req.params.id
@@ -171,7 +234,6 @@ productosCtrl.addnumero = async (req, res, next) => {
 		}
 	);
 }
-
 
 productosCtrl.subirImagen = (req, res, next) => {
 	imagen.upload(req, res, function (error) {
@@ -248,8 +310,6 @@ productosCtrl.updateProducto = async (req, res, next) => {
 		console.log(error);
 		next();
 	}
-
-
 };
 
 productosCtrl.updateProductoCantidad = async (req, res) => {
