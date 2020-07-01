@@ -19,7 +19,6 @@ module.exports = (req, res, next) => {
         error.statusCode = 500;
         throw error;
     }
-    console.log(revisarToken);
     //si es un token valido pero hay algun error
     if(!revisarToken){
         const error = new Error('No aunteticado');
