@@ -13,28 +13,33 @@ galeriaCtrl.subirImagen = (req, res, next) => {
 	});
 };
 
-galeriaCtrl.crearGaleria = async (req, res) => {
-    const {producto} = req.body;
-    if(!req.file){
-        res.json({message: 'La Galeria al menos debe tener una imagen'})
-    }else{
-        const newGaleria = new Galeria({
-            producto: producto,
-            imagenes: [{
-                url: req.file.filename
-            }]
-        });
-        await newGaleria.save((err, userStored) => {
-            if (err) {
-                res.status(500).send({ message: 'Ups, algo paso al registrar la galeria' });
-            } else {
-                if (!userStored) {
-                    res.status(404).send({ message: 'Error al crear la galeria' });
+galeriaCtrl.crearGaleria = async (req, res, next) => {
+    const galeria = await Galeria.findOne({ producto: req.params.idProducto})
+    if(!galeria){
+        const {producto} = req.body;
+        if(!req.file){
+            res.json({message: 'La Galeria al menos debe tener una imagen'})
+        }else{
+            const newGaleria = new Galeria({
+                producto: producto,
+                imagenes: [{
+                    url: req.file.filename
+                }]
+            });
+            await newGaleria.save((err, userStored) => {
+                if (err) {
+                    res.status(500).send({ message: 'Ups, algo paso al registrar la galeria' });
                 } else {
-                    res.status(200).json(userStored);
+                    if (!userStored) {
+                        res.status(404).send({ message: 'Error al crear la galeria' });
+                    } else {
+                        res.json(userStored);
+                    }
                 }
-            }
-        });
+            });
+        }
+    }else{
+        next();
     }
 }
 
@@ -52,9 +57,10 @@ galeriaCtrl.obtenerGaleria = async (req, res) => {
 }
 
 galeriaCtrl.crearImagen = async (req, res) => {
-    await Galeria.updateOne(
+    const producto = await Galeria.findOne({ producto: req.params.idProducto})
+    await Galeria.findOneAndUpdate(
         {
-            _id: req.params.idGaleria
+            _id: producto._id
         },
         {
             $addToSet:
@@ -64,14 +70,15 @@ galeriaCtrl.crearImagen = async (req, res) => {
                     url: req.file.filename
                 }
             }
-        }, (err, response) => {
+        }, async (err, userStored) => {
             if (err) {
                 res.status(500).send({ messege: 'Ups, algo paso al crear la imagen' });
             } else {
-                if (!response) {
+                if (!userStored) {
                     res.status(404).send({ message: 'Error al crear la imagen' });
                 } else {
-                    res.status(200).send({ message: 'Imagen guardada' });
+                    const galeria = await Galeria.findOne({_id: producto._id})
+                    res.json(galeria);
                 }
             }
         }

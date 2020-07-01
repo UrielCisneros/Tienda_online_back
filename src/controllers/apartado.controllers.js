@@ -25,6 +25,19 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 	})
 };
 
+apartadoCtrl.obtenerApartados = async (req, res) => {
+	try {
+		const apartado = await Apartado.find().populate('cliente').populate('producto');
+		if(!apartado){
+			res.json({ message: 'No existen apartados' });
+		}
+		res.json(apartado);
+	} catch (error) {
+		res.json({ message: 'error al obtener los apartados' });
+	}
+	
+};
+
 apartadoCtrl.obtenerApartado = async (req, res) => {
 	try {
 		const apartado = await Apartado.findById(req.params.idApartado).populate('cliente').populate('producto');

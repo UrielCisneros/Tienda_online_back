@@ -6,9 +6,12 @@ const {
     agregarApartado,
     obtenerApartado, 
     actualizarApartado, 
-/*     cambiarEstado, */ 
+    obtenerApartados,
     eliminarApartado 
 } = require('../controllers/apartado.controllers');
+
+router.route('/')
+    .get(obtenerApartados)
 
 router.route('/nuevo/:idCliente')
     .post(auth,agregarApartado)

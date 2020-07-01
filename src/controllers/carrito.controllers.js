@@ -73,6 +73,7 @@ carritoCtrl.agregarArticulo = async (req, res) => {
                     ]
                 }
             }, (err, response) => {
+                console.log(err)
                 if (err) {
                     res.status(500).send({ messege: 'Ups, algo paso al agregar articulo' });
                 } else {
@@ -93,7 +94,7 @@ carritoCtrl.eliminarCarrito = async (req, res) => {
             res.status(500).send({ messege: 'Ups, algo paso al eliminar el Carrito' });
         } else {
             if (!response) {
-                res.status(404).send({ message: 'Error al eliminar el Carrito (404)' });
+                res.status(404).send({ message: 'Este carrito no existe' });
             } else {
                 res.status(200).send({ message: 'Carrito eliminado' });
             }
@@ -111,7 +112,7 @@ carritoCtrl.eliminarArticulo = async (req, res) => {
             res.status(500).send({ messege: 'Ups, algo paso al eliminar articulo' });
         } else {
             if (!response) {
-                res.status(404).send({ message: 'Error al eliminar articulo (404)' });
+                res.status(404).send({ message: 'Este articulo no existe (404)' });
             } else {
                 res.status(200).send({ message: 'Articulo eliminado' });
             }
