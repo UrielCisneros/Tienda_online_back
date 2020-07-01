@@ -48,6 +48,7 @@ clienteCtrl.createCliente = (req, res) => {
 				if (err) {
 					res.status(500).send({ messege: 'Error al encriptar la contrasena' });
 				} else {
+
 					newCliente.contrasena = hash;
 					newCliente.save((err, userStored) => {
 						if (err) {
@@ -56,7 +57,16 @@ clienteCtrl.createCliente = (req, res) => {
 							if (!userStored) {
 								res.status(404).send({ message: 'Error al crear el usuario' });
 							} else {
-								res.status(200).send({ user: userStored });
+								const token = jwt.sign({
+									email : newCliente.email,
+									nombre: newCliente.nombre,
+									_id: newCliente._id
+								},
+								'HiXYE@Ay%39e;',
+								{
+									expiresIn : '4h'
+								});
+								res.status(200).send({ user: token });
 							}
 						}
 					});
@@ -65,8 +75,6 @@ clienteCtrl.createCliente = (req, res) => {
 		}
 	}
 };
-
-
 
 clienteCtrl.updateCliente = async (req, res, next) => {
 	try {
@@ -83,8 +91,28 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 			nuevoCliente.imagen = clienteBase.imagen;
 		}
 
-		const cliente = await clienteModel.findByIdAndUpdate(req.params.id, nuevoCliente);
-		res.json(cliente);
+		 await clienteModel.findByIdAndUpdate(req.params.id, nuevoCliente, async (err, userStored) => {
+			if (err) {
+				res.send({ messege: 'Ups, algo paso al registrar el usuario', err });
+			} else {
+				if (!userStored) {
+					res.status(404).send({ message: 'Error al crear el usuario' });
+				} else {
+					const clienteBase = await clienteModel.findById(req.params.id);
+					const token = jwt.sign({
+						email : clienteBase.email,
+						nombre: clienteBase.nombre,
+						_id: clienteBase._id,
+						imagen: clienteBase.imagen
+					},
+					"HiXYE@Ay%39e;",
+					{
+						expiresIn : '4h'
+					});
+					res.status(200).send({ user: token });
+				}
+			}
+		});
 	} catch (error) {
 		console.log(error);
 		next();
@@ -133,12 +161,12 @@ clienteCtrl.authCliente = async (req, res, next) => {
 				nombre: cliente.nombre,
 				_id: cliente._id
 			},
-			process.env.AUTH_KEY,
+			'HiXYE@Ay%39e;',
 			{
-				expiresIn : '1h'
+				expiresIn : '4h'
 			});
 			//token
-			res.json(token);
+			res.json({token});
 		}
 	}
 }

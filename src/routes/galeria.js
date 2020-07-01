@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const router = Router();
-
+const auth = require('../middleware/auth')
 const { 
     crearGaleria,
     obtenerGaleria,
@@ -20,8 +20,8 @@ router.route('/:idGaleria')
     .delete(eliminarGaleria)
 
 router.route('/:idGaleria/imagen/:idImagen')
-    .put(subirImagen, actualizarImagen)
-    .delete(eliminarImagen)
+    .put(auth,subirImagen, actualizarImagen)
+    .delete(auth,eliminarImagen)
 
 
 module.exports = router;

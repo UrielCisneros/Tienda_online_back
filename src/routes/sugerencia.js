@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const router = Router();
+const auth = require('../middleware/auth');
 
 const { 
     crearSugerencia,
@@ -9,12 +10,12 @@ const {
 } = require('../controllers/sugerencia.controllers');
 
 router.route('/nueva/:idProducto')
-    .post(crearSugerencia)
+    .post(auth,crearSugerencia)
 
 router.route('/:idSugerencia')
     .get(obtenerSugerencia)
-    .put(actualizarSugerencia)
-    .delete(eliminarSugerencia)
+    .put(auth,actualizarSugerencia)
+    .delete(auth,eliminarSugerencia)
 
 
 module.exports = router;

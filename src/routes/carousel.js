@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const router = Router();
-
+const auth = require('../middleware/auth');
 const { 
     subirImagen,
     crearCarousel,
@@ -10,12 +10,12 @@ const {
 } = require('../controllers/carousel.controllers');
 
 router.route('/nuevo/:idProducto')
-    .post(subirImagen, crearCarousel)
+    .post(auth,subirImagen, crearCarousel)
 
 router.route('/:idCarousel')
     .get(obtenerCarousel)
-    .put(subirImagen, actualizarCarousel)
-    .delete(eliminarCarousel)
+    .put(auth,subirImagen, actualizarCarousel)
+    .delete(auth,eliminarCarousel)
 
 
 module.exports = router;

@@ -1,6 +1,8 @@
 const { Router } = require('express');
 const router = Router();
 
+const auth = require('../middleware/auth');
+
 const {
 	getCliente,
 	getClientes,
@@ -13,9 +15,9 @@ const {
 
 router.route('/auth').post(authCliente);
 
-router.route('/').get(getClientes).post(createCliente);
+router.route('/').get(auth,getClientes).post(createCliente);
 
-router.route('/:id').get(getCliente).put(subirImagen, updateCliente).delete(deleteCliente);
+router.route('/:id').get(auth,getCliente).put(auth,subirImagen, updateCliente).delete(auth,deleteCliente);
 
 
 module.exports = router;
