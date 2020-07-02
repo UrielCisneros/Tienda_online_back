@@ -26,12 +26,12 @@ productosCtrl.agregarPromocion = async (req, res) => {
 				$set: { 'promocion.$': { imagenPromocion, precio } }
 			}, (err, response) => {
 				if (err) {
-					res.status(500).send({ message: 'Ups algo paso al actualizar' })
+					res.send({ message: 'Ups algo paso al actualizar',err })
 				} else {
 					if (!response) {
-						res.status(404).send({ message: 'Este apartado no existe' })
+						res.send({ message: 'Este apartado no existe' })
 					} else {
-						res.status(200).send({ message: 'Se actualizo con exito' })
+						res.send({ message: 'Se actualizo con exito' })
 					}
 				}
 			}
@@ -54,12 +54,12 @@ productosCtrl.eliminarPromocion = async (req, res) => {
 			}
 		}, (err, response) => {
 			if (err) {
-				res.status(500).send({ message: 'Ups, also paso en la base' })
+				res.send({ message: 'Ups, also paso en la base',err })
 			} else {
 				if (!response) {
-					res.status(404).send({ message: 'Esta promocion no existe' })
+					res.send({ message: 'Esta promocion no existe' })
 				} else {
-					res.status(200).send({ message: 'Promocion eliminada' })
+					res.send({ message: 'Promocion eliminada' })
 				}
 			}
 		});
@@ -81,12 +81,12 @@ productosCtrl.actualizarNumero = async (req, res) => {
 				$set: { 'numeros.$': { numero, cantidad } }
 			}, (err, response) => {
 				if (err) {
-					res.status(500).send({ message: 'Ups algo paso al actualizar' })
+					res.send({ message: 'Ups algo paso al actualizar' })
 				} else {
 					if (!response) {
-						res.status(404).send({ message: 'Este apartado no existe' })
+						res.send({ message: 'Este apartado no existe' })
 					} else {
-						res.status(200).send({ message: 'Se actualizo con exito' })
+						res.send({ message: 'Se actualizo con exito' })
 					}
 				}
 			}
@@ -110,12 +110,12 @@ productosCtrl.actualizarTalla = async (req, res) => {
 				$set: { 'tallas.$': { talla, cantidad } }
 			}, (err, response) => {
 				if (err) {
-					res.status(500).send({ message: 'Ups algo paso al actualizar' })
+					res.send({ message: 'Ups algo paso al actualizar' })
 				} else {
 					if (!response) {
-						res.status(404).send({ message: 'Este apartado no existe' })
+						res.send({ message: 'Este apartado no existe' })
 					} else {
-						res.status(200).send({ message: 'Se actualizo con exito' })
+						res.send({ message: 'Se actualizo con exito' })
 					}
 				}
 			}
@@ -138,12 +138,12 @@ productosCtrl.eliminarTalla = async (req, res) => {
 			}
 		}, (err, response) => {
 			if (err) {
-				res.status(500).send({ message: 'Ups, also paso en la base' })
+				res.send({ message: 'Ups, also paso en la base' })
 			} else {
 				if (!response) {
-					res.status(404).send({ message: 'esa talla no existe' })
+					res.send({ message: 'esa talla no existe' })
 				} else {
-					res.status(200).send({ message: 'Talla eliminada' })
+					res.send({ message: 'Talla eliminada' })
 				}
 			}
 		});
@@ -164,12 +164,12 @@ productosCtrl.eliminarNumero = async (req, res) => {
 			}
 		}, (err, response) => {
 			if (err) {
-				res.status(500).send({ message: 'Ups, also paso en la base' })
+				res.send({ message: 'Ups, also paso en la base' })
 			} else {
 				if (!response) {
-					res.status(404).send({ message: 'esa numero no existe' })
+					res.send({ message: 'esa numero no existe' })
 				} else {
-					res.status(200).send({ message: 'Numero eliminada' })
+					res.send({ message: 'Numero eliminada' })
 				}
 			}
 		});
@@ -186,19 +186,19 @@ productosCtrl.addTalla = async (req, res, next) => {
 			$addToSet:
 			{
 				tallas:
-				{
+				[{
 					talla: talla,
 					cantidad: cantidad
-				}
+				}]
 			}
 		}, (err, response) => {
 			if (err) {
-				res.status(500).send({ messege: 'Ups, algo al guardar talla' });
+				res.send({ messege: 'Ups, algo al guardar talla' });
 			} else {
 				if (!response) {
-					res.status(404).send({ message: 'Error al guardar' });
+					res.send({ message: 'Error al guardar' });
 				} else {
-					res.status(200).send({ message: 'talla guardada' });
+					res.send({ message: 'talla guardada' });
 				}
 			}
 		}
@@ -223,12 +223,12 @@ productosCtrl.addnumero = async (req, res, next) => {
 			}
 		}, (err, response) => {
 			if (err) {
-				res.status(500).send({ messege: 'Ups, algo al guardar numero' });
+				res.send({ messege: 'Ups, algo al guardar numero' });
 			} else {
 				if (!response) {
-					res.status(404).send({ message: 'Error al guardar' });
+					res.send({ message: 'Error al guardar' });
 				} else {
-					res.status(200).send({ message: 'numero guardado' });
+					res.send({ message: 'numero guardado' });
 				}
 			}
 		}
@@ -253,12 +253,12 @@ productosCtrl.getProductos = async (req, res) => {
 	}
 	Producto.paginate({}, options, (err, postStored) => {
 		if (err) {
-			res.status(500).send({ code: 500, messege: "Error en el servidor" });
+			res.send({  messege: "Error en el servidor" });
 		} else {
 			if (!postStored) {
-				res.status(404).send({ code: 404, messege: "Error al mostrar Blogs" })
+				res.send({ messege: "Error al mostrar Blogs" })
 			} else {
-				res.status(200).send({ code: 200, posts: postStored });
+				res.send({ posts: postStored });
 			}
 		}
 	});
@@ -275,9 +275,9 @@ productosCtrl.createProducto = async (req, res) => {
 			res.send({ messege: 'Ups, algo paso al registrar el producto',err });
 		} else {
 			if (!userStored) {
-				res.status(404).send({ message: 'Error al crear el producto' });
+				res.send({ message: 'Error al crear el producto' });
 			} else {
-				res.status(200).send({ message: 'Producto almacenado', userStored});
+				res.send({ message: 'Producto almacenado', userStored});
 			}
 		}
 	});

@@ -8,17 +8,12 @@ const pagoSchema = new Schema({
         type: String
     },
     orden: {
-        type: String
+        type: Schema.ObjectId,
+        ref: 'Pedidos'
     },
     cliente: {
-        type: String
-    },
-    email_cliente: {
-        type: String
-    },
-    fecha: {
-        type: Date,
-        default: Date.now
+        type: Schema.ObjectId,
+        ref: 'cliente'
     }
 }, {
     timestamps: true

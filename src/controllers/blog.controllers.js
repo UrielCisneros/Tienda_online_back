@@ -21,12 +21,12 @@ blogCtrl.getBlogs = async (req, res) => {
     }
     blogModel.paginate({}, options, (err, postStored) => {
         if (err) {
-            res.status(500).send({ code: 500, messege: "Error en el servidor" });
+            res.send({ messege: "Error en el servidor",err });
         } else {
             if (!postStored) {
-                res.status(404).send({ code: 404, messege: "Error al mostrar Blogs" })
+                res.send({ messege: "Error al mostrar Blogs" })
             } else {
-                res.status(200).send({ code: 200, posts: postStored });
+                res.send({ posts: postStored });
             }
         }
     });
@@ -35,18 +35,18 @@ blogCtrl.getBlogs = async (req, res) => {
 blogCtrl.createBlog = async (req, res) => {
     try {
         if (!req.file) {
-            res.status(500).send({ messege: "La imagen es obligatoria" });
+            res.send({ messege: "La imagen es obligatoria" });
         } else {
             const newBlog = new blogModel(req.body);
             newBlog.imagen = req.file.filename;
             await newBlog.save((err, postStored) => {
                 if (err) {
-                    res.status(500).send({ code: 500, message: "Error en el servidor" })
+                    res.send({ message: "Error en el servidor",err })
                 } else {
                     if (!postStored) {
-                        res.status(400).send({ code: 400, messege: "No se a podido crear el Blog" });
+                        res.send({ messege: "No se a podido crear el Blog" });
                     } else {
-                        res.status(200).send({ code: 200, messege: "Blog creado correctamente" });
+                        res.send({ messege: "Blog creado correctamente" });
                     }
                 }
             });
@@ -69,12 +69,12 @@ blogCtrl.updateBlog = async (req, res) => {
         }
         await blogModel.findByIdAndUpdate(req.params.id, newBlog, (err, postStored) => {
             if (err) {
-                res.status(500).send({ code: 500, message: "Error en el servidor" })
+                res.send({ message: "Error en el servidor",err })
             } else {
                 if (!postStored) {
-                    res.status(400).send({ code: 400, messege: "No se a podido actualizar el blog" });
+                    res.send({ messege: "No se a podido actualizar el blog" });
                 } else {
-                    res.status(200).send({ code: 200, messege: "Blog actualizado" });
+                    res.send({ messege: "Blog actualizado" });
                 }
             }
         });
@@ -89,12 +89,12 @@ blogCtrl.getBlog = async (req, res) => {
         const { url } = req.params;
         await blogModel.findOne({ url }, (err, postStored) => {
             if (err) {
-                res.status(500).send({ code: 500, messege: "Error en la base" });
+                res.send({ messege: "Error en la base",err });
             } else {
                 if (!postStored) {
-                    res.status(404).send({ code: 404, messege: "Error al eliminar" });
+                    res.send({ messege: "Error al eliminar" });
                 } else {
-                    res.status(200).send({ code: 200, post: postStored })
+                    res.send({ post: postStored })
                 }
             }
         });
@@ -107,20 +107,24 @@ blogCtrl.getBlog = async (req, res) => {
 blogCtrl.deleteBlog = async (req, res) => {
     try {
         const blogBase = await blogModel.findById(req.params.id);
-        if (blogBase.imagen) {
-            await imagen.eliminarImagen(blogBase.imagen);
-        }
-        await clienteModel.findByIdAndDelete(req.params.id, (err, postStored) => {
-            if (err) {
-                res.status(500).send({ code: 500, messege: "Error en la base" });
-            } else {
-                if (!postStored) {
-                    res.status(404).send({ code: 404, messege: "Error al eliminar" });
-                } else {
-                    res.status(200).send({ code: 200, messege: "Blog eliminado" })
-                }
+        if(blogBase){
+            if (blogBase.imagen && blogBase.imagen != null) {
+                await imagen.eliminarImagen(blogBase.imagen);
             }
-        });
+            await blogModel.findByIdAndDelete(req.params.id, (err, postStored) => {
+                if (err) {
+                    res.send({ messege: "Error en la base",err });
+                } else {
+                    if (!postStored) {
+                        res.send({ messege: "Error al eliminar" });
+                    } else {
+                        res.send({ messege: "Blog eliminado" })
+                    }
+                }
+            });
+        }else{
+            res.send({ messege: "Este blog no existeCre" });
+        }
     } catch (error) {
         console.log(error);
     }

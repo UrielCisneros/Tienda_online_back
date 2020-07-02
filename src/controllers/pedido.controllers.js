@@ -16,7 +16,6 @@ pedidoCtrl.getPedidos = async (req, res, next) => {
     }
 }
 
-
 pedidoCtrl.getPedidosUser = async (req, res, next) => {
     try {
         const pedidosUser = await pedidoModel.find({ cliente: req.params.id });
@@ -29,10 +28,7 @@ pedidoCtrl.getPedidosUser = async (req, res, next) => {
 pedidoCtrl.createPedido = async (req, res, next) => {
     const newpedido = new pedidoModel(req.body);
     try {
-        newpedido.pedido.map(async (pedido) => {
-            console.log(pedido.cantidad);
-        });
-        /* await newpedido.save(); */
+        await newpedido.save();
         res.json({ messege: "Se agrego el pedido" });
     } catch (error) {
         console.log(error);

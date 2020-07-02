@@ -17,7 +17,7 @@ clienteCtrl.subirImagen = async (req, res, next) => {
 clienteCtrl.getClientes = async (req, res, next) => {
 	try {
 		const clientes = await clienteModel.find();
-		res.json(clientes);
+		res.status(200).json(clientes);
 	} catch (error) {
 		console.log(error);
 		next();
@@ -39,14 +39,14 @@ clienteCtrl.createCliente = (req, res) => {
 	newCliente.active = false;
 	console.log(req.body);
 	if (!contrasena || !repeatContrasena) {
-		res.status(404).send({ messege: 'Las contrasenas son obligatorias' });
+		res.send({ messege: 'Las contrasenas son obligatorias' });
 	} else {
 		if (contrasena !== repeatContrasena) {
-			res.status(404).send({ message: 'Las contrasenas no son iguales' });
+			res.send({ message: 'Las contrasenas no son iguales' });
 		} else {
 			bcrypt.hash(contrasena, null, null, function (err, hash) {
 				if (err) {
-					res.status(500).send({ messege: 'Error al encriptar la contrasena' });
+					res.send({ messege: 'Error al encriptar la contrasena',err });
 				} else {
 
 					newCliente.contrasena = hash;
@@ -55,7 +55,7 @@ clienteCtrl.createCliente = (req, res) => {
 							res.send({ messege: 'Ups, algo paso al registrar el usuario', err });
 						} else {
 							if (!userStored) {
-								res.status(404).send({ message: 'Error al crear el usuario' });
+								res.send({ message: 'Error al crear el usuario' });
 							} else {
 								const token = jwt.sign({
 									email : newCliente.email,
@@ -66,7 +66,7 @@ clienteCtrl.createCliente = (req, res) => {
 								{
 									expiresIn : '4h'
 								});
-								res.status(200).send({ user: token });
+								res.send({ user: token });
 							}
 						}
 					});
@@ -96,7 +96,7 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 				res.send({ messege: 'Ups, algo paso al registrar el usuario', err });
 			} else {
 				if (!userStored) {
-					res.status(404).send({ message: 'Error al crear el usuario' });
+					res.send({ message: 'Error al crear el usuario' });
 				} else {
 					const clienteBase = await clienteModel.findById(req.params.id);
 					const token = jwt.sign({
@@ -109,7 +109,7 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 					{
 						expiresIn : '4h'
 					});
-					res.status(200).send({ user: token });
+					res.send({ user: token });
 				}
 			}
 		});
@@ -150,10 +150,10 @@ clienteCtrl.authCliente = async (req, res, next) => {
 	const cliente = await clienteModel.findOne({ email });
 
 	if(!cliente){
-		await res.status(401).json({ message: 'Este usuario no existe' });
+		await res.json({ message: 'Este usuario no existe' });
 	}else{
 		if(!bcrypt.compareSync(contrasena, cliente.contrasena)){
-			await res.status(401).json({ message: 'Contraseña incorrecta' });
+			await res.json({ message: 'Contraseña incorrecta' });
 			next();
 		}else{
 			const token = jwt.sign({
