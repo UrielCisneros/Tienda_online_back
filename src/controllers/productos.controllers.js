@@ -167,9 +167,9 @@ productosCtrl.eliminarNumero = async (req, res) => {
 				res.status(500).send({ message: 'Ups, also paso en la base' })
 			} else {
 				if (!response) {
-					res.status(404).send({ message: 'esa talla no existe' })
+					res.status(404).send({ message: 'esa numero no existe' })
 				} else {
-					res.status(200).send({ message: 'Talla eliminada' })
+					res.status(200).send({ message: 'Numero eliminada' })
 				}
 			}
 		});

@@ -20,7 +20,6 @@ module.exports = (req, res, next) => {
         res.send({message: 'token expirado', error})
         throw error;
     }
-    console.log(revisarToken);
     //si es un token valido pero hay algun error
     if(!revisarToken){
         const error = new Error('No aunteticado');
