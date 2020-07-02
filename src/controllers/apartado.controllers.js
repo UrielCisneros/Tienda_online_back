@@ -12,12 +12,12 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 			const newApartado = new Apartado({ producto, cliente, cantidad, estado });
 			await newApartado.save((err, response) => {
 				if(err){
-					res.status(500).send({ message: 'Error, algo paso al crear apartado' });
+					res.send({ message: 'Error, algo paso al crear apartado', err });
 				}else {
 					if(!response){
-						res.status(404).send({ message: 'Error al Crear apartado (404)' });
+						res.send({ message: 'Error al Crear apartado (404)' });
 					}else{
-						res.status(200).send({ message: 'Apartado creado' });
+						res.send({ message: 'Apartado creado' });
 					}
 				}
 			})
@@ -51,29 +51,15 @@ apartadoCtrl.obtenerApartado = async (req, res) => {
 	
 };
 
-/* apartadoCtrl.cambiarEstado = async (req, res) => {
-	await Apartado.findByIdAndUpdate(req.params.idApartado, req.body, function(err, response) {
-		if(err){
-			res.status(500).send({message: 'Hubo un error al cambiar el estado'});
-		}else{
-			if(!response){
-				res.status(404).send({ message: 'Error al cambiar estado (404)' });
-			}else{
-				res.status(200).send({message: 'Estado Actualizado'})
-			}
-		}
-	});
-}; */
-
 apartadoCtrl.actualizarApartado = async (req, res) => {
 	await Apartado.findByIdAndUpdate(req.params.idApartado, req.body, (err, response) => {
 		if(err){
-			res.status(500).send({message: 'Hubo un error al actualizar el apartado'})
+			res.send({message: 'Hubo un error al actualizar el apartado', err})
 		}else{
 			if(!response){
-				res.status(404).send({message: 'Error al actualizar apartado (404)'})
+				res.send({message: 'Error al actualizar apartado'})
 			}else{
-				res.status(200).json(response)
+				res.json(response)
 			}
 		}
 	});
@@ -82,9 +68,9 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 apartadoCtrl.eliminarApartado = async (req, res) => {
 	await Apartado.findByIdAndDelete(req.params.idApartado, (err, response) => {
 		if(err){
-			res.status(500).send({message: 'Error al eliminar apartado'})
+			res.send({message: 'Error al eliminar apartado', err})
 		}else if(!response){
-			res.status(404).send({message: 'El apartado no existe'})
+			res.send({message: 'El apartado no existe'})
 		}else{
 			res.json({ message: 'Apartado eliminado' });
 		}	

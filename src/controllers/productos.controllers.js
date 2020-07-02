@@ -193,7 +193,7 @@ productosCtrl.addTalla = async (req, res, next) => {
 			}
 		}, (err, response) => {
 			if (err) {
-				res.status(500).send({ messege: 'Ups, algo al guardar talla' });
+				res.send({ messege: 'Ups, algo al guardar talla', err });
 			} else {
 				if (!response) {
 					res.status(404).send({ message: 'Error al guardar' });
@@ -272,12 +272,12 @@ productosCtrl.createProducto = async (req, res) => {
 	}
 	await newProducto.save((err, userStored) => {
 		if (err) {
-			res.send({ messege: 'Ups, algo paso al registrar el producto',err });
+			res.json({ message: 'Ups, algo paso al registrar el producto', err});
 		} else {
 			if (!userStored) {
-				res.status(404).send({ message: 'Error al crear el producto' });
+				res.json({ message: 'Error al crear el producto' });
 			} else {
-				res.status(200).send({ message: 'Producto almacenado', userStored});
+				res.json({ message: 'Producto almacenado', userStored});
 			}
 		}
 	});

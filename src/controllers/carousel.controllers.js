@@ -18,12 +18,12 @@ carouselCtrl.crearCarousel = async (req, res) => {
     }
     await newCarousel.save((err, response) => {
         if(err){
-            res.status(500).send({message: 'Ups, hubo un error al crear el carousel'})
+            res.send({message: 'Ups, hubo un error al crear el carousel', err})
         }else{
             if(!response){
-                res.status(404).send({message: 'Carousel NO creado (404)'})
+                res.send({message: 'Carousel NO creado (404)'})
             }else{
-                res.status(200).json(response)
+                res.json(response)
             }
         }
     })
@@ -33,11 +33,11 @@ carouselCtrl.obtenerCarousel = async (req, res) => {
     const carousel = await Carousel.findById(req.params.idCarousel).populate('producto', 'nombre')
     try {
         if(!carousel){
-            res.status(404).send({message: 'Este carousel no existe'})
+            res.send({message: 'Este carousel no existe'})
         }
         res.json(carousel)
     } catch (error) {
-        res.status(500).send({message: 'Ups, hubo un error al obtener el carousel'})
+        res.send({message: 'Ups, hubo un error al obtener el carousel', error})
     }
 }
 
@@ -45,7 +45,7 @@ carouselCtrl.actualizarCarousel = async (req, res) => {
     try {
 		const carouselDeBase = await Carousel.findById(req.params.idCarousel);
 		if(!carouselDeBase){
-			res.status(404).send({message: 'Este carousel no existe'})
+			res.send({message: 'Este carousel no existe'})
 		}else{
 			//Construir nuevo producto
 			const nuevoCarousel = req.body;
@@ -57,11 +57,11 @@ carouselCtrl.actualizarCarousel = async (req, res) => {
 				nuevoCarousel.imagen = carouselDeBase.imagen;
 			}
 			const carousel = await Carousel.findByIdAndUpdate(req.params.idCarousel, nuevoCarousel);
-			res.status(200).json(carousel)
+			res.json(carousel)
 		}
 		
 	} catch (error) {
-		res.status(500).send({message: 'Error al actualizar Carousel'})
+		res.send({message: 'Error al actualizar Carousel', error})
 	}
 }
 
@@ -69,7 +69,7 @@ carouselCtrl.eliminarCarousel = async (req, res) => {
     const carouselDeBase = await Carousel.findById(req.params.idCarousel);
 	try {
 		if (!carouselDeBase) {
-			res.status(404).json({ message: 'Este carousel no existe' });
+			res.json({ message: 'Este carousel no existe' });
 		}else{
 			if (carouselDeBase.imagen) {
 				await imagen.eliminarImagen(carouselDeBase.imagen);
@@ -77,12 +77,12 @@ carouselCtrl.eliminarCarousel = async (req, res) => {
 		
 			const carousel = await Carousel.findByIdAndDelete(req.params.idCarousel);
 			if (!carousel) {
-				res.status(404).json({ message: 'Este carousel no existe' });
+				res.json({ message: 'Este carousel no existe' });
 			}
-			res.status(200).json({ message: 'Carousel eliminado' });
+			res.json({ message: 'Carousel eliminado' });
 		}		
 	} catch (error) {
-		res.status(500).send({message: 'Error al eliminar Carousel'})
+		res.send({message: 'Error al eliminar Carousel', error})
 	}
 }
 

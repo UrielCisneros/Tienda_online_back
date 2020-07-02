@@ -17,12 +17,12 @@ carritoCtrl.crearCarrito = async (req, res, next) => {
         
                 await newCarrito.save((err, response) => {
                     if (err) {
-                        res.status(500).send({ messege: 'Ups, algo paso al crear el Carrito' });
+                        res.send({ messege: 'Ups, algo paso al crear el Carrito', err });
                     } else {
                         if (!response) {
-                            res.status(404).send({ message: 'Error al crear el Carrito (404)' });
+                            res.send({ message: 'Error al crear el Carrito' });
                         } else {
-                            res.status(200).send({ message: 'Carrito creado' });
+                            res.send({ message: 'Carrito creado' });
                         }
                     }
                 }); 
@@ -75,12 +75,12 @@ carritoCtrl.agregarArticulo = async (req, res) => {
             }, (err, response) => {
                 console.log(err)
                 if (err) {
-                    res.status(500).send({ messege: 'Ups, algo paso al agregar articulo' });
+                    res.send({ messege: 'Ups, algo paso al agregar articulo', err });
                 } else {
                     if (!response) {
-                        res.status(404).send({ message: 'Error al crear el articulo (404)' });
+                        res.send({ message: 'Error al crear el articulo' });
                     } else {
-                        res.status(200).send({ message: 'Articulo agregado' });
+                        res.send({ message: 'Articulo agregado' });
                     }
                 }
             });
@@ -91,12 +91,12 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 carritoCtrl.eliminarCarrito = async (req, res) => {
     await Carrito.findByIdAndDelete(req.params.idCarrito, (err, response) => {
         if (err) {
-            res.status(500).send({ messege: 'Ups, algo paso al eliminar el Carrito' });
+            res.send({ messege: 'Ups, algo paso al eliminar el Carrito', err });
         } else {
             if (!response) {
-                res.status(404).send({ message: 'Este carrito no existe' });
+                res.send({ message: 'Este carrito no existe' });
             } else {
-                res.status(200).send({ message: 'Carrito eliminado' });
+                res.send({ message: 'Carrito eliminado' });
             }
         }
     })
@@ -109,12 +109,12 @@ carritoCtrl.eliminarArticulo = async (req, res) => {
     },
     { $pull: { articulos: { _id: req.params.idArticulo }} }, (err, response) => {
         if (err) {
-            res.status(500).send({ messege: 'Ups, algo paso al eliminar articulo' });
+            res.send({ messege: 'Ups, algo paso al eliminar articulo', err });
         } else {
             if (!response) {
-                res.status(404).send({ message: 'Este articulo no existe (404)' });
+                res.send({ message: 'Este articulo no existe' });
             } else {
-                res.status(200).send({ message: 'Articulo eliminado' });
+                res.send({ message: 'Articulo eliminado' });
             }
         }
     });
@@ -145,12 +145,12 @@ carritoCtrl.modificarCantidadArticulo = async (req, res) => {
                     }, (err, response) => {
 
                     if(err){
-                        res.status(500).send({ message: 'Ups, algo paso al modificar la cantidad' });
+                        res.send({ message: 'Ups, algo paso al modificar la cantidad', err });
                     }else {
                         if(!response){
-                            res.status(404).send({ message: 'Error al modificar la cantidad (404)' });
+                            res.send({ message: 'Error al modificar la cantidad' });
                         }else{
-                            res.status(200).send({ message: 'Cantidad Modificada' });
+                            res.send({ message: 'Cantidad Modificada' });
                         }
                     }
                 })

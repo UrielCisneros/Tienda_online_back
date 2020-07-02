@@ -10,6 +10,7 @@ const ProductoSchema = new Schema({
 	},
 	categoria: {
 		type: String,
+		required: true,
 		trim: true
 	},
 	tallas: [{
@@ -22,8 +23,7 @@ const ProductoSchema = new Schema({
 	}],
 	color: String,
 	cantidad: {
-		type: Number,
-		required: true
+		type: Number
 	},
 	precio: {
 		type: String,
