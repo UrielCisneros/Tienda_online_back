@@ -29,7 +29,7 @@ const pedidosSchema = new Schema(
 			type: String,
 			required: true
 		},
-		mensaje_admin: String
+		mensaje_admin: String	
 	},
 	{
 		timestamps: true
