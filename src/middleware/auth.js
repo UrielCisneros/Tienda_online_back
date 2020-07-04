@@ -17,7 +17,7 @@ module.exports = (req, res, next) => {
         revisarToken = jwt.verify(token, process.env.AUTH_KEY)
     } catch (error) {
         error.statusCode = 500;
-        res.send({message: 'token expirado', error})
+/*         res.send({message: 'token expirado', error}) */
         throw error;
     }
     
