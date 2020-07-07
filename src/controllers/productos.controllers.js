@@ -81,7 +81,7 @@ productosCtrl.actualizarNumero = async (req, res) => {
 				$set: { 'numeros.$': { numero, cantidad } }
 			}, (err, response) => {
 				if (err) {
-					res.send({ message: 'Ups algo paso al actualizar' })
+					res.send({ message: 'Ups algo paso al actualizar', err })
 				} else {
 					if (!response) {
 						res.send({ message: 'Este apartado no existe' })
@@ -110,7 +110,7 @@ productosCtrl.actualizarTalla = async (req, res) => {
 				$set: { 'tallas.$': { talla, cantidad } }
 			}, (err, response) => {
 				if (err) {
-					res.send({ message: 'Ups algo paso al actualizar' })
+					res.send({ message: 'Ups algo paso al actualizar',err })
 				} else {
 					if (!response) {
 						res.send({ message: 'Este apartado no existe' })
@@ -138,7 +138,7 @@ productosCtrl.eliminarTalla = async (req, res) => {
 			}
 		}, (err, response) => {
 			if (err) {
-				res.send({ message: 'Ups, also paso en la base' })
+				res.send({ message: 'Ups, also paso en la base', err })
 			} else {
 				if (!response) {
 					res.send({ message: 'esa talla no existe' })
@@ -164,7 +164,7 @@ productosCtrl.eliminarNumero = async (req, res) => {
 			}
 		}, (err, response) => {
 			if (err) {
-				res.send({ message: 'Ups, also paso en la base' })
+				res.send({ message: 'Ups, also paso en la base', err })
 			} else {
 				if (!response) {
 					res.send({ message: 'esa numero no existe' })
@@ -193,7 +193,7 @@ productosCtrl.addTalla = async (req, res, next) => {
 			}
 		}, (err, response) => {
 			if (err) {
-				res.send({ messege: 'Ups, algo al guardar talla' });
+				res.send({ messege: 'Ups, algo al guardar talla', err });
 			} else {
 				if (!response) {
 					res.send({ message: 'Error al guardar' });
@@ -223,7 +223,7 @@ productosCtrl.addnumero = async (req, res, next) => {
 			}
 		}, (err, response) => {
 			if (err) {
-				res.send({ messege: 'Ups, algo al guardar numero' });
+				res.send({ messege: 'Ups, algo al guardar numero', err });
 			} else {
 				if (!response) {
 					res.send({ message: 'Error al guardar' });
@@ -236,11 +236,12 @@ productosCtrl.addnumero = async (req, res, next) => {
 }
 
 productosCtrl.subirImagen = (req, res, next) => {
-	imagen.upload(req, res, function (error) {
-		if (error) {
-			res.json({ message: "Ups algo salio mal",error });
+	imagen.upload(req, res, function (err) {
+		if (err) {
+			res.send({ message: "formato de imagen no valido", err });
+		}else{
+			return next();
 		}
-		return next();
 	});
 };
 
@@ -253,7 +254,7 @@ productosCtrl.getProductos = async (req, res) => {
 	}
 	Producto.paginate({}, options, (err, postStored) => {
 		if (err) {
-			res.send({  messege: "Error en el servidor" });
+			res.send({  messege: "Error en el servidor", err });
 		} else {
 			if (!postStored) {
 				res.send({ messege: "Error al mostrar Blogs" })
@@ -305,7 +306,7 @@ productosCtrl.updateProducto = async (req, res, next) => {
 			nuevoProducto.imagen = productoDeBase.imagen;
 		}
 		const producto = await Producto.findByIdAndUpdate(req.params.id, nuevoProducto);
-		res.json(producto);
+		res.json({message: 'Producto actualizado', producto});
 	} catch (error) {
 		console.log(error);
 		next();

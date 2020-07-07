@@ -5,11 +5,12 @@ const path = require('path');
 const fs = require('fs');
 
 galeriaCtrl.subirImagen = (req, res, next) => {
-	imagen.upload(req, res, function (error) {
-		if (error) {
-			res.json({ message: error });
-		}
-		return next();
+	imagen.upload(req, res, function (err) {
+		if (err) {
+			res.json({ message: "Formato de imagen no valido", err });
+		}else{
+            return next();
+        }	
 	});
 };
 

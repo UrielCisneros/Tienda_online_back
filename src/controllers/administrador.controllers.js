@@ -95,9 +95,9 @@ adminCtrl.authAdmin = async (req, res, next) => {
 				rol: admin.rol
 			},
 			process.env.AUTH_KEY,
-			{
+/* 			{
 				expiresIn : '1h'
-			});
+			} */);
 			//token
 			res.json(token);
 		}

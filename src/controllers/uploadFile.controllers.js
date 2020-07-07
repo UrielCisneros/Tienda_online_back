@@ -20,7 +20,7 @@ const configuracionMulter = {
         if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/webp') {
             cb(null, true);
         } else {
-            cb(new Error('Formato no valido'));
+            return cb(new Error('Formato no valido'));
         }
     }
 };
