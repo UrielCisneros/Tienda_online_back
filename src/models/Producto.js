@@ -1,8 +1,8 @@
-const { Schema, model } = require('mongoose');
-
+var mongoose = require('mongoose');
+var Float = require('mongoose-float').loadType(mongoose,4);
 const mongoodePaginate = require('mongoose-paginate-v2');
 
-const ProductoSchema = new Schema({
+const ProductoSchema = new mongoose.Schema({
 	nombre: {
 		type: String,
 		required: true,
@@ -26,7 +26,7 @@ const ProductoSchema = new Schema({
 		type: Number
 	},
 	precio: {
-		type: String,
+		type: Float,
 		required: true
 	},
 	imagen: {
@@ -51,4 +51,4 @@ const ProductoSchema = new Schema({
 
 ProductoSchema.plugin(mongoodePaginate);
 
-module.exports = model('producto', ProductoSchema);
+module.exports = mongoose.model('producto', ProductoSchema);

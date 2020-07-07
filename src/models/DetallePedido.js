@@ -1,41 +1,21 @@
-const { Schema, model } = require('mongoose');
+
+var mongoose = require('mongoose');
+const { Schema, model } = mongoose;
 
 
 const detallePedidoSchema = new Schema({
     id_pedido: {
-        type: String,
-        required: true
+        type: Schema.ObjectId,
+        ref: 'Pedidos'
     },
-    articulos: {
-        idarticulo: {
-            type: String,
-            required: true
-        },
-        nombre: {
-            type: String,
-            required: true
-        },
-        cantidad: {
-            type: Number,
-            required: true
-        },
-        precio: {
-            type: Number,
-            required: true
-        },
-        subtotal: {
-            type: Number,
-            required: true
-        }
+    id_pago: {
+        type: Schema.ObjectId,
+        ref: 'Pago'
     },
-    unidades: {
-        type: String
-    },
-    fecha: {
-        type: Date,
-        default: Date.now
-    },
-    total: Number
+    cliente: {
+        type: Schema.ObjectId,
+        ref: 'cliente'
+    }
 }, {
     timestamps: true
 });

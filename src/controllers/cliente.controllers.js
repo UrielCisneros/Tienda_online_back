@@ -3,6 +3,7 @@ const imagen = require('./uploadFile.controllers');
 const bcrypt = require('bcrypt-nodejs');
 const jwt = require('jsonwebtoken')
 const clienteModel = require('../models/Cliente');
+const adminModel = require('../models/Administrador');
 
 
 clienteCtrl.subirImagen = async (req, res, next) => {
@@ -147,19 +148,17 @@ clienteCtrl.deleteCliente = async (req, res, next) => {
 
 clienteCtrl.authCliente = async (req, res, next) => {
 	const { email, contrasena } = req.body;
-	const cliente = await clienteModel.findOne({ email });
-
-	if(!cliente){
-		await res.json({ message: 'Este usuario no existe' });
-	}else{
-		if(!bcrypt.compareSync(contrasena, cliente.contrasena)){
+	const admin = await adminModel.findOne({email});
+	if(admin){
+		if(!bcrypt.compareSync(contrasena, admin.contrasena)){
 			await res.json({ message: 'Contraseña incorrecta' });
 			next();
 		}else{
 			const token = jwt.sign({
 				email : cliente.email,
 				nombre: cliente.nombre,
-				_id: cliente._id
+				_id: cliente._id,
+				role: "Admin"
 			},
 			'HiXYE@Ay%39e;',
 			{
@@ -167,6 +166,29 @@ clienteCtrl.authCliente = async (req, res, next) => {
 			});
 			//token
 			res.json({token});
+		}
+	}else{
+		const cliente = await clienteModel.findOne({ email });
+		if(!cliente){
+			await res.json({ message: 'Este usuario no existe' });
+		}else{
+			if(!bcrypt.compareSync(contrasena, cliente.contrasena)){
+				await res.json({ message: 'Contraseña incorrecta' });
+				next();
+			}else{
+				const token = jwt.sign({
+					email : cliente.email,
+					nombre: cliente.nombre,
+					_id: cliente._id,
+					role: "User"
+				},
+				'HiXYE@Ay%39e;',
+				{
+					expiresIn : '4h'
+				});
+				//token
+				res.json({token});
+			}
 		}
 	}
 }

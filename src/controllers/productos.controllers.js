@@ -238,7 +238,7 @@ productosCtrl.addnumero = async (req, res, next) => {
 productosCtrl.subirImagen = (req, res, next) => {
 	imagen.upload(req, res, function (error) {
 		if (error) {
-			res.json({ message: error });
+			res.json({ message: "Ups algo salio mal",error });
 		}
 		return next();
 	});

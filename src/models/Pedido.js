@@ -1,14 +1,12 @@
-const { Schema, model } = require('mongoose');
 
-const pedidosSchema = new Schema(
+var mongoose = require('mongoose');
+var Float = require('mongoose-float').loadType(mongoose,4);
+
+const pedidosSchema = new mongoose.Schema(
 	{
 		cliente: {
-			type: Schema.ObjectId,
+			type: mongoose.Schema.ObjectId,
 			ref: 'cliente'
-		},
-		fecha_creacion: {
-			type: Date,
-			default: Date.now
 		},
 		fecha_envio: {
 			type: Date
@@ -16,24 +14,26 @@ const pedidosSchema = new Schema(
 		pedido: [
 			{
 				producto: {
-					type: Schema.ObjectId,
+					type: mongoose.Schema.ObjectId,
 					ref: 'producto'
 				},
-				cantidad: Number
+				cantidad: Number,
+				talla: String,
+				numero: String
 			}
 		],
 		total: {
-			type: Number
+			type: Float
 		},
 		estado_pedido: {
-			type: String,
-			required: true
+			type: String
 		},
-		mensaje_admin: String	
+		mensaje_admin: String,
+	
 	},
 	{
 		timestamps: true
 	}
 );
 
-module.exports = model('Pedidos', pedidosSchema);
+module.exports = mongoose.model('Pedidos', pedidosSchema);

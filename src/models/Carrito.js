@@ -1,13 +1,14 @@
-const { Schema, model } = require('mongoose');
+var mongoose = require('mongoose');
+var Float = require('mongoose-float').loadType(mongoose,4);
 
-const CarritoSchema = new Schema({
+const CarritoSchema = new mongoose.Schema({
     cliente: {
-        type: Schema.ObjectId,
+        type: mongoose.Schema.ObjectId,
         ref: 'cliente'
     },
     articulos: [{
         idarticulo: {
-            type: Schema.ObjectId,
+            type: mongoose.Schema.ObjectId,
             ref: "producto"
         },
         cantidad: {
@@ -15,10 +16,10 @@ const CarritoSchema = new Schema({
             required: true
         },
         subtotal: {
-            type: Number,
+            type: Float,
             required: true
         }
     }]
 });
 
-module.exports = model('carrito', CarritoSchema);
+module.exports = mongoose.model('carrito', CarritoSchema);
