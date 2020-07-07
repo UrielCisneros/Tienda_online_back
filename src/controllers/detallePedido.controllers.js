@@ -125,7 +125,7 @@ detalleCtrl.getDetalle = async (req,res) => {
 detalleCtrl.getDetalleUser = async (req, res) => {
     try {
         console.log(req.params.idUser);
-        const DetalleUser = await detalleModel .find({ cliente: req.params.idUser });
+        const DetalleUser = await detalleModel .find({ cliente: req.params.idUser }).populate('id_pedido').populate('id_pago').populate('cliente');
         res.json(DetalleUser);
     } catch (error) {
         res.send({ messege: 'Ups, algo paso al obtenero el pedidos', error });

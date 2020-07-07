@@ -155,15 +155,13 @@ clienteCtrl.authCliente = async (req, res, next) => {
 			next();
 		}else{
 			const token = jwt.sign({
-				email : cliente.email,
-				nombre: cliente.nombre,
-				_id: cliente._id,
+				email : admin.email,
+				nombre: admin.nombre,
+				_id: admin._id,
 				role: "Admin"
 			},
-			'HiXYE@Ay%39e;',
-			{
-				expiresIn : '4h'
-			});
+			'HiXYE@Ay%39e;'
+			);
 			//token
 			res.json({token});
 		}
@@ -182,14 +180,66 @@ clienteCtrl.authCliente = async (req, res, next) => {
 					_id: cliente._id,
 					role: "User"
 				},
-				'HiXYE@Ay%39e;',
-				{
-					expiresIn : '4h'
-				});
+				'HiXYE@Ay%39e;'
+				);
 				//token
 				res.json({token});
 			}
 		}
+	}
+}
+
+clienteCtrl.authFirebase = async (req, res) => {
+	const { email, nombre, imagen, token } = req.body;
+	const cliente = await clienteModel.findOne({email});
+	if(cliente){
+		if(!bcrypt.compareSync(token, cliente.contrasena)){
+			await res.json({ message: 'Contraseña incorrecta' });
+			next();
+		}else{
+			const token = jwt.sign({
+				email : cliente.email,
+				nombre: cliente.nombre,
+				_id: cliente._id,
+				role: "User"
+			},
+			'HiXYE@Ay%39e;'
+			);
+			//token
+			res.json({token});
+		}
+	}else{
+		const newcliente = new clienteModel();
+		newcliente.nombre = nombre;
+		newcliente.email = email;
+		newcliente.imagen = imagen;
+		bcrypt.hash(token, null, null, function(err, hash) {
+			if (err) {
+				res.send({ messege: 'Error al encriptar la contrasena' });
+			} else {
+				newcliente.contrasena = hash;
+				newcliente.save((err, userStored) => {
+					if (err) {
+						res.send({ messege: 'Ups, algo paso al registrar el usuario',err });
+					} else {
+						if (!userStored) {
+							res.send({ message: 'Error al crear el usuario' });
+						} else {
+							const token = jwt.sign({
+								email : cliente.email,
+								nombre: cliente.nombre,
+								_id: cliente._id,
+								role: "User"
+							},
+							'HiXYE@Ay%39e;'
+							);
+							//token
+							res.json({token});
+						}
+					}
+				});
+			}
+		});
 	}
 }
 
