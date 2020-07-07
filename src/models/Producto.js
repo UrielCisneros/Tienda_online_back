@@ -46,6 +46,10 @@ const ProductoSchema = new Schema({
 		type: String,
 		trim: true
 	},
+	codigo: {
+		type: String, 
+		trim: true
+	},
 	activo: Boolean
 });
 

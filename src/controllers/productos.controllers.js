@@ -306,7 +306,7 @@ productosCtrl.updateProducto = async (req, res, next) => {
 			nuevoProducto.imagen = productoDeBase.imagen;
 		}
 		const producto = await Producto.findByIdAndUpdate(req.params.id, nuevoProducto);
-		res.json(producto);
+		res.json({message: 'Producto actualizado', producto});
 	} catch (error) {
 		console.log(error);
 		next();
