@@ -30,7 +30,7 @@ carouselCtrl.crearCarousel = async (req, res) => {
 }
 
 carouselCtrl.obtenerCarousel = async (req, res) => {
-    const carousel = await Carousel.findById(req.params.idCarousel).populate('producto', 'nombre')
+    const carousel = await Carousel.findOne({producto: req.params.idProducto}).populate('producto', 'nombre')
     try {
         if(!carousel){
             res.send({message: 'Este carousel no existe'})
@@ -43,7 +43,7 @@ carouselCtrl.obtenerCarousel = async (req, res) => {
 
 carouselCtrl.actualizarCarousel = async (req, res) => {
     try {
-		const carouselDeBase = await Carousel.findById(req.params.idCarousel);
+		const carouselDeBase = await Carousel.findOne({producto: req.params.idProducto});
 		if(!carouselDeBase){
 			res.send({message: 'Este carousel no existe'})
 		}else{
@@ -66,7 +66,7 @@ carouselCtrl.actualizarCarousel = async (req, res) => {
 }
 
 carouselCtrl.eliminarCarousel = async (req, res) => {
-    const carouselDeBase = await Carousel.findById(req.params.idCarousel);
+    const carouselDeBase = await Carousel.findOne({producto: req.params.idProducto});
 	try {
 		if (!carouselDeBase) {
 			res.json({ message: 'Este carousel no existe' });

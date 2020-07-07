@@ -40,7 +40,7 @@ apartadoCtrl.obtenerApartados = async (req, res) => {
 
 apartadoCtrl.obtenerApartado = async (req, res) => {
 	try {
-		const apartado = await Apartado.findById(req.params.idApartado).populate('cliente').populate('producto');
+		const apartado = await Apartado.findOne({cliente: req.params.idCliente}).populate('cliente').populate('producto');
 		if(!apartado){
 			res.json({ message: 'El apartado que busca no existe' });
 		}
@@ -52,7 +52,7 @@ apartadoCtrl.obtenerApartado = async (req, res) => {
 };
 
 apartadoCtrl.actualizarApartado = async (req, res) => {
-	await Apartado.findByIdAndUpdate(req.params.idApartado, req.body, (err, response) => {
+	await Apartado.findByIdAndUpdate({cliente: req.params.idCliente}, req.body, (err, response) => {
 		if(err){
 			res.send({message: 'Hubo un error al actualizar el apartado', err})
 		}else{
@@ -66,7 +66,7 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 };
 
 apartadoCtrl.eliminarApartado = async (req, res) => {
-	await Apartado.findByIdAndDelete(req.params.idApartado, (err, response) => {
+	await Apartado.findByIdAndDelete({cliente: req.params.idCliente}, (err, response) => {
 		if(err){
 			res.send({message: 'Error al eliminar apartado', err})
 		}else if(!response){

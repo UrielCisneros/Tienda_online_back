@@ -16,9 +16,8 @@ router.route('/')
 router.route('/nuevo/:idCliente')
     .post(auth,agregarApartado)
     
-router.route('/:idApartado')
+router.route('/:idCliente')
     .get(auth,obtenerApartado)
-/*     .patch(cambiarEstado) */
     .put(auth,actualizarApartado)
     .delete(auth,eliminarApartado)
 

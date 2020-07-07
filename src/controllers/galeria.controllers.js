@@ -46,7 +46,7 @@ galeriaCtrl.crearGaleria = async (req, res, next) => {
 
 galeriaCtrl.obtenerGaleria = async (req, res) => {
     try {
-        const galeria = await Galeria.findById(req.params.idGaleria).populate('producto', 'nombre');
+        const galeria = await Galeria.findOne({ producto: req.params.idProducto}).populate('producto', 'nombre');
         if(!galeria){
             res.send({ message: 'Esta galeria no existe' });
         }else{
@@ -89,7 +89,7 @@ galeriaCtrl.crearImagen = async (req, res) => {
 
 
 galeriaCtrl.actualizarImagen = async (req, res) => {
-        const datos = await Galeria.findById(req.params.idGaleria);        
+        const datos = await Galeria.findOne({ producto: req.params.idProducto});        
         const imagenes = datos.imagenes
         const urlB = imagenes.filter(x => x._id == req.params.idImagen)
         urlB.map( async (urlBase) => {
@@ -123,14 +123,14 @@ galeriaCtrl.actualizarImagen = async (req, res) => {
 
 
 galeriaCtrl.eliminarImagen = async (req, res) => {
-    const datos = await Galeria.findById(req.params.idGaleria);  
+    const datos = await Galeria.findOne({ producto: req.params.idProducto});  
     const imagenes = datos.imagenes
     const urlB = imagenes.filter(x => x._id == req.params.idImagen)
     urlB.map( async (urlBase) => {
         await imagen.eliminarImagen(urlBase.url);
         await Galeria.updateOne(
         {
-            _id: req.params.idGaleria
+            producto: req.params.idProducto
         },
         {
             $pull:
@@ -155,7 +155,7 @@ galeriaCtrl.eliminarImagen = async (req, res) => {
 }
 
 galeriaCtrl.eliminarGaleria = async (req, res) => {
-    const datos = await Galeria.findById(req.params.idGaleria);  
+    const datos = await Galeria.findOne({ producto: req.params.idProducto});  
     datos.imagenes.map( async (imagenes) => {
        try {
             await imagen.eliminarImagen(imagenes.url);
