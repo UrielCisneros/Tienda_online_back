@@ -6,9 +6,23 @@ const app = express();
 //settings
 app.set('port', process.env.PORT || 4000);
 
+//Config CORS (Rutas de acceso)
+const whitelist = ['http://localhost:3000'];
+
+const corsOptions = {
+    origin: (origin,callback) => {
+        const existe = whitelist.some(dominio => dominio === origin);
+        if(existe){
+            callback(null,true);
+        }else{
+            callback(new Error('Este server no tiene acceso'));
+        }
+    }
+}
+
 //middlewares
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 //rutes
