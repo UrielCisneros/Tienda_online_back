@@ -269,3 +269,4 @@ clienteCtrl.authFirebase = async (req, res) => {
 }
 
 module.exports = clienteCtrl;
+
