@@ -61,6 +61,7 @@ clienteCtrl.createCliente = (req, res) => {
 								const token = jwt.sign({
 									email : newCliente.email,
 									nombre: newCliente.nombre,
+									apellido: newCliente.apellido,
 									_id: newCliente._id,
 									role:"User"
 								},
@@ -101,6 +102,7 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 					const token = jwt.sign({
 						email : clienteBase.email,
 						nombre: clienteBase.nombre,
+						apellido: clienteBase.apellido,
 						_id: clienteBase._id,
 						imagen: clienteBase.imagen
 					},
@@ -181,6 +183,7 @@ clienteCtrl.authCliente = async (req, res, next) => {
 					const token = jwt.sign({
 						email : cliente.email,
 						nombre: cliente.nombre,
+						apellido: cliente.apellido,
 						_id: cliente._id,
 						rol: false
 					},
@@ -209,6 +212,7 @@ clienteCtrl.authFirebase = async (req, res) => {
 			const token = jwt.sign({
 				email : cliente.email,
 				nombre: cliente.nombre,
+				apellido: cliente.apellido,
 				_id: cliente._id,
 				rol: false
 			},
@@ -239,6 +243,7 @@ clienteCtrl.authFirebase = async (req, res) => {
 								const token = jwt.sign({
 									email : newcliente.email,
 									nombre: newcliente.nombre,
+									apellido: newcliente.apellido,
 									_id: newcliente._id,
 									rol: false
 								},
