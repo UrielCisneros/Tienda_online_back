@@ -39,6 +39,7 @@ pedidoCtrl.getPedidosUser = async (req, res, next) => {
 
 pedidoCtrl.createPedido = async (req, res, next) => {
     const newpedido = new pedidoModel(req.body);
+    newpedido.pagado = false;
     try {
         await newpedido.save((err, userStored) => {
             if (err) {

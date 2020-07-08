@@ -10,10 +10,13 @@ const {
 	updateCliente,
 	deleteCliente,
 	subirImagen,
-	authCliente
+	authCliente,
+	authFirebase
 } = require('../controllers/cliente.controllers');
 
 router.route('/auth').post(authCliente);
+
+router.route('/auth/firebase').post(authFirebase);
 
 router.route('/').get(auth,getClientes).post(createCliente);
 

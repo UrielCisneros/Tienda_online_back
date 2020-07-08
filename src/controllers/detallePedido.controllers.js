@@ -107,7 +107,19 @@ detalleCtrl.createDetalle = async (req,res) => {
                 }
             }
         })
-        res.send({ message: 'Detalle de venta creado' })
+        const pedidoPagado = await pedidoModel.findById(id_pedido);
+        pedidoPagado.pagado = true;  
+         await pedidoModel.findByIdAndUpdate({ _id: id_pedido },pedidoPagado, { new: true },(err, userStored) => {
+            if (err) {
+                res.send({ messege: 'Ups, parece que algo salio mal', err });
+            } else {
+                if (!userStored) {
+                    res.send({ message: 'Error al actualizar pedido' });
+                } else {
+                    res.send({ message: 'Detalle de venta creado' })
+                }
+            }
+        });
     }
 
 }

@@ -35,10 +35,10 @@ clienteCtrl.getCliente = async (req, res, next) => {
 };
 
 clienteCtrl.createCliente = (req, res) => {
-	const { contrasena, repeatContrasena } = req.body;
+	const repeatContrasena  = req.body.repeatContrasena;
+	const contrasena = req.body.constrasena;
 	const newCliente = new clienteModel(req.body);
 	newCliente.active = false;
-	console.log(req.body);
 	if (!contrasena || !repeatContrasena) {
 		res.send({ messege: 'Las contrasenas son obligatorias' });
 	} else {
@@ -49,7 +49,6 @@ clienteCtrl.createCliente = (req, res) => {
 				if (err) {
 					res.send({ messege: 'Error al encriptar la contrasena',err });
 				} else {
-
 					newCliente.contrasena = hash;
 					newCliente.save((err, userStored) => {
 						if (err) {
@@ -61,7 +60,8 @@ clienteCtrl.createCliente = (req, res) => {
 								const token = jwt.sign({
 									email : newCliente.email,
 									nombre: newCliente.nombre,
-									_id: newCliente._id
+									_id: newCliente._id,
+									role:"User"
 								},
 								'HiXYE@Ay%39e;',
 								{
@@ -147,50 +147,70 @@ clienteCtrl.deleteCliente = async (req, res, next) => {
 };
 
 clienteCtrl.authCliente = async (req, res, next) => {
-	const { email, contrasena } = req.body;
+	const { email } = req.body;
+	console.log(req.body);
+	const contrasena = req.body.contrasena;
+	console.log("Pass: "+req.body.contrasena);
 	const admin = await adminModel.findOne({email});
+	console.log(admin);
+	console.log(contrasena);
 	if(admin){
-		if(!bcrypt.compareSync(contrasena, admin.contrasena)){
-			await res.json({ message: 'Contraseña incorrecta' });
-			next();
-		}else{
-			const token = jwt.sign({
-				email : admin.email,
-				nombre: admin.nombre,
-				_id: admin._id,
-				role: "Admin"
-			},
-			'HiXYE@Ay%39e;'
-			);
-			//token
-			res.json({token});
-		}
-	}else{
-		const cliente = await clienteModel.findOne({ email });
-		if(!cliente){
-			await res.json({ message: 'Este usuario no existe' });
-		}else{
-			if(!bcrypt.compareSync(contrasena, cliente.contrasena)){
-				await res.json({ message: 'Contraseña incorrecta' });
+		try {
+			if(!bcrypt.compareSync(contrasena, admin.contrasena)){
+				res.json({ message: 'Contraseña incorrecta' });
 				next();
 			}else{
 				const token = jwt.sign({
-					email : cliente.email,
-					nombre: cliente.nombre,
-					_id: cliente._id,
-					role: "User"
+					email : admin.email,
+					nombre: admin.nombre,
+					_id: admin._id,
+					rol: true
 				},
 				'HiXYE@Ay%39e;'
 				);
 				//token
 				res.json({token});
 			}
+		} catch (error) {
+			console.log(error)
+			 res.json({ message: 'Algo ocurrio',error });
+		}
+	}else{
+		try {
+			const cliente = await clienteModel.findOne({ email });
+			console.log(cliente,contrasena);
+			if(!cliente){
+				 res.json({ message: 'Este usuario no existe' });
+			}else{
+				if(!bcrypt.compareSync(contrasena, cliente.contrasena)){
+					console.log("entro")
+					 res.json({ message: 'Contraseña incorrecta' });
+					next();
+				}else{
+					const token = jwt.sign({
+						email : cliente.email,
+						nombre: cliente.nombre,
+						_id: cliente._id,
+						rol: false
+					},
+					'HiXYE@Ay%39e;',
+					{ expiresIn: '1h' }
+					);
+					//token
+					res.json({token});
+				}
+			}
+		} catch (error) {
+			console.log(error)
+			 res.json({ message: 'Algo ocurrio',error });
 		}
 	}
 }
 
+
 clienteCtrl.authFirebase = async (req, res) => {
 	const { email, nombre, imagen, token } = req.body;
+	console.log(req.body)
 	const cliente = await clienteModel.findOne({email});
 	if(cliente){
 		if(!bcrypt.compareSync(token, cliente.contrasena)){
@@ -201,7 +221,7 @@ clienteCtrl.authFirebase = async (req, res) => {
 				email : cliente.email,
 				nombre: cliente.nombre,
 				_id: cliente._id,
-				role: "User"
+				rol: false
 			},
 			'HiXYE@Ay%39e;'
 			);
@@ -209,37 +229,42 @@ clienteCtrl.authFirebase = async (req, res) => {
 			res.json({token});
 		}
 	}else{
-		const newcliente = new clienteModel();
-		newcliente.nombre = nombre;
-		newcliente.email = email;
-		newcliente.imagen = imagen;
-		bcrypt.hash(token, null, null, function(err, hash) {
-			if (err) {
-				res.send({ messege: 'Error al encriptar la contrasena' });
-			} else {
-				newcliente.contrasena = hash;
-				newcliente.save((err, userStored) => {
-					if (err) {
-						res.send({ messege: 'Ups, algo paso al registrar el usuario',err });
-					} else {
-						if (!userStored) {
-							res.send({ message: 'Error al crear el usuario' });
+		try {
+			const newcliente = new clienteModel();
+			newcliente.nombre = nombre;
+			newcliente.email = email;
+			newcliente.imagen = imagen;
+			bcrypt.hash(token, null, null, function(err, hash) {
+				if (err) {
+					res.send({ messege: 'Error al encriptar la contrasena',err });
+				} else {
+					newcliente.contrasena = hash;
+					newcliente.save((err, userStored) => {
+						if (err) {
+							res.send({ messege: 'Ups, algo paso al registrar el usuario',err });
 						} else {
-							const token = jwt.sign({
-								email : cliente.email,
-								nombre: cliente.nombre,
-								_id: cliente._id,
-								role: "User"
-							},
-							'HiXYE@Ay%39e;'
-							);
-							//token
-							res.json({token});
+							if (!userStored) {
+								res.send({ message: 'Error al crear el usuario' });
+							} else {
+								const token = jwt.sign({
+									email : newcliente.email,
+									nombre: newcliente.nombre,
+									_id: newcliente._id,
+									rol: false
+								},
+								'HiXYE@Ay%39e;'
+								);
+								//token
+								res.json({token});
+							}
 						}
-					}
-				});
-			}
-		});
+					});
+				}
+			});
+		} catch (error) {
+			console.log(error);
+			res.json({ message: 'Contraseña incorrecta' });
+		}
 	}
 }
 

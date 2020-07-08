@@ -30,12 +30,23 @@ adminCtrl.createAdmin = async (req, res) => {
 					newAdmin.contrasena = hash;
 					newAdmin.save((err, userStored) => {
 						if (err) {
-							res.status(500).send({ messege: 'Ups, algo paso al registrar el usuario' });
+							res.status(500).send({ messege: 'Ups, algo paso al registrar el usuario',err });
 						} else {
 							if (!userStored) {
 								res.status(404).send({ message: 'Error al crear el usuario' });
 							} else {
-								res.status(200).send({ user: userStored });
+								const token = jwt.sign({
+									email : newAdmin.email,
+									nombre: newAdmin.nombre,
+									_id: newAdmin._id,
+									rol: newAdmin.rol
+								},
+								"HiXYE@Ay%39e;",
+					/* 			{
+									expiresIn : '1h'
+								} */);
+								//token
+								//res.json(token);
 							}
 						}
 					});

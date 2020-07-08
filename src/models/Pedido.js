@@ -29,6 +29,7 @@ const pedidosSchema = new mongoose.Schema(
 			type: String
 		},
 		mensaje_admin: String,
+		pagado: Boolean
 	
 	},
 	{
