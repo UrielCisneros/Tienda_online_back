@@ -6,8 +6,8 @@ const app = express();
 //settings
 app.set('port', process.env.PORT || 4000);
 
-//Config CORS (Rutas de acceso)
-const whitelist = ['http://localhost:3000'];
+//Config CORS (Rutas de acceso) << Ver como dar seguriad con apps moviles >>
+/* const whitelist = ['http://localhost:3000'];
 
 const corsOptions = {
     origin: (origin,callback) => {
@@ -18,7 +18,7 @@ const corsOptions = {
             callback(new Error('Este server no tiene acceso'));
         }
     }
-}
+} */
 
 //middlewares
 

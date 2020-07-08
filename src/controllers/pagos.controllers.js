@@ -9,9 +9,9 @@ pagoCtrl.createPago = async (req, res) => {
                 res.send({ message: "Error en el servidor" })
             } else {
                 if (!postStored) {
-                    res.send({ messege: "No se a podido crear el Pago" });
+                    res.send({ message: "No se a podido crear el Pago" });
                 } else {
-                    res.send({ messege: "Pago creado correctamente",postStored });
+                    res.send({ message: "Pago creado correctamente",postStored });
                 }
             }
         });

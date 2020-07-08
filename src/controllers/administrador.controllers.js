@@ -18,19 +18,19 @@ adminCtrl.createAdmin = async (req, res) => {
 	newAdmin.activo = false;
 
 	if (!contrasena || !repeatContrasena) {
-		res.status(404).send({ messege: 'Las contrasenas son obligatorias' });
+		res.status(404).send({ message: 'Las contrasenas son obligatorias' });
 	} else {
 		if (contrasena !== repeatContrasena) {
 			res.status(404).send({ message: 'Las contrasenas no son iguales' });
 		} else {
 			bcrypt.hash(contrasena, null, null, function(err, hash) {
 				if (err) {
-					res.status(500).send({ messege: 'Error al encriptar la contrasena' });
+					res.status(500).send({ message: 'Error al encriptar la contrasena' });
 				} else {
 					newAdmin.contrasena = hash;
 					newAdmin.save((err, userStored) => {
 						if (err) {
-							res.status(500).send({ messege: 'Ups, algo paso al registrar el usuario',err });
+							res.status(500).send({ message: 'Ups, algo paso al registrar el usuario',err });
 						} else {
 							if (!userStored) {
 								res.status(404).send({ message: 'Error al crear el usuario' });
@@ -75,7 +75,7 @@ adminCtrl.updateAdmin = async (req, res) => {
 			imagen
 		});
 	}
-	res.json({ messege: 'Admin Update' });
+	res.json({ message: 'Admin Update' });
 };
 
 adminCtrl.getAdmin = async (req, res) => {

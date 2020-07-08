@@ -20,6 +20,7 @@ clienteCtrl.getClientes = async (req, res, next) => {
 		const clientes = await clienteModel.find();
 		res.status(200).json(clientes);
 	} catch (error) {
+		res.json({ message: error });
 		console.log(error);
 		next();
 	}
@@ -28,7 +29,7 @@ clienteCtrl.getClientes = async (req, res, next) => {
 clienteCtrl.getCliente = async (req, res, next) => {
 	const cliente = await clienteModel.findById(req.params.id);
 	if (!cliente) {
-		res.json({ messege: 'Este cliente no existe' });
+		res.json({ message: 'Este cliente no existe' });
 		next();
 	}
 	res.json(cliente);
@@ -40,19 +41,19 @@ clienteCtrl.createCliente = (req, res) => {
 	const newCliente = new clienteModel(req.body);
 	newCliente.active = false;
 	if (!contrasena || !repeatContrasena) {
-		res.send({ messege: 'Las contrasenas son obligatorias' });
+		res.send({ message: 'Las contrasenas son obligatorias' });
 	} else {
 		if (contrasena !== repeatContrasena) {
 			res.send({ message: 'Las contrasenas no son iguales' });
 		} else {
 			bcrypt.hash(contrasena, null, null, function (err, hash) {
 				if (err) {
-					res.send({ messege: 'Error al encriptar la contrasena',err });
+					res.send({ message: 'Error al encriptar la contrasena',err });
 				} else {
 					newCliente.contrasena = hash;
 					newCliente.save((err, userStored) => {
 						if (err) {
-							res.send({ messege: 'Ups, algo paso al registrar el usuario', err });
+							res.send({ message: 'Ups, algo paso al registrar el usuario', err });
 						} else {
 							if (!userStored) {
 								res.send({ message: 'Error al crear el usuario' });
@@ -63,10 +64,7 @@ clienteCtrl.createCliente = (req, res) => {
 									_id: newCliente._id,
 									role:"User"
 								},
-								'HiXYE@Ay%39e;',
-								{
-									expiresIn : '4h'
-								});
+								process.env.AUTH_KEY);
 								res.send({ user: token });
 							}
 						}
@@ -94,7 +92,7 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 
 		 await clienteModel.findByIdAndUpdate(req.params.id, nuevoCliente, async (err, userStored) => {
 			if (err) {
-				res.send({ messege: 'Ups, algo paso al registrar el usuario', err });
+				res.send({ message: 'Ups, algo paso al registrar el usuario', err });
 			} else {
 				if (!userStored) {
 					res.send({ message: 'Error al crear el usuario' });
@@ -106,10 +104,7 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 						_id: clienteBase._id,
 						imagen: clienteBase.imagen
 					},
-					"HiXYE@Ay%39e;",
-					{
-						expiresIn : '4h'
-					});
+					process.env.AUTH_KEY);
 					res.send({ user: token });
 				}
 			}
@@ -123,12 +118,12 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 function verificarPass(nuevoCliente, contrasena, repeatContrasena) {
 	if (contrasena && repeatContrasena) {
 		if (contrasena !== repeatContrasena) {
-			res.status(404).send({ message: 'Las contrasenas no son iguales' });
+			res.send({ message: 'Las contrasenas no son iguales' });
 		} else {
 			verificarPass
 			bcrypt.hash(contrasena, null, null, function (err, hash) {
 				if (err) {
-					res.status(500).send({ messege: 'Error al encriptar la contrasena' });
+					res.send({ message: 'Error al encriptar la contrasena' });
 				} else {
 					nuevoCliente.contrasena = hash;
 				}
@@ -148,12 +143,8 @@ clienteCtrl.deleteCliente = async (req, res, next) => {
 
 clienteCtrl.authCliente = async (req, res, next) => {
 	const { email } = req.body;
-	console.log(req.body);
 	const contrasena = req.body.contrasena;
-	console.log("Pass: "+req.body.contrasena);
 	const admin = await adminModel.findOne({email});
-	console.log(admin);
-	console.log(contrasena);
 	if(admin){
 		try {
 			if(!bcrypt.compareSync(contrasena, admin.contrasena)){
@@ -166,7 +157,7 @@ clienteCtrl.authCliente = async (req, res, next) => {
 					_id: admin._id,
 					rol: true
 				},
-				'HiXYE@Ay%39e;'
+				process.env.AUTH_KEY
 				);
 				//token
 				res.json({token});
@@ -193,8 +184,7 @@ clienteCtrl.authCliente = async (req, res, next) => {
 						_id: cliente._id,
 						rol: false
 					},
-					'HiXYE@Ay%39e;',
-					{ expiresIn: '1h' }
+					process.env.AUTH_KEY
 					);
 					//token
 					res.json({token});
@@ -209,11 +199,10 @@ clienteCtrl.authCliente = async (req, res, next) => {
 
 
 clienteCtrl.authFirebase = async (req, res) => {
-	const { email, nombre, imagen, token } = req.body;
-	console.log(req.body)
+	const { email, nombre,apellido, imagen, uid } = req.body;
 	const cliente = await clienteModel.findOne({email});
 	if(cliente){
-		if(!bcrypt.compareSync(token, cliente.contrasena)){
+		if(!bcrypt.compareSync(uid, cliente.contrasena)){
 			await res.json({ message: 'Contraseña incorrecta' });
 			next();
 		}else{
@@ -223,7 +212,7 @@ clienteCtrl.authFirebase = async (req, res) => {
 				_id: cliente._id,
 				rol: false
 			},
-			'HiXYE@Ay%39e;'
+			process.env.AUTH_KEY
 			);
 			//token
 			res.json({token});
@@ -232,16 +221,17 @@ clienteCtrl.authFirebase = async (req, res) => {
 		try {
 			const newcliente = new clienteModel();
 			newcliente.nombre = nombre;
+			newcliente.apellido = apellido;
 			newcliente.email = email;
 			newcliente.imagen = imagen;
-			bcrypt.hash(token, null, null, function(err, hash) {
+			bcrypt.hash(uid, null, null, function(err, hash) {
 				if (err) {
-					res.send({ messege: 'Error al encriptar la contrasena',err });
+					res.send({ message: 'Error al encriptar la contrasena',err });
 				} else {
 					newcliente.contrasena = hash;
 					newcliente.save((err, userStored) => {
 						if (err) {
-							res.send({ messege: 'Ups, algo paso al registrar el usuario',err });
+							res.send({ message: 'Ups, algo paso al registrar el usuario',err });
 						} else {
 							if (!userStored) {
 								res.send({ message: 'Error al crear el usuario' });
@@ -252,7 +242,7 @@ clienteCtrl.authFirebase = async (req, res) => {
 									_id: newcliente._id,
 									rol: false
 								},
-								'HiXYE@Ay%39e;'
+								process.env.AUTH_KEY
 								);
 								//token
 								res.json({token});

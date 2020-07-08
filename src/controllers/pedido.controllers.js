@@ -10,7 +10,7 @@ pedidoCtrl.getPedidos = async (req, res, next) => {
         });
         res.json(pedidos);
     } catch (error) {
-        res.send({ messege: 'Ups, algo paso al obtenero el pedidos', error });
+        res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
         next();
     }
 }
@@ -23,7 +23,7 @@ pedidoCtrl.getPedido = async (req, res, next) => {
         });
         res.json(pedidos);
     } catch (error) {
-        res.send({ messege: 'Ups, algo paso al obtenero el pedidos', error });
+        res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
         next();
     }
 }
@@ -33,7 +33,7 @@ pedidoCtrl.getPedidosUser = async (req, res, next) => {
         const pedidosUser = await pedidoModel.find({ cliente: req.params.id });
         res.json(pedidosUser);
     } catch (error) {
-        res.send({ messege: 'Ups, algo paso al obtenero el pedidos', error });
+        res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
     }
 }
 
@@ -43,12 +43,12 @@ pedidoCtrl.createPedido = async (req, res, next) => {
     try {
         await newpedido.save((err, userStored) => {
             if (err) {
-                res.send({ messege: 'Ups, algo paso al registrar el usuario', err });
+                res.send({ message: 'Ups, algo paso al registrar el usuario', err });
             } else {
                 if (!userStored) {
                     res.send({ message: 'Error al crear el Pedodo' });
                 } else {
-                    res.json({ messege: "Se agrego el pedido" });
+                    res.json({ message: "Se agrego el pedido" });
                 }
             }
         });
@@ -68,16 +68,16 @@ pedidoCtrl.updateEstadoPedido = async (req, res, next) => {
                 mensaje_admin
             }, { new: true });
             console.log(pedido);
-            res.send({ messege: 'Pedido Actualizado'});
+            res.send({ message: 'Pedido Actualizado'});
         }else{
             const pedido = await pedidoModel.findByIdAndUpdate({ _id: req.params.id }, {
                 mensaje_admin
             }, { new: true });
             console.log(pedido);
-            res.send({ messege: 'Mensaje del pedido actualizado'});
+            res.send({ message: 'Mensaje del pedido actualizado'});
         }
     } catch (error) {
-        res.send({ messege: 'Ups, algo paso al obtenero el pedidos', error });
+        res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
         next();
     }
 }
