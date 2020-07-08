@@ -35,24 +35,26 @@ clienteCtrl.getCliente = async (req, res, next) => {
 };
 
 clienteCtrl.createCliente = (req, res) => {
+	console.log(req.body)
 	const repeatContrasena  = req.body.repeatContrasena;
-	const contrasena = req.body.constrasena;
+	const contrasena = req.body.contrasena;
+	console.log(contrasena, repeatContrasena)
 	const newCliente = new clienteModel(req.body);
 	newCliente.active = false;
 	if (!contrasena || !repeatContrasena) {
-		res.send({ messege: 'Las contrasenas son obligatorias' });
+		res.send({ message: 'Las contrasenas son obligatorias' });
 	} else {
 		if (contrasena !== repeatContrasena) {
 			res.send({ message: 'Las contrasenas no son iguales' });
 		} else {
 			bcrypt.hash(contrasena, null, null, function (err, hash) {
 				if (err) {
-					res.send({ messege: 'Error al encriptar la contrasena',err });
+					res.send({ message: 'Error al encriptar la contrasena',err });
 				} else {
 					newCliente.contrasena = hash;
 					newCliente.save((err, userStored) => {
 						if (err) {
-							res.send({ messege: 'Ups, algo paso al registrar el usuario', err });
+							res.send({ message: 'Ups, algo paso al registrar el usuario', err });
 						} else {
 							if (!userStored) {
 								res.send({ message: 'Error al crear el usuario' });
@@ -261,9 +263,9 @@ clienteCtrl.authFirebase = async (req, res) => {
 					});
 				}
 			});
-		} catch (error) {
-			console.log(error);
-			res.json({ message: 'Contraseña incorrecta' });
+		} catch (err) {
+			console.log(err);
+			res.json({ message: 'Contraseña incorrecta', err });
 		}
 	}
 }
