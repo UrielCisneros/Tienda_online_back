@@ -16,11 +16,11 @@ const {
 router.route('/nuevo/:idCliente')
     .post(auth,crearCarrito, agregarArticulo)
 
-router.route('/:idCarrito', auth)
+router.route('/:idCliente', auth)
     .get(auth,obtenerCarrito)
     .delete(auth,eliminarCarrito)
 
-router.route('/:idCarrito/articulo/:idArticulo')
+router.route('/:idCliente/articulo/:idArticulo')
     .delete(auth,eliminarArticulo)
     .put(auth,modificarCantidadArticulo)
 

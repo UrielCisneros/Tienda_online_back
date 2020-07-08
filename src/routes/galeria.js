@@ -14,11 +14,11 @@ const {
 router.route('/nueva/:idProducto')
     .post(auth, subirImagen, crearGaleria, crearImagen)
 
-router.route('/:idGaleria')
+router.route('/:idProducto')
     .get(obtenerGaleria)
     .delete(eliminarGaleria)
 
-router.route('/:idGaleria/imagen/:idImagen')
+router.route('/:idProducto/imagen/:idImagen')
     .put(auth,subirImagen, actualizarImagen)
     .delete(auth,eliminarImagen)
 

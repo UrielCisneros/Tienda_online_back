@@ -18,7 +18,7 @@ sugerenciaCtrl.crearSugerencia = async (req, res) => {
 
 sugerenciaCtrl.obtenerSugerencia = async (req, res) => {
     try {
-        const sugerencia = await Sugerencia.findById(req.params.idSugerencia).populate('producto').populate('sugerencias.producto');
+        const sugerencia = await Sugerencia.findOne({producto: req.params.idProducto}).populate('producto').populate('sugerencias.producto');
         if(!sugerencia){
             res.send({ message: 'Esta sugerencia de compra no existe' })
         }else{
@@ -30,7 +30,7 @@ sugerenciaCtrl.obtenerSugerencia = async (req, res) => {
 }
 
 sugerenciaCtrl.actualizarSugerencia = async (req, res) => {
-       await Sugerencia.findOneAndUpdate(req.params.idSugerencia, req.body, (err, response) => {
+       await Sugerencia.findOneAndUpdate({producto: req.params.idProducto}, req.body, (err, response) => {
            if(err){
                res.send({ message: 'Ups, hubo un error al actualizar esta sugerencia', err})
            }else{
@@ -44,7 +44,7 @@ sugerenciaCtrl.actualizarSugerencia = async (req, res) => {
 }
 
 sugerenciaCtrl.eliminarSugerencia = async (req, res) => {
-    const sugerencia = await Sugerencia.findByIdAndDelete(req.params.idSugerencia)
+    const sugerencia = await Sugerencia.findByIdAndDelete({producto: req.params.idProducto})
         try {
             if(!sugerencia){
                 res.send({message: 'Esta sugerencia de compra no existe'})

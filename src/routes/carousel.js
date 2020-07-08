@@ -12,7 +12,7 @@ const {
 router.route('/nuevo/:idProducto')
     .post(auth,subirImagen, crearCarousel)
 
-router.route('/:idCarousel')
+router.route('/:idProducto')
     .get(obtenerCarousel)
     .put(auth,subirImagen, actualizarCarousel)
     .delete(auth,eliminarCarousel)

@@ -35,7 +35,7 @@ carritoCtrl.crearCarrito = async (req, res, next) => {
 
 carritoCtrl.obtenerCarrito = async (req, res) => {
     try {
-        const carrito = await Carrito.findById(req.params.idCarrito)
+        const carrito = await Carrito.findOne({cliente: req.params.idCliente})
         .populate('cliente', 'nombre apellido')
         .populate('articulos.idarticulo', 'nombre precio imagen')
         if (!carrito) {
@@ -89,7 +89,7 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 }
 
 carritoCtrl.eliminarCarrito = async (req, res) => {
-    await Carrito.findByIdAndDelete(req.params.idCarrito, (err, response) => {
+    await Carrito.findByIdAndDelete({cliente: req.params.idCliente}, (err, response) => {
         if (err) {
             res.send({ messege: 'Ups, algo paso al eliminar el Carrito', err });
         } else {
@@ -105,7 +105,7 @@ carritoCtrl.eliminarCarrito = async (req, res) => {
 carritoCtrl.eliminarArticulo = async (req, res) => {
     await Carrito.updateOne(
     {
-        _id: req.params.idCarrito
+        cliente: req.params.idCliente
     },
     { $pull: { articulos: { _id: req.params.idArticulo }} }, (err, response) => {
         if (err) {
@@ -122,7 +122,7 @@ carritoCtrl.eliminarArticulo = async (req, res) => {
 
 carritoCtrl.modificarCantidadArticulo = async (req, res) => {
 
-    const { articulos } = await Carrito.findById(req.params.idCarrito)
+    const { articulos } = await Carrito.findOne({cliente: req.params.idCliente})
     const articuloFiltrado = articulos.filter(x => x._id == req.params.idArticulo)
 
     articuloFiltrado.map( async (articulo) => {

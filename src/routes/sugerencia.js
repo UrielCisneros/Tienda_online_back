@@ -12,7 +12,7 @@ const {
 router.route('/nueva/:idProducto')
     .post(auth,crearSugerencia)
 
-router.route('/:idSugerencia')
+router.route('/:idProducto')
     .get(obtenerSugerencia)
     .put(auth,actualizarSugerencia)
     .delete(auth,eliminarSugerencia)
