@@ -193,7 +193,7 @@ productosCtrl.addTalla = async (req, res, next) => {
 			}
 		}, (err, response) => {
 			if (err) {
-				res.send({ messege: 'Ups, algo al guardar talla', err });
+				res.send({ message: 'Ups, algo al guardar talla', err });
 			} else {
 				if (!response) {
 					res.send({ message: 'Error al guardar' });
@@ -223,7 +223,7 @@ productosCtrl.addnumero = async (req, res, next) => {
 			}
 		}, (err, response) => {
 			if (err) {
-				res.send({ messege: 'Ups, algo al guardar numero', err });
+				res.send({ message: 'Ups, algo al guardar numero', err });
 			} else {
 				if (!response) {
 					res.send({ message: 'Error al guardar' });
@@ -254,10 +254,10 @@ productosCtrl.getProductos = async (req, res) => {
 	}
 	Producto.paginate({}, options, (err, postStored) => {
 		if (err) {
-			res.send({  messege: "Error en el servidor", err });
+			res.send({  message: "Error en el servidor", err });
 		} else {
 			if (!postStored) {
-				res.send({ messege: "Error al mostrar Blogs" })
+				res.send({ message: "Error al mostrar Blogs" })
 			} else {
 				res.send({ posts: postStored });
 			}

@@ -111,7 +111,7 @@ detalleCtrl.createDetalle = async (req,res) => {
         pedidoPagado.pagado = true;  
          await pedidoModel.findByIdAndUpdate({ _id: id_pedido },pedidoPagado, { new: true },(err, userStored) => {
             if (err) {
-                res.send({ messege: 'Ups, parece que algo salio mal', err });
+                res.send({ message: 'Ups, parece que algo salio mal', err });
             } else {
                 if (!userStored) {
                     res.send({ message: 'Error al actualizar pedido' });
@@ -129,7 +129,7 @@ detalleCtrl.getDetalle = async (req,res) => {
         const detalle = await detalleModel.find().populate('id_pedido').populate('id_pago').populate('cliente');
         res.json(detalle);
     } catch (error) {
-        res.send({ messege: 'Ups, algo paso al obtenero el pedidos', error });
+        res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
         next();
     }
 }
@@ -140,7 +140,7 @@ detalleCtrl.getDetalleUser = async (req, res) => {
         const DetalleUser = await detalleModel .find({ cliente: req.params.idUser }).populate('id_pedido').populate('id_pago').populate('cliente');
         res.json(DetalleUser);
     } catch (error) {
-        res.send({ messege: 'Ups, algo paso al obtenero el pedidos', error });
+        res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
     }
 }
 
