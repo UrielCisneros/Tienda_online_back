@@ -37,7 +37,7 @@ clienteCtrl.getCliente = async (req, res, next) => {
 
 clienteCtrl.createCliente = (req, res) => {
 	const repeatContrasena  = req.body.repeatContrasena;
-	const contrasena = req.body.constrasena;
+	const contrasena = req.body.contrasena;
 	const newCliente = new clienteModel(req.body);
 	newCliente.active = false;
 	if (!contrasena || !repeatContrasena) {
