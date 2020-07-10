@@ -352,4 +352,18 @@ productosCtrl.deleteProducto = async (req, res, next) => {
 
 };
 
+productosCtrl.promocion = async (req,res) => {
+	try {
+		const productoDeBase = await Producto.find(
+			{promocion:{
+				$nin:[{
+					imagenPromocion: ""
+				}]
+	}});	
+		res.json({ productoDeBase });
+	} catch (error) {
+		res.json({ error });
+	}
+}
+
 module.exports = productosCtrl;
