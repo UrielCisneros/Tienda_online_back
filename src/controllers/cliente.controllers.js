@@ -44,29 +44,29 @@ clienteCtrl.createCliente = (req, res) => {
 		const newCliente = new clienteModel(req.body);
 		newCliente.active = false;
 		if (!contrasena || !repeatContrasena) {
-			res.send({ message: 'Las contrasenas son obligatorias' });
+			res.json({ message: 'Las contrasenas son obligatorias' });
 		} else {
 			if (contrasena !== repeatContrasena) {
-				res.send({ message: 'Las contrasenas no son iguales' });
+				res.json({ message: 'Las contrasenas no son iguales' });
 			} else {
 				bcrypt.hash(contrasena, null, null, function (err, hash) {
 					if (err) {
-						res.send({ message: 'Error al encriptar la contrasena',err });
+						res.json({ message: 'Error al encriptar la contrasena',err });
 					} else {
 						newCliente.contrasena = hash;
 						newCliente.save((err, userStored) => {
 							if (err) {
-								res.send({ message: 'Ups, algo paso al registrar el usuario', err });
+								res.json({ message: 'Ups, algo paso al registrar el usuario', err });
 							} else {
 								if (!userStored) {
-									res.send({ message: 'Error al crear el usuario' });
+									res.json({ message: 'Error al crear el usuario' });
 								} else {
 									const token = jwt.sign({
 										email : newCliente.email,
 										nombre: newCliente.nombre,
 										apellido: newCliente.apellido,
 										_id: newCliente._id,
-										rol:"User"
+										rol:false
 									},
 									process.env.AUTH_KEY);
 									console.log("Token: "+token)
@@ -101,10 +101,10 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 
 		 await clienteModel.findByIdAndUpdate(req.params.id, nuevoCliente, async (err, userStored) => {
 			if (err) {
-				res.send({ message: 'Ups, algo paso al registrar el usuario', err });
+				res.json({ message: 'Ups, algo paso al registrar el usuario', err });
 			} else {
 				if (!userStored) {
-					res.send({ message: 'Error al crear el usuario' });
+					res.json({ message: 'Error al crear el usuario' });
 				} else {
 					const clienteBase = await clienteModel.findById(req.params.id);
 					const token = jwt.sign({
@@ -112,15 +112,17 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 						nombre: clienteBase.nombre,
 						apellido: clienteBase.apellido,
 						_id: clienteBase._id,
-						imagen: clienteBase.imagen
+						imagen: clienteBase.imagen,
+						rol: false
 					},
 					process.env.AUTH_KEY);
-					res.send({ user: token });
+					res.json({ token });
 				}
 			}
 		});
 	} catch (error) {
 		console.log(error);
+		res.json({ error });
 		next();
 	}
 };
@@ -128,12 +130,12 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 function verificarPass(nuevoCliente, contrasena, repeatContrasena) {
 	if (contrasena && repeatContrasena) {
 		if (contrasena !== repeatContrasena) {
-			res.send({ message: 'Las contrasenas no son iguales' });
+			res.json({ message: 'Las contrasenas no son iguales' });
 		} else {
 			verificarPass
 			bcrypt.hash(contrasena, null, null, function (err, hash) {
 				if (err) {
-					res.send({ message: 'Error al encriptar la contrasena' });
+					res.json({ message: 'Error al encriptar la contrasena' });
 				} else {
 					nuevoCliente.contrasena = hash;
 				}
@@ -238,15 +240,15 @@ clienteCtrl.authFirebase = async (req, res) => {
 			newcliente.imagen = imagen;
 			bcrypt.hash(uid, null, null, function(err, hash) {
 				if (err) {
-					res.send({ message: 'Error al encriptar la contrasena',err });
+					res.json({ message: 'Error al encriptar la contrasena',err });
 				} else {
 					newcliente.contrasena = hash;
 					newcliente.save((err, userStored) => {
 						if (err) {
-							res.send({ message: 'Ups, algo paso al registrar el usuario',err });
+							res.json({ message: 'Ups, algo paso al registrar el usuario',err });
 						} else {
 							if (!userStored) {
-								res.send({ message: 'Error al crear el usuario' });
+								res.json({ message: 'Error al crear el usuario' });
 							} else {
 								const token = jwt.sign({
 									email : newcliente.email,
