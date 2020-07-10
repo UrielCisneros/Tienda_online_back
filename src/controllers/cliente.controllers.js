@@ -69,7 +69,8 @@ clienteCtrl.createCliente = (req, res) => {
 										role:"User"
 									},
 									process.env.AUTH_KEY);
-									res.send({ user: token });
+									console.log("Token: "+token)
+									res.send({ token });
 								}
 							}
 						});
