@@ -36,43 +36,47 @@ clienteCtrl.getCliente = async (req, res, next) => {
 };
 
 clienteCtrl.createCliente = (req, res) => {
-	const repeatContrasena  = req.body.repeatContrasena;
-	const contrasena = req.body.contrasena;
-	const newCliente = new clienteModel(req.body);
-	newCliente.active = false;
-	if (!contrasena || !repeatContrasena) {
-		res.send({ message: 'Las contrasenas son obligatorias' });
-	} else {
-		if (contrasena !== repeatContrasena) {
-			res.send({ message: 'Las contrasenas no son iguales' });
+	try {
+		const repeatContrasena  = req.body.repeatContrasena;
+		const contrasena = req.body.contrasena;
+		const newCliente = new clienteModel(req.body);
+		newCliente.active = false;
+		if (!contrasena || !repeatContrasena) {
+			res.send({ message: 'Las contrasenas son obligatorias' });
 		} else {
-			bcrypt.hash(contrasena, null, null, function (err, hash) {
-				if (err) {
-					res.send({ message: 'Error al encriptar la contrasena',err });
-				} else {
-					newCliente.contrasena = hash;
-					newCliente.save((err, userStored) => {
-						if (err) {
-							res.send({ message: 'Ups, algo paso al registrar el usuario', err });
-						} else {
-							if (!userStored) {
-								res.send({ message: 'Error al crear el usuario' });
+			if (contrasena !== repeatContrasena) {
+				res.send({ message: 'Las contrasenas no son iguales' });
+			} else {
+				bcrypt.hash(contrasena, null, null, function (err, hash) {
+					if (err) {
+						res.send({ message: 'Error al encriptar la contrasena',err });
+					} else {
+						newCliente.contrasena = hash;
+						newCliente.save((err, userStored) => {
+							if (err) {
+								res.send({ message: 'Ups, algo paso al registrar el usuario', err });
 							} else {
-								const token = jwt.sign({
-									email : newCliente.email,
-									nombre: newCliente.nombre,
-									apellido: newCliente.apellido,
-									_id: newCliente._id,
-									role:"User"
-								},
-								process.env.AUTH_KEY);
-								res.send({ user: token });
+								if (!userStored) {
+									res.send({ message: 'Error al crear el usuario' });
+								} else {
+									const token = jwt.sign({
+										email : newCliente.email,
+										nombre: newCliente.nombre,
+										apellido: newCliente.apellido,
+										_id: newCliente._id,
+										role:"User"
+									},
+									process.env.AUTH_KEY);
+									res.send({ user: token });
+								}
 							}
-						}
-					});
-				}
-			});
+						});
+					}
+				});
+			}
 		}
+	} catch (error) {
+		res.send({ error });
 	}
 };
 
