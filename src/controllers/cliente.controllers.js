@@ -37,10 +37,11 @@ clienteCtrl.getCliente = async (req, res, next) => {
 
 clienteCtrl.createCliente = (req, res) => {
 	try {
-		console.log("Datos del body: "+req.body)
+		console.log("Datos del body: ");
+		console.log(req.body);
 		const repeatContrasena  = req.body.repeatContrasena;
 		const contrasena = req.body.contrasena;
-		console.log("datos contrasena: contrasena: "+ contrasena + "repeatContrasena: "+repeatContrasena);
+		console.log("datos contrasena: contrasena: "+ contrasena + " repeatContrasena: "+repeatContrasena);
 		const newCliente = new clienteModel(req.body);
 		newCliente.active = false;
 		if (!contrasena || !repeatContrasena) {
@@ -70,7 +71,7 @@ clienteCtrl.createCliente = (req, res) => {
 									},
 									process.env.AUTH_KEY);
 									console.log("Token: "+token)
-									res.json({ token });
+									res.json({token});
 								}
 							}
 						});
@@ -79,7 +80,7 @@ clienteCtrl.createCliente = (req, res) => {
 			}
 		}
 	} catch (error) {
-		res.send({ error });
+		res.json({ error });
 		console.log(error);
 	}
 };
