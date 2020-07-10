@@ -66,11 +66,11 @@ clienteCtrl.createCliente = (req, res) => {
 										nombre: newCliente.nombre,
 										apellido: newCliente.apellido,
 										_id: newCliente._id,
-										role:"User"
+										rol:"User"
 									},
 									process.env.AUTH_KEY);
 									console.log("Token: "+token)
-									res.send({ token });
+									res.json({ token });
 								}
 							}
 						});
