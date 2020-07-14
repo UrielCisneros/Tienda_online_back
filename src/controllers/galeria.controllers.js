@@ -24,7 +24,7 @@ galeriaCtrl.crearGaleria = async (req, res, next) => {
             const newGaleria = new Galeria({
                 producto: producto,
                 imagenes: [{
-                    url: req.file.filename
+                    url: req.file.key
                 }]
             });
             await newGaleria.save((err, userStored) => {
@@ -68,7 +68,7 @@ galeriaCtrl.crearImagen = async (req, res) => {
             {
                 imagenes:
                 {
-                    url: req.file.filename
+                    url: req.file.key
                 }
             }
         }, async (err, userStored) => {
@@ -94,7 +94,7 @@ galeriaCtrl.actualizarImagen = async (req, res) => {
         const urlB = imagenes.filter(x => x._id == req.params.idImagen)
         urlB.map( async (urlBase) => {
             if (req.file) {
-                url = req.file.filename;
+                url = req.file.key;
                 await imagen.eliminarImagen(urlBase.url);
             } else {
                 url = urlBase.url;
