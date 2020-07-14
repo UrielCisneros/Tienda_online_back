@@ -2,7 +2,8 @@ const { Router } = require('express');
 const router = Router();
 const auth = require('../middleware/auth');
 
-const { getBlogs, getBlog, createBlog, updateBlog, deleteBlog, subirImagen } = require('../controllers/blog.controllers');
+const { getBlogs, getBlog, createBlog, updateBlog, deleteBlog, subirImagen,deleted } = require('../controllers/blog.controllers');
+const { route } = require('./administrador');
 
 
 
@@ -16,5 +17,7 @@ router.route('/:id')
     .delete(auth,deleteBlog);//Delete a blog
 
 router.route('/:url').get(getBlog);//Get one blog dates
+
+
 
 module.exports = router;
