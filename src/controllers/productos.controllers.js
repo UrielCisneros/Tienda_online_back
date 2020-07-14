@@ -14,7 +14,7 @@ productosCtrl.agregarPromocion = async (req, res) => {
 		console.log(promocionArray.precio);
 		const {precio = promocionArray.precio } = req.body;
 		if(req.file){
-			imagenPromocion = req.file.filename
+			imagenPromocion = req.file.key
 		}else{
 			imagenPromocion = promocionArray.imagen
 		}
@@ -269,7 +269,7 @@ productosCtrl.createProducto = async (req, res) => {
 	const newProducto = new Producto(req.body);
 	newProducto.activo = true;
 	if (req.file) {
-		newProducto.imagen = req.file.filename;
+		newProducto.imagen = req.file.key;
 	}
 	await newProducto.save((err, userStored) => {
 		if (err) {
@@ -300,7 +300,7 @@ productosCtrl.updateProducto = async (req, res, next) => {
 		const nuevoProducto = req.body;
 		//Verificar si mandaron imagen
 		if (req.file) {
-			nuevoProducto.imagen = req.file.filename;
+			nuevoProducto.imagen = req.file.key;
 			await imagen.eliminarImagen(productoDeBase.imagen);
 		} else {
 			nuevoProducto.imagen = productoDeBase.imagen;
