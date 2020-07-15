@@ -1,8 +1,6 @@
 const galeriaCtrl = {};
 const Galeria = require('../models/Galeria');
 const imagen = require('./uploadFile.controllers');
-const path = require('path');
-const fs = require('fs');
 
 galeriaCtrl.subirImagen = (req, res, next) => {
 	imagen.upload(req, res, function (err) {
