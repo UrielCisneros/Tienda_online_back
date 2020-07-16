@@ -266,6 +266,7 @@ productosCtrl.getProductos = async (req, res) => {
 };
 
 productosCtrl.createProducto = async (req, res) => {
+	console.log(req.body)
 	const newProducto = new Producto(req.body);
 	newProducto.activo = true;
 	if (req.file) {
@@ -276,9 +277,9 @@ productosCtrl.createProducto = async (req, res) => {
 			res.json({ message: 'Ups, algo paso al registrar el producto', err});
 		} else {
 			if (!userStored) {
-				res.send({ message: 'Error al crear el producto' });
+				res.json({ message: 'Error al crear el producto' });
 			} else {
-				res.send({ message: 'Producto almacenado', userStored});
+				res.json({ message: 'Producto almacenado', userStored});
 			}
 		}
 	});
