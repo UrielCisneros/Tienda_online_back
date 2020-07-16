@@ -1,68 +1,106 @@
 const productosCtrl = {};
 const imagen = require('./uploadFile.controllers');
 const Producto = require('../models/Producto');
+const promocionModel = require('../models/PromocionProducto');
 
-
-productosCtrl.agregarPromocion = async (req, res) => {
-	const datos = await Producto.findById(req.params.id);
-
-	const promocionProducto = datos.promocion;
-	const promocion = promocionProducto.filter(x => x._id == req.params.idPromocion);
-	
-	promocion.map(async (promocionArray) => {
-		let imagenPromocion = "";
-		console.log(promocionArray.precio);
-		const {precio = promocionArray.precio } = req.body;
-		if(req.file){
-			imagenPromocion = req.file.key
-		}else{
-			imagenPromocion = promocionArray.imagen
+productosCtrl.getPromocion = async (req,res) => {
+	try {
+		const { page = 1, limit = 10 } = req.query;
+		const options = {
+			page,
+			limit: parseInt(limit)
 		}
-		await Producto.updateOne(
-			{
-				'promocion._id': req.params.idPromocion
-			},
-			{
-				$set: { 'promocion.$': { imagenPromocion, precio } }
-			}, (err, response) => {
-				if (err) {
-					res.send({ message: 'Ups algo paso al actualizar',err })
+		promocionModel.paginate({}, options, (err, postStored) => {
+			if (err) {
+				res.send({  message: "Error en el servidor", err });
+			} else {
+				if (!postStored) {
+					res.send({ message: "Error al mostrar las promociones" })
 				} else {
-					if (!response) {
-						res.send({ message: 'Este apartado no existe' })
-					} else {
-						res.send({ message: 'Se actualizo con exito' })
-					}
+					res.send({ posts: postStored });
 				}
 			}
-		);
-	})
+		}).populate('producto');
+	} catch (error) {
+		console.log(error);
+		res.send({ error })
+	}
 }
 
-productosCtrl.eliminarPromocion = async (req, res) => {
-	await Producto.updateOne(
-		{
-			_id: req.params.id
-		},
-		{
-			$pull:
-			{
-				promocion:
-				{
-					_id: req.params.idPromocion
-				}
-			}
-		}, (err, response) => {
+productosCtrl.crearPromocion = async (req,res) => {
+	try {
+		const newPromocion = new promocionModel(req.body);
+		if (req.file) {
+			newPromocion.imagenPromocion = req.file.key;
+		}
+		await newPromocion.save((err, userStored) => {
 			if (err) {
-				res.send({ message: 'Ups, also paso en la base',err })
+				res.json({ message: 'Ups, algo paso al crear la promocion', err});
 			} else {
-				if (!response) {
-					res.send({ message: 'Esta promocion no existe' })
+				if (!userStored) {
+					res.json({ message: 'Error al crear la promocion' });
 				} else {
-					res.send({ message: 'Promocion eliminada' })
+					res.json({ message: 'Promocion creada', userStored});
 				}
 			}
 		});
+	} catch (error) {
+		console.log(error);
+		res.send({ error })
+	}
+}
+
+
+productosCtrl.actualizarPromocion = async (req, res) => {
+	try {
+		const promocionBase = await promocionModel.findById(req.params.id);
+		const newPromocion = req.body;
+		if(req.file){
+			newPromocion.imagenPromocion = req.file.key;
+			if(promocionBase.imagenPromocion){
+				await imagen.eliminarImagen(promocionBase.imagenPromocion);
+			}
+		}else{
+			newPromocion.imagenPromocion = promocionBase.imagenPromocion;
+		}
+		 await promocionModel.findByIdAndUpdate(req.params.id, newPromocion, async (err, userStored) => {
+			if (err) {
+				res.json({ message: 'Ups, algo paso al crear al actualizar la promocion', err});
+			} else {
+				if (!userStored) {
+					res.json({ message: 'Error al actualizar promocion' });
+				} else {
+					const promocionBase = await promocionModel.findById(userStored._id);
+					res.json({ message: 'Promocion actualizada', promocionBase});
+				}
+			}
+		});
+	} catch (error) {
+		console.log(error);
+		res.send({ error })
+	}
+
+
+	
+}
+
+productosCtrl.eliminarPromocion = async (req, res) => {
+	try {
+		const promocionBase = await promocionModel.findById(req.params.id);
+		if (promocionBase.imagenPromocion) {
+			await imagen.eliminarImagen(promocionBase.imagenPromocion);
+		}
+	
+		const promocion = await promocionModel.findByIdAndDelete(req.params.id);
+		if (!promocion) {
+			res.json({ message: 'Este promocion no existe' });
+		}
+		res.json({ message: 'Promocion eliminada' });
+	} catch (error) {
+		console.log(error);
+		res.send({ error })
+	}
+
 }
 
 productosCtrl.actualizarNumero = async (req, res) => {
@@ -252,7 +290,7 @@ productosCtrl.getProductos = async (req, res) => {
 		page,
 		limit: parseInt(limit)
 	}
-	Producto.paginate({}, options, (err, postStored) => {
+	await Producto.paginate({}, options, (err, postStored) => {
 		if (err) {
 			res.send({  message: "Error en el servidor", err });
 		} else {

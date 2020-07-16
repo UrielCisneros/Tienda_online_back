@@ -15,8 +15,10 @@ const {
 	eliminarNumero,
 	actualizarTalla,
 	actualizarNumero,
-	agregarPromocion,
-	eliminarPromocion
+	actualizarPromocion,
+	eliminarPromocion,
+	crearPromocion,
+	getPromocion
 } = require('../controllers/productos.controllers');
 const auth = require('../middleware/auth')
 
@@ -34,6 +36,8 @@ router.route('/action/:id/talla/:idtalla').delete(auth,eliminarTalla).put(auth,a
 
 router.route('/action/:id/numero/:idnumero').delete(auth,eliminarNumero).put(auth,actualizarNumero);
 
-router.route('/promocion/:id/idPromo/:idPromocion').put(auth,subirImagen,agregarPromocion).delete(auth,eliminarPromocion);
+router.route('/promocion/').post(subirImagen,crearPromocion).get(getPromocion)
+
+router.route('/promocion/:id').put(subirImagen,actualizarPromocion).delete(eliminarPromocion);
 
 module.exports = router;
