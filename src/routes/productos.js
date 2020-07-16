@@ -22,11 +22,11 @@ const {
 } = require('../controllers/productos.controllers');
 const auth = require('../middleware/auth')
 
-router.route('/').get(getProductos).post(auth,subirImagen, createProducto);
+router.route('/promocion/').post(subirImagen,crearPromocion).get(getPromocion)
+
+router.route('/').get(getProductos).post(subirImagen, createProducto);
 
 router.route('/:id').get(getProducto).put(auth,subirImagen, updateProducto).delete(auth,deleteProducto);
-
-router.route('/stock/:id').put(auth,updateProductoCantidad);
 
 router.route('/addTalla/:id').post(auth,addTalla);
 
@@ -36,7 +36,7 @@ router.route('/action/:id/talla/:idtalla').delete(auth,eliminarTalla).put(auth,a
 
 router.route('/action/:id/numero/:idnumero').delete(auth,eliminarNumero).put(auth,actualizarNumero);
 
-router.route('/promocion/').post(subirImagen,crearPromocion).get(getPromocion)
+
 
 router.route('/promocion/:id').put(subirImagen,actualizarPromocion).delete(eliminarPromocion);
 

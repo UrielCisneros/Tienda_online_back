@@ -3,29 +3,24 @@ const imagen = require('./uploadFile.controllers');
 const Producto = require('../models/Producto');
 const promocionModel = require('../models/PromocionProducto');
 
-productosCtrl.getPromocion = async (req,res) => {
-	try {
-		const { page = 1, limit = 10 } = req.query;
-		const options = {
-			page,
-			limit: parseInt(limit)
-		}
-		promocionModel.paginate({}, options, (err, postStored) => {
-			if (err) {
-				res.send({  message: "Error en el servidor", err });
-			} else {
-				if (!postStored) {
-					res.send({ message: "Error al mostrar las promociones" })
-				} else {
-					res.send({ posts: postStored });
-				}
-			}
-		}).populate('producto');
+productosCtrl.getPromocion = async (req,res,next) => {
+/* 	try {
+		const clientes = await promocionModel.find();
+		res.status(200).json(clientes);
 	} catch (error) {
+		res.json({ message: error });
 		console.log(error);
-		res.send({ error })
-	}
+		next();
+	} */
+    try {
+        const pedidos = await promocionModel.find().populate('productoPromocion').limit(10);
+        res.json(pedidos);
+    } catch (error) {
+        res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
+        next();
+    }
 }
+
 
 productosCtrl.crearPromocion = async (req,res) => {
 	try {
@@ -351,29 +346,6 @@ productosCtrl.updateProducto = async (req, res, next) => {
 	}
 };
 
-productosCtrl.updateProductoCantidad = async (req, res) => {
-	const { cantidad, operacion } = req.body;
-	const query = await Producto.findById(req.params.id).select('cantidad -_id');
-	switch (operacion) {
-		case '+':
-			await Producto.findByIdAndUpdate(req.params.id, { $set: { cantidad: query.cantidad + cantidad } });
-			res.json({ message: `Se sumaron ${cantidad} productos del stock ` });
-			break;
-
-		case '-':
-			if (cantidad <= query.cantidad) {
-				await Producto.findByIdAndUpdate(req.params.id, { $set: { cantidad: query.cantidad - cantidad } });
-				res.json({ message: `Se restaron ${cantidad} productos del stock ` });
-			} else {
-				res.json({ message: 'Cantidad no disponible' });
-			}
-			break;
-
-		default:
-			res.json({ message: 'Se esperaba una operacion valida' });
-			break;
-	}
-};
 
 productosCtrl.deleteProducto = async (req, res, next) => {
 	const productoDeBase = await Producto.findById(req.params.id);
