@@ -44,7 +44,7 @@ sugerenciaCtrl.actualizarSugerencia = async (req, res) => {
 }
 
 sugerenciaCtrl.eliminarSugerencia = async (req, res) => {
-    const sugerencia = await Sugerencia.findByIdAndDelete({producto: req.params.idProducto})
+    const sugerencia = await Sugerencia.findOneAndDelete({producto: req.params.idProducto})
         try {
             if(!sugerencia){
                 res.send({message: 'Esta sugerencia de compra no existe'})
