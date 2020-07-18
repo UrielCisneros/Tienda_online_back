@@ -56,7 +56,7 @@ carouselCtrl.actualizarCarousel = async (req, res) => {
 			} else {
 				nuevoCarousel.imagen = carouselDeBase.imagen;
 			}
-			const carousel = await Carousel.findByIdAndUpdate(req.params.idProducto, nuevoCarousel);
+			const carousel = await Carousel.findOneAndUpdate({producto: req.params.idProducto}, nuevoCarousel);
 			res.json(carousel)
 		}
 		
