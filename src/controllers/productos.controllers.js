@@ -3,18 +3,44 @@ const imagen = require('./uploadFile.controllers');
 const Producto = require('../models/Producto');
 const promocionModel = require('../models/PromocionProducto');
 
-productosCtrl.getPromocion = async (req,res,next) => {
-/* 	try {
-		const clientes = await promocionModel.find();
-		res.status(200).json(clientes);
+productosCtrl.getPromociones = async (req,res) => {
+	try {
+		const pedidos = await promocionModel.find().populate('productoPromocion');
+		res.json(pedidos);
 	} catch (error) {
-		res.json({ message: error });
-		console.log(error);
-		next();
-	} */
+		res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
+        next();
+	}
+}
+
+productosCtrl.getPromocion = async (req,res,next) => {
+	try {
+		const pedidos = await promocionModel.findById(req.params.id).populate('productoPromocion');
+		res.json(pedidos);
+	} catch (error) {
+		res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
+        next();
+	}
+}
+
+productosCtrl.getPromocionCarousel = async (req,res,next) => {
     try {
-        const pedidos = await promocionModel.find().populate('productoPromocion').limit(10);
-        res.json(pedidos);
+		await promocionModel.aggregate([ { $sample: { size: 15 } } ]).exec(async function(err, transactions) {
+			if(err){
+				res.send({ message: 'Ups, algo paso al obtenero el pedidos', err });
+			}else{
+				await Producto.populate(transactions, {path: 'productoPromocion'}, function(err, populatedTransactions) {
+					// Your populated translactions are inside populatedTransactions
+					if(err){
+						res.send({ message: 'Ups, algo paso al obtenero el pedidos', err });
+					}else{
+						console.log(populatedTransactions)
+						res.json(populatedTransactions);
+					}
+				});
+			}			
+		});
+		/* pedidos.aggregate([ { $sample: { size: 10 } } ]) */
     } catch (error) {
         res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
         next();
