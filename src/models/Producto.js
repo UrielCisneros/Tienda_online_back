@@ -32,16 +32,6 @@ const ProductoSchema = new mongoose.Schema({
 	imagen: {
 		type: String
 	},
-	promocion: [
-		{
-			imagenPromocion: {
-				type: String
-			},
-			precio: {
-				type: Number
-			}
-		}
-	],
 	descripcion: {
 		type: String,
 		trim: true
