@@ -26,7 +26,7 @@ const auth = require('../middleware/auth')
 
 router.route('/promocion/carousel/').get(getPromocionCarousel)
 
-router.route('/promocion/').post(subirImagen,crearPromocion).get(getPromociones)
+router.route('/promocion/').post(auth,subirImagen,crearPromocion).get(getPromociones)
 
 router.route('/').get(getProductos).post(subirImagen, createProducto);
 
@@ -42,6 +42,6 @@ router.route('/action/:id/numero/:idnumero').delete(auth,eliminarNumero).put(aut
 
 
 
-router.route('/promocion/:id').put(subirImagen,actualizarPromocion).delete(eliminarPromocion).get(getPromocion);
+router.route('/promocion/:id').put(auth,subirImagen,actualizarPromocion).delete(auth,eliminarPromocion).get(getPromocion);
 
 module.exports = router;
