@@ -75,7 +75,7 @@ carouselCtrl.eliminarCarousel = async (req, res) => {
 				await imagen.eliminarImagen(carouselDeBase.imagen);
 			}
 		
-			const carousel = await Carousel.findByIdAndDelete(req.params.idProducto);
+			const carousel = await Carousel.findOneAndDelete({producto: req.params.idProducto});
 			if (!carousel) {
 				res.json({ message: 'Este carousel no existe' });
 			}
