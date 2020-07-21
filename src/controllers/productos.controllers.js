@@ -25,7 +25,7 @@ productosCtrl.getPromocion = async (req,res,next) => {
 
 productosCtrl.getPromocionCarousel = async (req,res,next) => {
     try {
-		await promocionModel.aggregate([ { $sample: { size: 15 } } ]).exec(async function(err, transactions) {
+/* 		await promocionModel.aggregate([ { $sample: { size: 10 } }, ]).exec(async function(err, transactions) {
 			if(err){
 				res.send({ message: 'Ups, algo paso al obtenero el pedidos', err });
 			}else{
@@ -39,7 +39,10 @@ productosCtrl.getPromocionCarousel = async (req,res,next) => {
 					}
 				});
 			}			
-		});
+		}); */
+
+		const pedido = await promocionModel.find({imagenPromocion:{$exists:true}}).populate('productoPromocion');
+		res.send(pedido);
 		/* pedidos.aggregate([ { $sample: { size: 10 } } ]) */
     } catch (error) {
         res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
