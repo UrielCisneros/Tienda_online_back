@@ -38,7 +38,7 @@ blogCtrl.createBlog = async (req, res) => {
             res.send({ message: "La imagen es obligatoria" });
         } else {
             const newBlog = new blogModel(req.body);
-            newBlog.imagen = req.file.filename;
+            newBlog.imagen = req.file.key;
             await newBlog.save((err, postStored) => {
                 if (err) {
                     res.send({ message: "Error en el servidor",err })
@@ -62,7 +62,7 @@ blogCtrl.updateBlog = async (req, res) => {
         const blogBase = await blogModel.findById(req.params.id);
         const newBlog = req.body;
         if (req.file) {
-            newBlog.imagen = req.file.filename;
+            newBlog.imagen = req.file.key;
             await imagen.eliminarImagen(blogBase.imagen);
         } else {
             newBlog.imagen = blogBase.imagen;

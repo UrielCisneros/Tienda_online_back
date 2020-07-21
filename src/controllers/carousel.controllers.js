@@ -14,7 +14,7 @@ carouselCtrl.subirImagen = (req, res, next) => {
 carouselCtrl.crearCarousel = async (req, res) => {
     const newCarousel = new Carousel(req.body);
     if (req.file) {
-		newCarousel.imagen = req.file.filename;
+		newCarousel.imagen = req.file.key;
     }
     await newCarousel.save((err, response) => {
         if(err){
@@ -51,7 +51,7 @@ carouselCtrl.actualizarCarousel = async (req, res) => {
 			const nuevoCarousel = req.body;
 			//Verificar si mandaron imagen
 			if (req.file) {
-				nuevoCarousel.imagen = req.file.filename;
+				nuevoCarousel.imagen = req.file.key;
 				await imagen.eliminarImagen(carouselDeBase.imagen);
 			} else {
 				nuevoCarousel.imagen = carouselDeBase.imagen;
@@ -75,7 +75,7 @@ carouselCtrl.eliminarCarousel = async (req, res) => {
 				await imagen.eliminarImagen(carouselDeBase.imagen);
 			}
 		
-			const carousel = await Carousel.findByIdAndDelete(req.params.idProducto);
+			const carousel = await Carousel.findOneAndDelete({producto: req.params.idProducto});
 			if (!carousel) {
 				res.json({ message: 'Este carousel no existe' });
 			}
