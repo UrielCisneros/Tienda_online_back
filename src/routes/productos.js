@@ -26,7 +26,7 @@ const auth = require('../middleware/auth')
 
 router.route('/promocion/carousel/').get(getPromocionCarousel)
 
-router.route('/promocion/').post(subirImagen,crearPromocion).get(getPromociones)
+router.route('/promocion/').post(auth,subirImagen,crearPromocion).get(getPromociones)
 
 router.route('/').get(getProductos).post(subirImagen, createProducto);
 
