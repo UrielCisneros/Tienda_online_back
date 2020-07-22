@@ -8,28 +8,22 @@ const TiendaSchema = new Schema({
     direccion: [
         {
             calle_numero: {
-                type: String,
-                required: true
+                type: String
             },
             entre_calles: {
-                type: String,
-                required: true
+                type: String
             },
             cp: {
-                type: String,
-                required: true
+                type: String
             },
             colonia: {
-                type: String,
-                required: true
+                type: String
             },
             ciudad: {
-                type: String,
-                required: true
+                type: String
             },
             estado: {
-                type: String,
-                required: true
+                type: String
             }
     
         }
@@ -62,8 +56,10 @@ const TiendaSchema = new Schema({
         type: String,
         required: true
     },
-    activo: Boolean
-
+    activo: Boolean,
+    imagenLogo:{
+        type:String
+    }
 });
 
 module.exports = model('tienda', TiendaSchema);

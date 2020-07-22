@@ -6,7 +6,6 @@ const {
 	createProducto,
 	getProducto,
 	updateProducto,
-	updateProductoCantidad,
 	deleteProducto,
 	subirImagen,
 	addTalla,
