@@ -3,6 +3,32 @@ const imagen = require('./uploadFile.controllers');
 const Producto = require('../models/Producto');
 const promocionModel = require('../models/PromocionProducto');
 
+productosCtrl.deleteImagen = async (req,res) => {
+	try {
+		const productoDeBase = await promocionModel.findById(req.params.id);
+		if(productoDeBase.imagenPromocion){
+			await promocionModel.updateOne({"_id":req.params.id},{$unset:{"imagenPromocion":""}},async (err, userStored) => {
+				if (err) {
+					res.json({ message: 'Ups, algo paso al eliminar la imagen', err});
+				} else {
+					if (!userStored) {
+						res.json({ message: 'Error al eliminar la imagen' });
+					} else {
+						const promocionBase = await promocionModel.findById(userStored._id);
+						res.json({ message: 'Imagen eliminada', promocionBase});
+					}
+				}
+			});
+		}else{
+			res.json({ message: "Esta promocion no tiene imagen" })
+		}
+		
+	} catch (error) {
+		console.log(error);
+		res.json({ error })
+	}
+}
+
 productosCtrl.getPromociones = async (req,res) => {
 	try {
 		const pedidos = await promocionModel.find().populate('productoPromocion');
