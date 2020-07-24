@@ -3,6 +3,32 @@ const imagen = require('./uploadFile.controllers');
 const Producto = require('../models/Producto');
 const promocionModel = require('../models/PromocionProducto');
 
+productosCtrl.deleteImagen = async (req,res) => {
+	try {
+		const productoDeBase = await promocionModel.findById(req.params.id);
+		if(productoDeBase.imagenPromocion){
+			await promocionModel.updateOne({"_id":req.params.id},{$unset:{"imagenPromocion":""}},async (err, userStored) => {
+				if (err) {
+					res.json({ message: 'Ups, algo paso al eliminar la imagen', err});
+				} else {
+					if (!userStored) {
+						res.json({ message: 'Error al eliminar la imagen' });
+					} else {
+						const promocionBase = await promocionModel.findById(userStored._id);
+						res.json({ message: 'Imagen eliminada', promocionBase});
+					}
+				}
+			});
+		}else{
+			res.json({ message: "Esta promocion no tiene imagen" })
+		}
+		
+	} catch (error) {
+		console.log(error);
+		res.json({ error })
+	}
+}
+
 productosCtrl.getPromociones = async (req,res) => {
 	try {
 		const pedidos = await promocionModel.find().populate('productoPromocion');
@@ -25,7 +51,7 @@ productosCtrl.getPromocion = async (req,res,next) => {
 
 productosCtrl.getPromocionCarousel = async (req,res,next) => {
     try {
-		await promocionModel.aggregate([ { $sample: { size: 15 } } ]).exec(async function(err, transactions) {
+/* 		await promocionModel.aggregate([ { $sample: { size: 10 } }, ]).exec(async function(err, transactions) {
 			if(err){
 				res.send({ message: 'Ups, algo paso al obtenero el pedidos', err });
 			}else{
@@ -39,7 +65,10 @@ productosCtrl.getPromocionCarousel = async (req,res,next) => {
 					}
 				});
 			}			
-		});
+		}); */
+
+		const pedido = await promocionModel.find({imagenPromocion:{$exists:true}}).populate('productoPromocion');
+		res.send(pedido);
 		/* pedidos.aggregate([ { $sample: { size: 10 } } ]) */
     } catch (error) {
         res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
