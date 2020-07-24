@@ -67,11 +67,11 @@ productosCtrl.getPromocionCarousel = async (req,res,next) => {
 			}			
 		}); */
 
-		const pedido = await promocionModel.find({imagenPromocion:{$exists:true}}).populate('productoPromocion');
-		res.send(pedido);
-		/* pedidos.aggregate([ { $sample: { size: 10 } } ]) */
+		const promocion = await promocionModel.find({imagenPromocion:{$exists:true}}).populate('productoPromocion').limit(10);
+		res.send(promocion);
+		/* promocion.aggregate([ { $sample: { size: 10 } } ]) */
     } catch (error) {
-        res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
+        res.send({ message: 'Ups, algo paso al obtener promociones', error });
         next();
     }
 }
