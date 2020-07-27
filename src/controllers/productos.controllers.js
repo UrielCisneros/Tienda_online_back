@@ -31,20 +31,20 @@ productosCtrl.deleteImagen = async (req,res) => {
 
 productosCtrl.getPromociones = async (req,res) => {
 	try {
-		const pedidos = await promocionModel.find().populate('productoPromocion');
-		res.json(pedidos);
+		const promociones = await promocionModel.find().populate('productoPromocion');
+		res.json(promociones);
 	} catch (error) {
-		res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
+		res.send({ message: 'Ups, algo paso al obtener promocion', error });
         next();
 	}
 }
 
 productosCtrl.getPromocion = async (req,res,next) => {
 	try {
-		const pedidos = await promocionModel.findById(req.params.id).populate('productoPromocion');
-		res.json(pedidos);
+		const promociones = await promocionModel.findById(req.params.id).populate('productoPromocion');
+		res.json(promociones);
 	} catch (error) {
-		res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
+		res.send({ message: 'Ups, algo paso al obtener promocion', error });
         next();
 	}
 }
@@ -346,6 +346,20 @@ productosCtrl.getProductos = async (req, res) => {
 		} else {
 			if (!postStored) {
 				res.send({ message: "Error al mostrar Blogs" })
+			} else {
+				res.send({ posts: postStored });
+			}
+		}
+	});
+};
+
+productosCtrl.getProductosFiltrados = async (req, res) => {
+	await Producto.find({nombre: { $regex: '.*' + req.params.search + '.*', $options: 'i' } },(err, postStored) => {
+		if (err) {
+			res.send({  message: "Error en el servidor", err });
+		} else {
+			if (!postStored) {
+				res.send({ message: "Error al mostrar Productos" })
 			} else {
 				res.send({ posts: postStored });
 			}

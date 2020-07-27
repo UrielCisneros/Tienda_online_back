@@ -20,7 +20,8 @@ const {
 	getPromocionCarousel,
 	getPromociones,
 	getPromocion,
-	deleteImagen
+	deleteImagen,
+	getProductosFiltrados
 } = require('../controllers/productos.controllers');
 const auth = require('../middleware/auth')
 
@@ -29,6 +30,8 @@ router.route('/promocion/carousel/').get(getPromocionCarousel)
 router.route('/promocion/').post(auth,subirImagen,crearPromocion).get(getPromociones)
 
 router.route('/').get(getProductos).post(subirImagen, createProducto);
+
+router.route('/search/:search').get(getProductosFiltrados)
 
 router.route('/:id').get(getProducto).put(auth,subirImagen, updateProducto).delete(auth,deleteProducto);
 
