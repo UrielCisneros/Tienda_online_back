@@ -31,6 +31,16 @@ carouselCtrl.crearCarousel = async (req, res) => {
 
 carouselCtrl.obtenerTodosCarousels = async (req, res, next) => {
     try {
+		const carousel = await Carousel.find().populate('producto');
+		res.json(carousel);
+    } catch (err) {
+        res.json({ message: 'Ups, algo paso al obtener carouseles', err });
+        next();
+    }
+}
+
+carouselCtrl.obtenerLimiteCarousels = async (req, res, next) => {
+    try {
 		const carousel = await Carousel.find().populate('producto').limit(10);
 		res.json(carousel);
     } catch (err) {

@@ -7,11 +7,15 @@ const {
     obtenerCarousel,
     actualizarCarousel, 
     eliminarCarousel,
-    obtenerTodosCarousels
+    obtenerTodosCarousels,
+    obtenerLimiteCarousels
 } = require('../controllers/carousel.controllers');
 
 router.route('/')
     .get(obtenerTodosCarousels)
+
+router.route('/limite')
+    .get(obtenerLimiteCarousels)
 
 router.route('/nuevo/:idProducto')
     .post(auth,subirImagen, crearCarousel)
