@@ -113,17 +113,17 @@ blogCtrl.deleteBlog = async (req, res) => {
             }
             await blogModel.findByIdAndDelete(req.params.id, (err, postStored) => {
                 if (err) {
-                    res.send({ messages: "Error en la base",err });
+                    res.send({ message: "Error en la base",err });
                 } else {
                     if (!postStored) {
-                        res.send({ messages: "Error al eliminar" });
+                        res.send({ message: "Error al eliminar" });
                     } else {
-                        res.send({ messages: "Blog eliminado" })
+                        res.send({ message: "Blog eliminado" })
                     }
                 }
             });
         }else{
-            res.send({ messages: "Este blog no existe" });
+            res.send({ message: "Este blog no existe" });
         }
     } catch (error) {
         console.log(error);
