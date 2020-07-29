@@ -252,7 +252,7 @@ productosCtrl.eliminarNumero = async (req, res) => {
 				res.status(500).send({ message: 'Ups, also paso en la base', err })
 			} else {
 				if (!response) {
-					res.status(404).send({ message: 'esa numero no existe' })
+					res.status(404).send({ message: 'ese numero no existe' })
 				} else {
 					res.status(200).send({ message: 'Numero eliminada' })
 				}
