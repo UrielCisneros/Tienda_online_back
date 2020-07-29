@@ -3,7 +3,7 @@ const imagen = require('./uploadFile.controllers');
 const blogModel = require('../models/Blog');
 
 blogCtrl.subirImagen = async (req, res, next) => {
-    await imagen.upload(req, res, function (error) {
+    await imagen.upload(req, res, function (err) {
         if (err) {
             res.status(400).json({ message: err });
         }
