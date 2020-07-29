@@ -4,8 +4,8 @@ const blogModel = require('../models/Blog');
 
 blogCtrl.subirImagen = async (req, res, next) => {
     await imagen.upload(req, res, function (error) {
-        if (error) {
-            res.json({ message: error });
+        if (err) {
+            res.status(400).json({ message: err });
         }
         return next();
     });
@@ -21,12 +21,12 @@ blogCtrl.getBlogs = async (req, res) => {
     }
     blogModel.paginate({}, options, (err, postStored) => {
         if (err) {
-            res.send({ message: "Error en el servidor",err });
+            res.status(500).send({ message: "Error en el servidor",err });
         } else {
             if (!postStored) {
-                res.send({ message: "Error al mostrar Blogs" })
+                res.status(400).send({ message: "Error al mostrar Blogs" })
             } else {
-                res.send({ posts: postStored });
+                res.status(200).send({ posts: postStored });
             }
         }
     });
@@ -35,18 +35,18 @@ blogCtrl.getBlogs = async (req, res) => {
 blogCtrl.createBlog = async (req, res) => {
     try {
         if (!req.file) {
-            res.send({ message: "La imagen es obligatoria" });
+            res.status(404).send({ message: "La imagen es obligatoria" });
         } else {
             const newBlog = new blogModel(req.body);
             newBlog.imagen = req.file.key;
             await newBlog.save((err, postStored) => {
                 if (err) {
-                    res.send({ message: "Parece que se duplico un campo",err })
+                    res.status(500).send({ message: "Parece que se duplico un campo",err })
                 } else {
                     if (!postStored) {
-                        res.send({ message: "No se a podido crear el Blog" });
+                        res.status(400).send({ message: "No se a podido crear el Blog" });
                     } else {
-                        res.send({ message: "Blog creado correctamente" });
+                        res.status(200).send({ message: "Blog creado correctamente" });
                     }
                 }
             });
@@ -69,12 +69,12 @@ blogCtrl.updateBlog = async (req, res) => {
         }
         await blogModel.findByIdAndUpdate(req.params.id, newBlog, (err, postStored) => {
             if (err) {
-                res.send({ message: "Error en el servidor",err })
+                res.status(500).send({ message: "Error en el servidor",err })
             } else {
                 if (!postStored) {
-                    res.send({ message: "No se a podido actualizar el blog" });
+                    res.status(400).send({ message: "No se a podido actualizar el blog" });
                 } else {
-                    res.send({ message: "Blog actualizado" });
+                    res.status(200).send({ message: "Blog actualizado" });
                 }
             }
         });
@@ -89,12 +89,12 @@ blogCtrl.getBlog = async (req, res) => {
         const { url } = req.params;
         await blogModel.findOne({ url }, (err, postStored) => {
             if (err) {
-                res.send({ message: "Error en la base",err });
+                res.status(500).send({ message: "Error en la base",err });
             } else {
                 if (!postStored) {
-                    res.send({ message: "Error al eliminar" });
+                    res.status(400).send({ message: "Error al eliminar" });
                 } else {
-                    res.send({ post: postStored })
+                    res.status(200).send({ post: postStored })
                 }
             }
         });
@@ -113,12 +113,12 @@ blogCtrl.deleteBlog = async (req, res) => {
             }
             await blogModel.findByIdAndDelete(req.params.id, (err, postStored) => {
                 if (err) {
-                    res.send({ message: "Error en la base",err });
+                    res.status(500).send({ message: "Error en la base",err });
                 } else {
                     if (!postStored) {
-                        res.send({ message: "Error al eliminar" });
+                        res.status(400).send({ message: "Error al eliminar" });
                     } else {
-                        res.send({ message: "Blog eliminado" })
+                        res.status(200).send({ message: "Blog eliminado" })
                     }
                 }
             });

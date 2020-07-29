@@ -19,8 +19,8 @@ clienteCtrl.getClientes = async (req, res, next) => {
 	try {
 		const clientes = await clienteModel.find();
 		res.status(200).json(clientes);
-	} catch (error) {
-		res.json({ message: error });
+	} catch (err) {
+		res.status(400).json({ message: err });
 		console.log(error);
 		next();
 	}
@@ -29,7 +29,7 @@ clienteCtrl.getClientes = async (req, res, next) => {
 clienteCtrl.getCliente = async (req, res, next) => {
 	const cliente = await clienteModel.findById(req.params.id);
 	if (!cliente) {
-		res.json({ message: 'Este cliente no existe' });
+		res.status(404).json({ err: 'Este cliente no existe' });
 		next();
 	}
 	res.json(cliente);
@@ -45,22 +45,22 @@ clienteCtrl.createCliente = (req, res) => {
 		const newCliente = new clienteModel(req.body);
 		newCliente.active = false;
 		if (!contrasena || !repeatContrasena) {
-			res.json({ message: 'Las contrasenas son obligatorias' });
+			res.status(404).json({ message: 'Las contrasenas son obligatorias' });
 		} else {
 			if (contrasena !== repeatContrasena) {
-				res.json({ message: 'Las contrasenas no son iguales' });
+				res.status(404).json({ message: 'Las contrasenas no son iguales' });
 			} else {
 				bcrypt.hash(contrasena, null, null, function (err, hash) {
 					if (err) {
-						res.json({ message: 'Error al encriptar la contrasena',err });
+						res.status(500).json({ message: 'Error al encriptar la contrasena',err });
 					} else {
 						newCliente.contrasena = hash;
 						newCliente.save((err, userStored) => {
 							if (err) {
-								res.json({ message: 'Ups, algo paso al registrar el usuario', err });
+								res.status(500).json({ message: 'Ups, algo paso al registrar el usuario', err });
 							} else {
 								if (!userStored) {
-									res.json({ message: 'Error al crear el usuario' });
+									res.status(404).json({ message: 'Error al crear el usuario' });
 								} else {
 									const token = jwt.sign({
 										email : newCliente.email,
@@ -102,10 +102,10 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 
 		 await clienteModel.findByIdAndUpdate(req.params.id, nuevoCliente, async (err, userStored) => {
 			if (err) {
-				res.json({ message: 'Ups, algo paso al registrar el usuario', err });
+				res.status(500).json({ message: 'Ups, algo paso al registrar el usuario', err });
 			} else {
 				if (!userStored) {
-					res.json({ message: 'Error al crear el usuario' });
+					res.status(404).json({ message: 'Error al crear el usuario' });
 				} else {
 					const clienteBase = await clienteModel.findById(req.params.id);
 					const token = jwt.sign({
@@ -123,7 +123,7 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 		});
 	} catch (error) {
 		console.log(error);
-		res.json({ error });
+		res.status(404).json({ error });
 		next();
 	}
 };
@@ -131,12 +131,12 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 function verificarPass(nuevoCliente, contrasena, repeatContrasena) {
 	if (contrasena && repeatContrasena) {
 		if (contrasena !== repeatContrasena) {
-			res.json({ message: 'Las contrasenas no son iguales' });
+			res.status(404).json({ message: 'Las contrasenas no son iguales' });
 		} else {
 			verificarPass
 			bcrypt.hash(contrasena, null, null, function (err, hash) {
 				if (err) {
-					res.json({ message: 'Error al encriptar la contrasena' });
+					res.status(404).json({ message: 'Error al encriptar la contrasena' });
 				} else {
 					nuevoCliente.contrasena = hash;
 				}
@@ -161,7 +161,7 @@ clienteCtrl.authCliente = async (req, res, next) => {
 	if(admin){
 		try {
 			if(!bcrypt.compareSync(contrasena, admin.contrasena)){
-				res.json({ message: 'Contraseña incorrecta' });
+				res.status(404).json({ message: 'Contraseña incorrecta' });
 				next();
 			}else{
 				const token = jwt.sign({
@@ -177,18 +177,18 @@ clienteCtrl.authCliente = async (req, res, next) => {
 			}
 		} catch (error) {
 			console.log(error)
-			 res.json({ message: 'Algo ocurrio',error });
+			 res.status(404).json({ message: 'Algo ocurrio',error });
 		}
 	}else{
 		try {
 			const cliente = await clienteModel.findOne({ email });
 			console.log(cliente,contrasena);
 			if(!cliente){
-				 res.json({ message: 'Este usuario no existe' });
+				 res.status(404).json({ message: 'Este usuario no existe' });
 			}else{
 				if(!bcrypt.compareSync(contrasena, cliente.contrasena)){
 					console.log("entro")
-					 res.json({ message: 'Contraseña incorrecta' });
+					 res.status(500).json({ message: 'Contraseña incorrecta' });
 					next();
 				}else{
 					const token = jwt.sign({
@@ -206,7 +206,7 @@ clienteCtrl.authCliente = async (req, res, next) => {
 			}
 		} catch (error) {
 			console.log(error)
-			 res.json({ message: 'Algo ocurrio',error });
+			 res.status(500).json({ message: 'Algo ocurrio',error });
 		}
 	}
 }
@@ -217,7 +217,7 @@ clienteCtrl.authFirebase = async (req, res) => {
 	const cliente = await clienteModel.findOne({email});
 	if(cliente){
 		if(!bcrypt.compareSync(uid, cliente.contrasena)){
-			await res.json({ message: 'Contraseña incorrecta' });
+			res.status(500).json({ message: 'Contraseña incorrecta' });
 			next();
 		}else{
 			const token = jwt.sign({
@@ -241,15 +241,15 @@ clienteCtrl.authFirebase = async (req, res) => {
 			newcliente.imagen = imagen;
 			bcrypt.hash(uid, null, null, function(err, hash) {
 				if (err) {
-					res.json({ message: 'Error al encriptar la contrasena',err });
+					res.status(500).json({ message: 'Error al encriptar la contrasena',err });
 				} else {
 					newcliente.contrasena = hash;
 					newcliente.save((err, userStored) => {
 						if (err) {
-							res.json({ message: 'Ups, algo paso al registrar el usuario',err });
+							res.status(500).json({ message: 'Ups, algo paso al registrar el usuario',err });
 						} else {
 							if (!userStored) {
-								res.json({ message: 'Error al crear el usuario' });
+								res.status(500).json({ message: 'Error al crear el usuario' });
 							} else {
 								const token = jwt.sign({
 									email : newcliente.email,
@@ -269,7 +269,7 @@ clienteCtrl.authFirebase = async (req, res) => {
 			});
 		} catch (err) {
 			console.log(err);
-			res.json({ message: 'Contraseña incorrecta', err });
+			res.status(500).json({ message: 'Contraseña incorrecta', err });
 		}
 	}
 }
