@@ -5,12 +5,12 @@ sugerenciaCtrl.crearSugerencia = async (req, res) => {
     const newSugerencia = new Sugerencia (req.body);
     await newSugerencia.save((err, response) => {
         if(err){
-            res.send({ message: 'Ups, hubo un error al crear esta sugerencia', err})
+            res.status(500).json({ message: 'Hubo un error al crear esta sugerencia', err})
         }else{
             if(!response){
-                res.send({ message: 'Error al crear sugerencia'})
+                res.status(404).json({ message: 'Error al crear sugerencia'})
             }else{
-                res.json(response)
+                res.status(200).json({message: 'Sugerencia creada', response})
             }
         }
     })
@@ -20,24 +20,24 @@ sugerenciaCtrl.obtenerSugerencia = async (req, res) => {
     try {
         const sugerencia = await Sugerencia.findOne({producto: req.params.idProducto}).populate('producto').populate('sugerencias.producto');
         if(!sugerencia){
-            res.send({ message: 'Esta sugerencia de compra no existe' })
+            res.status(404).json({ message: 'Sugerencia no encontrada' })
         }else{
-            res.json(sugerencia)
+            res.status(200).json(sugerencia)
         } 
     } catch (error) {
-        res.send({ message: 'Ups, hubo un error al obtener esta sugerencia', error})
+        res.status(500).json({ message: 'Hubo un error al obtener esta sugerencia', error})
     }
 }
 
 sugerenciaCtrl.actualizarSugerencia = async (req, res) => {
        await Sugerencia.findOneAndUpdate({producto: req.params.idProducto}, req.body, (err, response) => {
            if(err){
-               res.send({ message: 'Ups, hubo un error al actualizar esta sugerencia', err})
+               res.status(500).json({ message: 'Hubo un error al actualizar esta sugerencia', err})
            }else{
                if(!response){
-                   res.send({message: 'Esta sugerencia de compra no existe'})
+                   res.status(404).json({message: 'Sugerencia no encontrada'})
                }else{
-                   res.json(response)
+                   res.status(200).json({message: 'Sugerencia Actualizada', response})
                }
            }
        })
@@ -47,12 +47,12 @@ sugerenciaCtrl.eliminarSugerencia = async (req, res) => {
     const sugerencia = await Sugerencia.findOneAndDelete({producto: req.params.idProducto})
         try {
             if(!sugerencia){
-                res.send({message: 'Esta sugerencia de compra no existe'})
+                res.status(404).json({message: 'Sugerencia no encontrada'})
             }else{
-                res.send({message: 'Sugerencia de compra eliminada'})
+                res.status(200).json({message: 'Sugerencia de compra eliminada'})
             }
         } catch (error) {
-            res.send({ message: 'Ups, hubo un error al eliminar esta sugerencia', error})
+            res.status(500).json({ message: 'Hubo un error al eliminar esta sugerencia', error})
         }
 }
 

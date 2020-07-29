@@ -5,7 +5,7 @@ const imagen = require('./uploadFile.controllers');
 galeriaCtrl.subirImagen = (req, res, next) => {
 	imagen.upload(req, res, function (err) {
 		if (err) {
-			res.json({ message: "Formato de imagen no valido", err });
+			res.status(404).json({ message: "Formato de imagen no valido", err });
 		}else{
             return next();
         }	
@@ -17,7 +17,7 @@ galeriaCtrl.crearGaleria = async (req, res, next) => {
     if(!galeria){
         const {producto} = req.body;
         if(!req.file){
-            res.json({message: 'La Galeria al menos debe tener una imagen'})
+            res.status(404).json({message: 'La Galeria al menos debe tener una imagen'})
         }else{
             const newGaleria = new Galeria({
                 producto: producto,
@@ -27,12 +27,12 @@ galeriaCtrl.crearGaleria = async (req, res, next) => {
             });
             await newGaleria.save((err, userStored) => {
                 if (err) {
-                    res.send({ message: 'Ups, algo paso al registrar la galeria', err });
+                    res.status(500).json({ message: 'Hubo un error al registrar la galeria', err });
                 } else {
                     if (!userStored) {
-                        res.send({ message: 'Error al crear la galeria' });
+                        res.status(404).json({ message: 'Galeria no encontrada' });
                     } else {
-                        res.json(userStored);
+                        res.status(200).json({message: 'Galeria creada', userStored});
                     }
                 }
             });
@@ -46,12 +46,12 @@ galeriaCtrl.obtenerGaleria = async (req, res) => {
     try {
         const galeria = await Galeria.findOne({ producto: req.params.idProducto}).populate('producto', 'nombre');
         if(!galeria){
-            res.send({ message: 'Esta galeria no existe' });
+            res.status(404).json({ message: 'Galeria no encontrada' });
         }else{
-            res.json(galeria);
+            res.status(200).json(galeria);
         }   
     } catch (error) {
-        res.json({ mensaje: 'Error al obtener esta galeria' });
+        res.status(500).json({ mensaje: 'Hubo un error al obtener esta galeria', error });
     }
 }
 
@@ -71,13 +71,13 @@ galeriaCtrl.crearImagen = async (req, res) => {
             }
         }, async (err, userStored) => {
             if (err) {
-                res.send({ messege: 'Ups, algo paso al crear la imagen', err });
+                res.status(500).json({ messege: 'Hubo un error al crear la imagen', err });
             } else {
                 if (!userStored) {
-                    res.send({ message: 'Error al crear la imagen' });
+                    res.status(404).json({ message: 'Imagen no encontrada' });
                 } else {
                     const galeria = await Galeria.findOne({_id: producto._id})
-                    res.json(galeria);
+                    res.status(200).json({message: 'Imagen creada', galeria});
                 }
             }
         }
@@ -106,12 +106,12 @@ galeriaCtrl.actualizarImagen = async (req, res) => {
                     $set: { 'imagenes.$': { url : url } }
                 }, (err, response) => {
                     if(err){
-                        res.send({message: 'Ups, algo paso al actualizar imagen', err})
+                        res.status(500).json({message: 'Hubo un error al actualizar imagen', err})
                     }else{
                         if(!response){
-                            res.send({message: 'imagen no existe'})
+                            res.status(404).json({message: 'Imagen no encontrada'})
                         }else{
-                            res.send({message: 'Imagen actualizada'})
+                            res.status(200).json({message: 'Imagen actualizada', response})
                         }
                     }
                 }
@@ -140,12 +140,12 @@ galeriaCtrl.eliminarImagen = async (req, res) => {
             }
         }, (err, response) => {
             if(err){
-                res.send({message: 'Ups, algo paso al eliminar imagen', err})
+                res.status(500).json({message: 'Hubo un error al eliminar imagen', err})
             }else{
                 if(!response){
-                    res.send({message: 'imagen no existe'})
+                    res.status(404).json({message: 'Imagen no encontrada'})
                 }else{
-                    res.send({message: 'Imagen Eliminada'})
+                    res.status(200).json({message: 'Imagen Eliminada'})
                 }
             }
         });
@@ -158,14 +158,14 @@ galeriaCtrl.eliminarGaleria = async (req, res) => {
        try {
             await imagen.eliminarImagen(imagenes.url);
        } catch (error) {
-           res.send({message: 'Ups, algo paso al eliminar imagen', err})
+           res.status(500).json({message: 'hubo un error al eliminar imagen', err})
        }
     })
     await Galeria.findByIdAndDelete(req.params.idGaleria, (err, response) => {
         if(err){
-            res.send({message: 'Esta galeria no existe'})  
+            res.status(404).json({message: 'galeria no encontrada'})  
         }else{
-            res.send({message: 'Galeria Eliminada'})
+            res.status(200).json({message: 'Galeria Eliminada'})
         }
     })  
 }
