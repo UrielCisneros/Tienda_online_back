@@ -35,18 +35,18 @@ blogCtrl.getBlogs = async (req, res) => {
 blogCtrl.createBlog = async (req, res) => {
     try {
         if (!req.file) {
-            res.status(404).send({ message: "La imagen es obligatoria" });
+            res.status(404).json({ message: "La imagen es obligatoria" });
         } else {
             const newBlog = new blogModel(req.body);
             newBlog.imagen = req.file.key;
             await newBlog.save((err, postStored) => {
                 if (err) {
-                    res.status(500).send({ message: "Parece que se duplico un campo",err })
+                    res.status(500).json({ message: "Parece que se duplico un campo",err })
                 } else {
                     if (!postStored) {
-                        res.status(400).send({ message: "No se a podido crear el Blog" });
+                        res.status(400).json({ message: "No se a podido crear el Blog" });
                     } else {
-                        res.status(200).send({ message: "Blog creado correctamente" });
+                        res.status(200).json({ message: "Blog creado correctamente" });
                     }
                 }
             });
