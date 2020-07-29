@@ -5,7 +5,7 @@ const imagen = require('./uploadFile.controllers');
 carouselCtrl.subirImagen = (req, res, next) => {
 	imagen.upload(req, res, function (error) {
 		if (error) {
-			res.json({ message: error });
+			res.status(404).json({ message: 'Formato de imagen no valido', error });
 		}
 		return next();
 	});
@@ -18,12 +18,12 @@ carouselCtrl.crearCarousel = async (req, res) => {
     }
     await newCarousel.save((err, response) => {
         if(err){
-            res.send({message: 'Ups, hubo un error al crear el carousel', err})
+            res.status(500).json({message: 'Hubo un error al crear el carousel', err})
         }else{
             if(!response){
-                res.send({message: 'Carousel NO creado (404)'})
+                res.status(404).json({message: 'Carousel no encontrado'})
             }else{
-                res.json(response)
+                res.status(200).json({message: 'Carousel creado', response})
             }
         }
     })
@@ -32,9 +32,9 @@ carouselCtrl.crearCarousel = async (req, res) => {
 carouselCtrl.obtenerTodosCarousels = async (req, res, next) => {
     try {
 		const carousel = await Carousel.find().populate('producto');
-		res.json(carousel);
-    } catch (err) {
-        res.json({ message: 'Ups, algo paso al obtener carouseles', err });
+		res.status(200).json(carousel);
+    } catch (error) {
+        res.status(500).json({ message: 'Hubo un error al obtener carouseles', error });
         next();
     }
 }
@@ -42,9 +42,9 @@ carouselCtrl.obtenerTodosCarousels = async (req, res, next) => {
 carouselCtrl.obtenerLimiteCarousels = async (req, res, next) => {
     try {
 		const carousel = await Carousel.find().populate('producto').limit(10);
-		res.json(carousel);
-    } catch (err) {
-        res.json({ message: 'Ups, algo paso al obtener carouseles', err });
+		res.status(200).json(carousel);
+    } catch (error) {
+        res.status(500).json({ message: 'Hubo un error al obtener carouseles', error });
         next();
     }
 }
@@ -53,11 +53,12 @@ carouselCtrl.obtenerCarousel = async (req, res) => {
     const carousel = await Carousel.findOne({producto: req.params.idProducto}).populate('producto')
     try {
         if(!carousel){
-            res.send({message: 'Este carousel no existe'})
-        }
-        res.json(carousel)
-    } catch (err) {
-        res.send({message: 'Ups, hubo un error al obtener el carousel', err})
+            res.status(404).json({message: 'Carousel no encontrado'})
+        }else{
+			res.status(200).json(carousel)
+		}   
+    } catch (error) {
+        res.status(500).json({message: 'Hubo un error al obtener el carousel', error})
     }
 }
 
@@ -65,7 +66,7 @@ carouselCtrl.actualizarCarousel = async (req, res) => {
     try {
 		const carouselDeBase = await Carousel.findOne({producto: req.params.idProducto});
 		if(!carouselDeBase){
-			res.send({message: 'Este carousel no existe'})
+			res.status(404).json({message: 'Carousel no encontrado'})
 		}else{
 			//Construir nuevo producto
 			const nuevoCarousel = req.body;
@@ -77,11 +78,11 @@ carouselCtrl.actualizarCarousel = async (req, res) => {
 				nuevoCarousel.imagen = carouselDeBase.imagen;
 			}
 			const carousel = await Carousel.findOneAndUpdate({producto: req.params.idProducto}, nuevoCarousel);
-			res.json(carousel)
+			res.status(200).json({message: 'Carousel Actualizado', carousel})
 		}
 		
-	} catch (err) {
-		res.send({message: 'Error al actualizar Carousel', err})
+	} catch (error) {
+		res.status(500).json({message: 'Error al actualizar Carousel', error})
 	}
 }
 
@@ -89,7 +90,7 @@ carouselCtrl.eliminarCarousel = async (req, res) => {
     const carouselDeBase = await Carousel.findOne({producto: req.params.idProducto});
 	try {
 		if (!carouselDeBase) {
-			res.json({ message: 'Este carousel no existe' });
+			res.status(404).json({ message: 'Carousel no encontrado' });
 		}else{
 			if (carouselDeBase.imagen) {
 				await imagen.eliminarImagen(carouselDeBase.imagen);
@@ -97,12 +98,12 @@ carouselCtrl.eliminarCarousel = async (req, res) => {
 		
 			const carousel = await Carousel.findOneAndDelete({producto: req.params.idProducto});
 			if (!carousel) {
-				res.json({ message: 'Este carousel no existe' });
+				res.status(404).json({ message: 'Carousel no encontrado' });
 			}
-			res.json({ message: 'Carousel eliminado' });
+			res.status(200).json({ message: 'Carousel eliminado' });
 		}		
-	} catch (err) {
-		res.send({message: 'Error al eliminar Carousel', err})
+	} catch (error) {
+		res.status(500).json({message: 'Error al eliminar Carousel', error})
 	}
 }
 

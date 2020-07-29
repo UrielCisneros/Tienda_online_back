@@ -5,7 +5,7 @@ const Tienda = require('../models/Tienda');
 tiendaCtrl.subirImagen = async (req,res,next) => {
     imagen.upload(req, res, function (err) {
 		if (err) {
-			res.send({ message: "formato de imagen no valido", err });
+			res.status(404).json({ message: "formato de imagen no valido", err });
 		}else{
 			return next();
 		}
@@ -13,16 +13,16 @@ tiendaCtrl.subirImagen = async (req,res,next) => {
 }
 
 tiendaCtrl.crearTienda = async (req, res) => {
-    const newTienda = new Tienda(req.body)
+    const newTienda = new Tienda(req.body);
     newTienda.activo = true;
     if(req.file){
         newTienda.imagenLogo = req.file.key;
     }
     await newTienda.save((err, response) => {
         if(err){
-            res.send({message: 'Error al crear Tienda', err})
+            res.status(500).json({message: 'Error al crear Tienda', err});
         }else{
-            res.json(response)
+            res.status(200).json({message: 'Tienda creada', response});
         }
     })
 };
@@ -31,11 +31,12 @@ tiendaCtrl.obtenerTienda = async (req, res) => {
     try {
         const tienda = await Tienda.findById(req.params.idTienda)
         if(!tienda){
-            res.send({ message: 'Esta tienda no existe'})
+            res.status(404).json({message: 'Tienda no encontrada'});
+        }else{
+            res.status(200).json(tienda);
         }
-        res.json(tienda)
     } catch (error) {
-        res.send({ message: 'Hubo un error al obtener esta tienda', error })
+        res.status(500).json({ message: 'Hubo un error al obtener esta tienda', error });
     }
 };
 
@@ -44,7 +45,7 @@ tiendaCtrl.actualizarTienda = async (req, res) => {
     const newTienda = req.body;
     if(req.file){
         if(infoTiendaBase.imagenLogo){
-            await imagen.eliminarImagen(infoTiendaBase.imagenLogo)
+            await imagen.eliminarImagen(infoTiendaBase.imagenLogo);
         }
         newTienda.imagenLogo = req.file.key;
     }else{
@@ -52,12 +53,12 @@ tiendaCtrl.actualizarTienda = async (req, res) => {
     }
  	await Tienda.findOneAndUpdate({_id: req.params.idTienda}, newTienda, (err, response) => {
         if(err){
-            res.send({message: 'Error al actualizar Tienda', err})
+            res.status(500).json({message: 'Error al actualizar Tienda', err});
         }else{
             if(!response){
-                res.send({ message: 'Esta tienda no existe'})
+                res.status(404).json({ message: 'Tienda no encontrada'});
             }else{
-                res.json(response)
+                res.status(200).json({message: 'Tienda Actualizada', response});
             }
         }
     }) 
@@ -65,10 +66,10 @@ tiendaCtrl.actualizarTienda = async (req, res) => {
 
 tiendaCtrl.eliminarTienda = async (req, res) => {
     try {
-        await Tienda.findByIdAndDelete(req.params.idTienda)
-        res.send({message: "Tienda eliminada"})
+        await Tienda.findByIdAndDelete(req.params.idTienda);
+        res.status(200).json({message: "Tienda eliminada"});
     } catch (error) {
-        res.send({message: 'Ups, error al eliminar Tienda', error})
+        res.status(500).json({message: 'Hubo un error al eliminar Tienda', error});
     }
 };
 
