@@ -85,7 +85,7 @@ adminCtrl.getAdmin = async (req, res) => {
 
 adminCtrl.deleteAdmin = async (req, res) => {
 	await adminModel.findByIdAndDelete(req.params.id);
-	res.json({ message: 'Admin Deleted' });
+	res.status(200).json({ message: 'Admin Deleted' });
 };
 
 adminCtrl.authAdmin = async (req, res, next) => {

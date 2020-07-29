@@ -8,9 +8,9 @@ pedidoCtrl.getPedidos = async (req, res, next) => {
             path: 'pedido.producto',
             model: 'producto'
         });
-        res.json(pedidos);
-    } catch (error) {
-        res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
+        res.status(200).json(pedidos);
+    } catch (err) {
+        res.status(500).send({ message: 'Ups, algo paso al obtenero el pedidos', err });
         next();
     }
 }
@@ -21,9 +21,9 @@ pedidoCtrl.getPedido = async (req, res, next) => {
             path: 'pedido.producto',
             model: 'producto'
         });
-        res.json(pedidos);
-    } catch (error) {
-        res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
+        res.status(200).json(pedidos);
+    } catch (err) {
+        res.status(500).send({ message: 'Ups, algo paso al obtenero el pedidos', err });
         next();
     }
 }
@@ -31,9 +31,9 @@ pedidoCtrl.getPedido = async (req, res, next) => {
 pedidoCtrl.getPedidosUser = async (req, res, next) => {
     try {
         const pedidosUser = await pedidoModel.find({ cliente: req.params.id });
-        res.json(pedidosUser);
-    } catch (error) {
-        res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
+        res.status(200).json(pedidosUser);
+    } catch (err) {
+        res.status(500).send({ message: 'Ups, algo paso al obtenero el pedidos', err });
     }
 }
 
@@ -43,17 +43,17 @@ pedidoCtrl.createPedido = async (req, res, next) => {
     try {
         await newpedido.save((err, userStored) => {
             if (err) {
-                res.send({ message: 'Ups, algo paso al registrar el usuario', err });
+                res.status(500).send({ message: 'Ups, algo paso al registrar el usuario', err });
             } else {
                 if (!userStored) {
-                    res.send({ message: 'Error al crear el Pedodo' });
+                    res.status(404).send({ message: 'Error al crear el Pedodo' });
                 } else {
-                    res.json({ message: "Se agrego el pedido" });
+                    res.status(200).json({ message: "Se agrego el pedido" });
                 }
             }
         });
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
+        res.status(500).send({ message: 'Ups, algo paso al registrar el usuario', err });
         next();
     }
 }
@@ -68,16 +68,16 @@ pedidoCtrl.updateEstadoPedido = async (req, res, next) => {
                 mensaje_admin
             }, { new: true });
             console.log(pedido);
-            res.send({ message: 'Pedido Actualizado'});
+            res.status(200).send({ message: 'Pedido Actualizado'});
         }else{
             const pedido = await pedidoModel.findByIdAndUpdate({ _id: req.params.id }, {
                 mensaje_admin
             }, { new: true });
             console.log(pedido);
-            res.send({ message: 'Mensaje del pedido actualizado'});
+            res.status(200).send({ message: 'Mensaje del pedido actualizado'});
         }
-    } catch (error) {
-        res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
+    } catch (err) {
+        res.status(500).send({ message: 'Ups, algo paso al obtenero el pedidos', err });
         next();
     }
 }

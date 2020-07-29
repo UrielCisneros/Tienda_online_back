@@ -6,15 +6,14 @@ const pedidoModel = require('../models/Pedido');
 
 detalleCtrl.createDetalle = async (req,res) => {
     const {id_pedido} = req.body;
-
     const newDetalle = new detalleModel(req.body);
     await newDetalle.save((err, postStored) => {
         if (err) {
-            res.send({ message: 'Error al crear el detalle' })
+            res.status(500).send({ message: 'Error al crear el detalle' })
             throw err;
         } else {
             if (!postStored) {
-                res.send({ message: 'Error al crear el detalle' })
+                res.status(500).send({ message: 'Error al crear el detalle' })
                 throw err;
             }
         }
@@ -28,7 +27,7 @@ detalleCtrl.createDetalle = async (req,res) => {
                 producto.tallas.map(async (talla) => {
                     if(talla.talla == pedido.talla){
                         if(talla.cantidad == '0' || talla.cantidad < pedido.cantidad){
-                            res.send({ message: 'No exixten suficientes en el inventario' })
+                            res.status(500).send({ message: 'No exixten suficientes en el inventario' })
                             throw talla.cantidad;
                         }else{
                             let cantidad = talla.cantidad - pedido.cantidad;
@@ -42,11 +41,11 @@ detalleCtrl.createDetalle = async (req,res) => {
                                         cantidad: cantidad } }
                                 }, (err, response) => {
                                     if (err) {
-                                        res.send({ message: 'Ups algo paso al restar la talla' })
+                                        res.status(500).send({ message: 'Ups algo paso al restar la talla' })
                                         throw err;
                                     } else {
                                         if (!response) {
-                                            res.send({ message: 'Ups algo paso al restar la talla' })
+                                            res.status(500).send({ message: 'Ups algo paso al restar la talla' })
                                             throw err;
                                         }
                                     }
@@ -60,7 +59,7 @@ detalleCtrl.createDetalle = async (req,res) => {
                 producto.numeros.map(async (numero) => {
                     if(numero.numero == pedido.numero){
                         if(numero.cantidad == '0' || numero.cantidad < pedido.cantidad){
-                            res.send({ message: 'No exixten suficientes en el inventario' })
+                            res.status(500).send({ message: 'No exixten suficientes en el inventario' })
                             throw numero.cantidad;
                         }else{
                             let cantidad = numero.cantidad - pedido.cantidad;
@@ -74,11 +73,11 @@ detalleCtrl.createDetalle = async (req,res) => {
                                         cantidad: cantidad } }
                                 }, (err, response) => {
                                     if (err) {
-                                        res.send({ message: 'Ups algo paso al restar la talla' })
+                                        res.status(500).send({ message: 'Ups algo paso al restar la talla' })
                                         throw err;
                                     } else {
                                         if (!response) {
-                                            res.send({ message: 'Ups algo paso al restar la talla' })
+                                            res.status(500).send({ message: 'Ups algo paso al restar la talla' })
                                             throw err;
                                         }
                                     }
@@ -91,7 +90,7 @@ detalleCtrl.createDetalle = async (req,res) => {
                 const producto = await productoModel.findById(pedido.producto);
                 const newProducto = producto;
                 if(producto.cantidad == 0 || producto.cantidad < pedido.cantidad){
-                    res.send({ message: 'No exixten suficientes en el inventario' })
+                    res.status(500).send({ message: 'No exixten suficientes en el inventario' })
                     throw error;
                 }else{
                     newProducto.cantidad = parseInt(producto.cantidad) - parseInt(pedido.cantidad);
@@ -111,12 +110,12 @@ detalleCtrl.createDetalle = async (req,res) => {
         pedidoPagado.pagado = true;  
          await pedidoModel.findByIdAndUpdate({ _id: id_pedido },pedidoPagado, { new: true },(err, userStored) => {
             if (err) {
-                res.send({ message: 'Ups, parece que algo salio mal', err });
+                res.status(500).send({ message: 'Ups, parece que algo salio mal', err });
             } else {
                 if (!userStored) {
-                    res.send({ message: 'Error al actualizar pedido' });
+                    res.status(404).send({ message: 'Error al actualizar pedido' });
                 } else {
-                    res.send({ message: 'Detalle de venta creado' })
+                    res.status(200).send({ message: 'Detalle de venta creado' })
                 }
             }
         });
@@ -127,9 +126,9 @@ detalleCtrl.createDetalle = async (req,res) => {
 detalleCtrl.getDetalle = async (req,res) => {
     try {
         const detalle = await detalleModel.find().populate('id_pedido').populate('id_pago').populate('cliente');
-        res.json(detalle);
-    } catch (error) {
-        res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
+        res.status(200).json(detalle);
+    } catch (err) {
+        res.status(500).send({ message: 'Ups, algo paso al obtenero el pedidos', err });
         next();
     }
 }
@@ -138,9 +137,9 @@ detalleCtrl.getDetalleUser = async (req, res) => {
     try {
         console.log(req.params.idUser);
         const DetalleUser = await detalleModel .find({ cliente: req.params.idUser }).populate('id_pedido').populate('id_pago').populate('cliente');
-        res.json(DetalleUser);
-    } catch (error) {
-        res.send({ message: 'Ups, algo paso al obtenero el pedidos', error });
+        res.status(200).json(DetalleUser);
+    } catch (err) {
+        res.status(500).send({ message: 'Ups, algo paso al obtenero el pedidos', err });
     }
 }
 
