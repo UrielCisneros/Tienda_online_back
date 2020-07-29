@@ -6,18 +6,19 @@ pagoCtrl.createPago = async (req, res) => {
         const newPago = new pagoModel(req.body);
         await newPago.save((err, postStored) => {
             if (err) {
-                res.status(500).send({ message: "Error en el servidor" })
+                res.status(500).json({ message: "Error en el servidor" })
             } else {
                 if (!postStored) {
-                    res.status(404).send({ message: "No se a podido crear el Pago" });
+                    res.status(404).json({ message: "No se a podido crear el Pago" });
                 } else {
-                    res.status(200).send({ message: "Pago creado correctamente",postStored });
+                    res.status(200).json({ message: "Pago creado correctamente",postStored });
                 }
             }
         });
 
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
+        res.status(500).json({ message: "Error en el servidor",err })	
+        console.log(err);
     }
 
 }

@@ -7,9 +7,9 @@ const adminModel = require('../models/Administrador');
 
 
 clienteCtrl.subirImagen = async (req, res, next) => {
-	await imagen.upload(req, res, function (error) {
-		if (error) {
-			res.json({ message: error });
+	await imagen.upload(req, res, function (err) {
+		if (err) {
+			res.json({ message: err });
 		}
 		return next();
 	});
@@ -20,19 +20,24 @@ clienteCtrl.getClientes = async (req, res, next) => {
 		const clientes = await clienteModel.find();
 		res.status(200).json(clientes);
 	} catch (err) {
-		res.status(400).json({ message: err });
+		res.status(500).json({ message: "Error en el servidor",err })	
 		console.log(error);
 		next();
 	}
 };
 
 clienteCtrl.getCliente = async (req, res, next) => {
-	const cliente = await clienteModel.findById(req.params.id);
-	if (!cliente) {
-		res.status(404).json({ err: 'Este cliente no existe' });
-		next();
+	try {
+		const cliente = await clienteModel.findById(req.params.id);
+		if (!cliente) {
+			res.status(404).json({ err: 'Este cliente no existe' });
+			next();
+		}
+		res.json(cliente);
+	} catch (err) {
+		res.status(500).json({ message: "Error en el servidor",err })	
 	}
-	res.json(cliente);
+
 };
 
 clienteCtrl.createCliente = (req, res) => {
@@ -79,9 +84,9 @@ clienteCtrl.createCliente = (req, res) => {
 				});
 			}
 		}
-	} catch (error) {
-		res.json({ error });
-		console.log(error);
+	} catch (err) {
+		res.status(500).json({ message: "Error en el servidor",err })	
+		console.log(err);
 	}
 };
 
@@ -121,9 +126,9 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 				}
 			}
 		});
-	} catch (error) {
-		console.log(error);
-		res.status(404).json({ error });
+	} catch (err) {
+		console.log(err);
+		res.status(500).json({ message: "Error en el servidor",err })	
 		next();
 	}
 };
@@ -136,7 +141,7 @@ function verificarPass(nuevoCliente, contrasena, repeatContrasena) {
 			verificarPass
 			bcrypt.hash(contrasena, null, null, function (err, hash) {
 				if (err) {
-					res.status(404).json({ message: 'Error al encriptar la contrasena' });
+					res.status(404).json({ message: 'Error al encriptar la contrasena',err });
 				} else {
 					nuevoCliente.contrasena = hash;
 				}
@@ -146,12 +151,16 @@ function verificarPass(nuevoCliente, contrasena, repeatContrasena) {
 }
 
 clienteCtrl.deleteCliente = async (req, res, next) => {
-	const clienteDeBase = await clienteModel.findById(req.params.id);
-	if (clienteDeBase.imagen) {
-		await imagen.eliminarImagen(clienteDeBase.imagen);
+	try {
+		const clienteDeBase = await clienteModel.findById(req.params.id);
+		if (clienteDeBase.imagen) {
+			await imagen.eliminarImagen(clienteDeBase.imagen);
+		}
+		await clienteModel.findByIdAndDelete(req.params.id);
+		res.json({ message: 'Cliente Deleted' });
+	} catch (err) {
+		res.status(500).json({ message: "Error en el servidor",err })	
 	}
-	await clienteModel.findByIdAndDelete(req.params.id);
-	res.json({ message: 'Cliente Deleted' });
 };
 
 clienteCtrl.authCliente = async (req, res, next) => {
@@ -175,9 +184,9 @@ clienteCtrl.authCliente = async (req, res, next) => {
 				//token
 				res.json({token});
 			}
-		} catch (error) {
-			console.log(error)
-			 res.status(404).json({ message: 'Algo ocurrio',error });
+		} catch (err) {
+			console.log(err)
+			res.status(500).json({ message: "Error en el servidor",err })	
 		}
 	}else{
 		try {
@@ -204,9 +213,9 @@ clienteCtrl.authCliente = async (req, res, next) => {
 					res.json({token});
 				}
 			}
-		} catch (error) {
-			console.log(error)
-			 res.status(500).json({ message: 'Algo ocurrio',error });
+		} catch (err) {
+			console.log(err)
+			res.status(500).json({ message: "Error en el servidor",err })	
 		}
 	}
 }
@@ -269,7 +278,7 @@ clienteCtrl.authFirebase = async (req, res) => {
 			});
 		} catch (err) {
 			console.log(err);
-			res.status(500).json({ message: 'Contraseña incorrecta', err });
+			res.status(500).json({ message: "Error en el servidor",err })	
 		}
 	}
 }

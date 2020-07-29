@@ -3,7 +3,7 @@ const imagen = require('./uploadFile.controllers');
 const blogModel = require('../models/Blog');
 
 blogCtrl.subirImagen = async (req, res, next) => {
-    await imagen.upload(req, res, function (err) {
+    await imagen.upload(req, res, function (error) {
         if (err) {
             res.status(400).json({ message: err });
         }
@@ -51,8 +51,9 @@ blogCtrl.createBlog = async (req, res) => {
                 }
             });
         }
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
+        res.status(500).send({ message: "Error en el servidor",err })
+        console.log(err);
     }
 
 }
@@ -69,17 +70,18 @@ blogCtrl.updateBlog = async (req, res) => {
         }
         await blogModel.findByIdAndUpdate(req.params.id, newBlog, (err, postStored) => {
             if (err) {
-                res.status(500).send({ message: "Error en el servidor",err })
+                res.status(500).json({ message: "Error en el servidor",err })
             } else {
                 if (!postStored) {
-                    res.status(400).send({ message: "No se a podido actualizar el blog" });
+                    res.status(400).json({ message: "No se a podido actualizar el blog" });
                 } else {
-                    res.status(200).send({ message: "Blog actualizado" });
+                    res.status(200).json({ message: "Blog actualizado" });
                 }
             }
         });
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
+        res.status(500).json({ message: "Error en el servidor",err })
+        console.log(err);
     }
 
 }
@@ -89,17 +91,18 @@ blogCtrl.getBlog = async (req, res) => {
         const { url } = req.params;
         await blogModel.findOne({ url }, (err, postStored) => {
             if (err) {
-                res.status(500).send({ message: "Error en la base",err });
+                res.status(500).json({ message: "Error en la base",err });
             } else {
                 if (!postStored) {
-                    res.status(400).send({ message: "Error al eliminar" });
+                    res.status(400).json({ message: "Error al eliminar" });
                 } else {
-                    res.status(200).send({ post: postStored })
+                    res.status(200).json({ post: postStored })
                 }
             }
         });
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
+        res.status(500).json({ message: "Error en el servidor",err })
+        console.log(err);
     }
 
 }
@@ -113,20 +116,21 @@ blogCtrl.deleteBlog = async (req, res) => {
             }
             await blogModel.findByIdAndDelete(req.params.id, (err, postStored) => {
                 if (err) {
-                    res.status(500).send({ message: "Error en la base",err });
+                    res.status(500).json({ message: "Error en la base",err });
                 } else {
                     if (!postStored) {
-                        res.status(400).send({ message: "Error al eliminar" });
+                        res.status(400).json({ message: "Error al eliminar" });
                     } else {
-                        res.status(200).send({ message: "Blog eliminado" })
+                        res.status(200).json({ message: "Blog eliminado" })
                     }
                 }
             });
         }else{
-            res.send({ message: "Este blog no existe" });
+            res.json({ message: "Este blog no existe" });
         }
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
+        res.status(500).json({ message: "Error en el servidor",err })
+        console.log(err);
     }
 }
 

@@ -128,7 +128,7 @@ detalleCtrl.getDetalle = async (req,res) => {
         const detalle = await detalleModel.find().populate('id_pedido').populate('id_pago').populate('cliente');
         res.status(200).json(detalle);
     } catch (err) {
-        res.status(500).send({ message: 'Ups, algo paso al obtenero el pedidos', err });
+        res.status(500).json({ message: 'Ups, algo paso al obtenero el pedidos', err });
         next();
     }
 }
@@ -139,7 +139,7 @@ detalleCtrl.getDetalleUser = async (req, res) => {
         const DetalleUser = await detalleModel .find({ cliente: req.params.idUser }).populate('id_pedido').populate('id_pago').populate('cliente');
         res.status(200).json(DetalleUser);
     } catch (err) {
-        res.status(500).send({ message: 'Ups, algo paso al obtenero el pedidos', err });
+        res.status(500).json({ message: 'Ups, algo paso al obtenero el pedidos', err });
     }
 }
 
