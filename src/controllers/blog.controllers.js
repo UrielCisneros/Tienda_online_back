@@ -41,7 +41,7 @@ blogCtrl.createBlog = async (req, res) => {
             newBlog.imagen = req.file.key;
             await newBlog.save((err, postStored) => {
                 if (err) {
-                    res.status(500).json({ message: "Parece que se duplico un campo",err })
+                    res.status(500).json({ message: "Parece que se duplico la url",err })
                 } else {
                     if (!postStored) {
                         res.status(404).json({ message: "No se a podido crear el Blog" });
