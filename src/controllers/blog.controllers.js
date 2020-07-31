@@ -44,7 +44,7 @@ blogCtrl.createBlog = async (req, res) => {
                     res.status(500).json({ message: "Parece que se duplico un campo",err })
                 } else {
                     if (!postStored) {
-                        res.status(400).json({ message: "No se a podido crear el Blog" });
+                        res.status(404).json({ message: "No se a podido crear el Blog" });
                     } else {
                         res.status(200).json({ message: "Blog creado correctamente" });
                     }
