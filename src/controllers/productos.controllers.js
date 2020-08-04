@@ -91,7 +91,7 @@ productosCtrl.crearPromocion = async (req,res) => {
 				if (!userStored) {
 					res.status(404).json({ message: 'Error al crear la promocion' });
 				} else {
-					res.status(400).json({ message: 'Promocion creada', userStored});
+					res.status(200).json({ message: 'Promocion creada', userStored});
 				}
 			}
 		});
