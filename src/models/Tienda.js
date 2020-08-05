@@ -10,9 +10,6 @@ const TiendaSchema = new Schema({
             calle_numero: {
                 type: String
             },
-            entre_calles: {
-                type: String
-            },
             cp: {
                 type: String
             },
@@ -32,19 +29,11 @@ const TiendaSchema = new Schema({
         type: Number,
         required: true
     },
-    ubicacion: {
-        type: String,
-        required: true
-    },
+    ubicacion: [{
+        lat: String,
+        lng: String
+    }],
     descripcion: {
-        type: String,
-        required: true
-    },
-    mision: {
-        type: String,
-        required: true
-    },
-    vision: {
         type: String,
         required: true
     },

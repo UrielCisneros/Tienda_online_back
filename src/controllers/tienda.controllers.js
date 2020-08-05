@@ -29,14 +29,10 @@ tiendaCtrl.crearTienda = async (req, res) => {
 
 tiendaCtrl.obtenerTienda = async (req, res) => {
     try {
-        const tienda = await Tienda.findById(req.params.idTienda)
-        if(!tienda){
-            res.status(404).json({message: 'Tienda no encontrada'});
-        }else{
+        const tienda = await Tienda.find();
             res.status(200).json(tienda);
-        }
     } catch (error) {
-        res.status(500).json({ message: 'Hubo un error al obtener esta tienda', error });
+            res.status(500).json({ message: 'Hubo un error al obtener esta tienda', error });
     }
 };
 

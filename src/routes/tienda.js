@@ -12,9 +12,9 @@ const auth = require('../middleware/auth');
 
 router.route('/')
     .post(auth,subirImagen,crearTienda)
+    .get(obtenerTienda)
 
 router.route('/:idTienda')
-    .get(obtenerTienda)
     .put(auth,subirImagen,actualizarTienda)
     .delete(auth,eliminarTienda)
 

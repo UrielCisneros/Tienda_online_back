@@ -11,14 +11,17 @@ aws.config.update({
 
 const s3 = new aws.S3();
 
+//Filtros que se aceptaran en los archivos
 const fileFilter = (req, file, cb) => {
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/webp' || file.mimetype === 'image/jpg') {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
         cb(null, true);
     } else {
         return cb(new Error('Formato no valido'));
     }
   }
   
+
+  //Aqui es donde conectamos al Bucket de Amazon S3 y le damos los filtros
   const configuracionMulter ={
     fileFilter,
     storage: multerS3({
@@ -34,6 +37,8 @@ const fileFilter = (req, file, cb) => {
     }) 
   };
 
+
+//Funcion que elimina la imagen den Bucked
 subir.eliminarImagen = (keyDeleted) => {
     s3.deleteObject({
       Bucket: 'prueba-imagenes-uploads',
