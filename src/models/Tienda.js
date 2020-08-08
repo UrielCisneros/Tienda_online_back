@@ -33,15 +33,11 @@ const TiendaSchema = new Schema({
         lat: String,
         lng: String
     }],
-    descripcion: {
-        type: String,
-        required: true
-    },
     politicas: {
         type: String,
         required: true
     },
-    terminos: {
+    imagenCorp: {
         type: String,
         required: true
     },
