@@ -13,7 +13,7 @@ tiendaCtrl.subirImagen = async (req,res,next) => {
 }
 
 tiendaCtrl.crearTienda = async (req, res) => {
-    console,log(req.body);
+    console.log(req.body);
     const newTienda = new Tienda(req.body);
     newTienda.activo = true;
     if(req.file){
