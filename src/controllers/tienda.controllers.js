@@ -56,8 +56,28 @@ tiendaCtrl.obtenerTienda = async (req, res) => {
 };
 
 tiendaCtrl.actualizarTienda = async (req, res) => {
+    const {nombre,telefono,calle_numero,cp,colonia,ciudad,lat,lng,politicas,imagenCorp,linkFace,linkInsta,linkTweeter} = req.body;
     const infoTiendaBase =  await Tienda.findById(req.params.idTienda);
-    const newTienda = req.body;
+    const newTienda = {
+        nombre: nombre,
+        telefono: telefono,
+        direccion:[{
+            calle_numero:calle_numero,
+            cp:cp,
+            colonia:colonia,
+            ciudad:ciudad
+        }],
+        ubicacion:[{
+            lat:lat,
+            lng:lng
+        }],
+        politicas:politicas,
+        imagenCorp:imagenCorp,
+        linkFace:linkFace,
+        linkInsta:linkInsta,
+        linkTweeter:linkTweeter
+    };
+    
     if(req.file){
         if(infoTiendaBase.imagenLogo){
             await imagen.eliminarImagen(infoTiendaBase.imagenLogo);
