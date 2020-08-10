@@ -44,7 +44,10 @@ const TiendaSchema = new Schema({
     activo: Boolean,
     imagenLogo:{
         type:String
-    }
+    },
+    linkFace: String,
+    linkInsta: String,
+    linkTweeter: String,
 });
 
 module.exports = model('tienda', TiendaSchema);

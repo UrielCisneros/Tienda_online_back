@@ -13,9 +13,26 @@ tiendaCtrl.subirImagen = async (req,res,next) => {
 }
 
 tiendaCtrl.crearTienda = async (req, res) => {
-    const {direccion} = req.body;
-    console.log(req.body.direccion);
-    const newTienda = new Tienda(req.body);
+    const {nombre,telefono,calle_numero,cp,colonia,ciudad,lat,lng,politicas,imagenCorp,linkFace,linkInsta,linkTweeter} = req.body;
+    const newTienda = new Tienda({
+        nombre: nombre,
+        telefono: telefono,
+        direccion:[{
+            calle_numero:calle_numero,
+            cp:cp,
+            colonia:colonia,
+            ciudad:ciudad
+        }],
+        ubicacion:[{
+            lat:lat,
+            lng:lng
+        }],
+        politicas:politicas,
+        imagenCorp:imagenCorp,
+        linkFace:linkFace,
+        linkInsta:linkInsta,
+        linkTweeter:linkTweeter
+    });
     newTienda.activo = true;
     if(req.file){
         newTienda.imagenLogo = req.file.key;
