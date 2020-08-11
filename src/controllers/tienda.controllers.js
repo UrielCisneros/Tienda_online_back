@@ -77,7 +77,7 @@ tiendaCtrl.actualizarTienda = async (req, res) => {
         linkInsta:linkInsta,
         linkTweeter:linkTweeter
     };
-    
+
     if(req.file){
         if(infoTiendaBase.imagenLogo){
             await imagen.eliminarImagen(infoTiendaBase.imagenLogo);
@@ -93,7 +93,7 @@ tiendaCtrl.actualizarTienda = async (req, res) => {
             if(!response){
                 res.status(404).json({ message: 'Tienda no encontrada'});
             }else{
-                res.status(200).json({message: 'Tienda Actualizada', response});
+                res.status(200).json({message: 'Tienda Actualizada'});
             }
         }
     }) 
