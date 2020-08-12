@@ -1,6 +1,7 @@
 
 var mongoose = require('mongoose');
 var Float = require('mongoose-float').loadType(mongoose,4);
+const mongoodePaginate = require('mongoose-paginate-v2');
 
 const pedidosSchema = new mongoose.Schema(
 	{
@@ -36,5 +37,7 @@ const pedidosSchema = new mongoose.Schema(
 		timestamps: true
 	}
 );
+
+pedidosSchema.plugin(mongoodePaginate);
 
 module.exports = mongoose.model('Pedidos', pedidosSchema);
