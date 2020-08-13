@@ -15,8 +15,7 @@ const ApartadoSchema = new Schema({
     },
     estado: {
         type: String,
-        enum: ['PEDIDO', 'ACEPTADO', 'RECHAZADO'],
-        default: 'PEDIDO'
+        required: true
     }
 
 });
