@@ -2,11 +2,13 @@ const { Router } = require('express');
 const router = Router();
 const auth = require('../middleware/auth')
 
-const { createPedido, getPedidos, updateEstadoPedido, getPedidosUser, getPedido, getPedidosAdmin } = require('../controllers/pedido.controllers');
+const { createPedido, getPedidos, updateEstadoPedido, getPedidosUser, getPedido, getPedidosAdmin, getPedidosAdminFiltrados } = require('../controllers/pedido.controllers');
 
 router.route('/').post(auth,createPedido).get(auth,getPedidos);
 
 router.route('/admin/').get(auth,getPedidosAdmin);
+
+router.route('/admin/filtrados').get(auth,getPedidosAdminFiltrados);
 
 router.route('/:id').get(auth,getPedidosUser);
 

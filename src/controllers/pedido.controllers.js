@@ -29,6 +29,21 @@ pedidoCtrl.getPedidosAdmin = async (req, res, next) => {
         next();
     }
 }
+pedidoCtrl.getPedidosAdminFiltrados = async (req, res, next) => {
+    try {
+        const { page = 1, limit = 10, filtro } = req.query;
+		const options = {
+			page,
+            limit: parseInt(limit),
+            populate: ['cliente', { path: 'pedido.producto', model: 'producto'}]
+		}
+        const pedidos = await pedidoModel.paginate({pagado: true, estado_pedido: filtro}, options);
+        res.status(200).json(pedidos);
+    } catch (err) {
+        res.status(500).json({ message: 'Ups, algo paso al obtenero el pedidos', err });
+        next();
+    }
+}
 
 pedidoCtrl.getPedido = async (req, res, next) => {
     try {
