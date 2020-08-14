@@ -7,7 +7,8 @@ const {
     obtenerApartado, 
     actualizarApartado, 
     obtenerApartados,
-    eliminarApartado 
+    eliminarApartado,
+    obtenerUnApartado
 } = require('../controllers/apartado.controllers');
 
 router.route('/')
@@ -20,5 +21,7 @@ router.route('/:idCliente')
     .get(auth,obtenerApartado)
     .put(auth,actualizarApartado)
     .delete(auth,eliminarApartado)
+
+router.route('/:idApartado').get(auth,obtenerUnApartado)
 
 module.exports = router;

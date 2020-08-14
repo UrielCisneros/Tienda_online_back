@@ -121,4 +121,17 @@ apartadoCtrl.eliminarApartado = async (req, res) => {
 	});
 };
 
+apartadoCtrlobtenerUnApartado = async (req, res) => {
+	try {
+		const apartado =  await Apartado.findById(req.params.idApartado);
+		if(apartado){
+			res.status(200).json(apartado);
+		}
+	} catch (err) {
+		res.status(500).json({ message: 'Hubo un error al obtener apartado', err });
+	}
+	
+
+}
+
 module.exports = apartadoCtrl;
