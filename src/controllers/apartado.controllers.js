@@ -84,7 +84,7 @@ apartadoCtrl.obtenerApartados = async (req, res) => {
 
 apartadoCtrl.obtenerApartado = async (req, res) => {
 	try {
-		const apartado = await Apartado.findOne({cliente: req.params.idCliente}).populate('cliente').populate('producto');
+		const apartado = await Apartado.find({cliente: req.params.idCliente}).populate('cliente').populate('producto');
 		if(!apartado){
 			res.status(404).json({ message: 'Apartado no encontrado' });
 		}
