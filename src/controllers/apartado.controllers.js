@@ -121,7 +121,7 @@ apartadoCtrl.eliminarApartado = async (req, res) => {
 	});
 };
 
-apartadoCtrlobtenerUnApartado = async (req, res) => {
+apartadoCtrl.obtenerUnApartado = async (req, res) => {
 	try {
 		const apartado =  await Apartado.findById(req.params.idApartado);
 		if(apartado){
