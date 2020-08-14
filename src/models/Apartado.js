@@ -13,10 +13,10 @@ const ApartadoSchema = new Schema({
         type: Number,
         required: true
     },
-    medida:{
+    medida: [{
         talla: String,
         numero: String
-    },
+    }],
     estado: {
         type: String,
         required: true
