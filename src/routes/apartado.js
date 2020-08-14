@@ -22,6 +22,6 @@ router.route('/:idCliente')
     .put(auth,actualizarApartado)
     .delete(auth,eliminarApartado)
 
-router.route('/:idApartado').get(auth,obtenerUnApartado)
+router.route('/apartado/:idApartado').get(auth,obtenerUnApartado)
 
 module.exports = router;
