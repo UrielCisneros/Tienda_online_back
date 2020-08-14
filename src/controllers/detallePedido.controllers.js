@@ -21,13 +21,12 @@ detalleCtrl.createDetalle = async (req,res) => {
     if(newDetalle){
         const pedidoBase = await pedidoModel.findById(id_pedido)
         pedidoBase.pedido.map(async (pedido) => {
-            console.log(pedido)
             if(pedido.talla){
                 const producto = await productoModel.findById(pedido.producto);
                 producto.tallas.map(async (talla) => {
                     if(talla.talla == pedido.talla){
                         if(talla.cantidad == '0' || talla.cantidad < pedido.cantidad){
-                            res.status(500).send({ message: 'No exixten suficientes en el inventario' })
+                            res.status(500).send({ message: 'No existen suficientes productos en el inventario' })
                             throw talla.cantidad;
                         }else{
                             let cantidad = talla.cantidad - pedido.cantidad;
@@ -59,7 +58,7 @@ detalleCtrl.createDetalle = async (req,res) => {
                 producto.numeros.map(async (numero) => {
                     if(numero.numero == pedido.numero){
                         if(numero.cantidad == '0' || numero.cantidad < pedido.cantidad){
-                            res.status(500).send({ message: 'No exixten suficientes en el inventario' })
+                            res.status(500).send({ message: 'No exixten suficientes productos en el inventario' })
                             throw numero.cantidad;
                         }else{
                             let cantidad = numero.cantidad - pedido.cantidad;

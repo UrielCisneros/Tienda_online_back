@@ -77,7 +77,6 @@ productosCtrl.getPromocionCarousel = async (req,res,next) => {
     }
 }
 
-
 productosCtrl.crearPromocion = async (req,res) => {
 	try {
 		const newPromocion = new promocionModel(req.body);
@@ -99,7 +98,6 @@ productosCtrl.crearPromocion = async (req,res) => {
 		res.status(500).json({ message: "Error en el servidor",err })	
 	}
 }
-
 
 productosCtrl.actualizarPromocion = async (req, res) => {
 	try {
@@ -457,7 +455,6 @@ productosCtrl.updateProducto = async (req, res, next) => {
 		next();
 	}
 };
-
 
 productosCtrl.deleteProducto = async (req, res, next) => {
 	try {
