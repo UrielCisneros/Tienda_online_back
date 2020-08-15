@@ -77,7 +77,6 @@ productosCtrl.getPromocionCarousel = async (req,res,next) => {
     }
 }
 
-
 productosCtrl.crearPromocion = async (req,res) => {
 	try {
 		const newPromocion = new promocionModel(req.body);
@@ -99,7 +98,6 @@ productosCtrl.crearPromocion = async (req,res) => {
 		res.status(500).json({ message: "Error en el servidor",err })	
 	}
 }
-
 
 productosCtrl.actualizarPromocion = async (req, res) => {
 	try {
@@ -136,15 +134,20 @@ productosCtrl.actualizarPromocion = async (req, res) => {
 productosCtrl.eliminarPromocion = async (req, res) => {
 	try {
 		const promocionBase = await promocionModel.findById(req.params.id);
-		if (promocionBase.imagenPromocion) {
-			await imagen.eliminarImagen(promocionBase.imagenPromocion);
-		}
-	
-		const promocion = await promocionModel.findByIdAndDelete(req.params.id);
-		if (!promocion) {
+		if(promocionBase){
+			if (promocionBase.imagenPromocion) {
+				await imagen.eliminarImagen(promocionBase.imagenPromocion);
+			}
+		
+			const promocion = await promocionModel.findByIdAndDelete(req.params.id);
+			if (!promocion) {
+				res.status(404).json({ message: 'Este promocion no existe' });
+			}
+			res.status(200).json({ message: 'Promocion eliminada' });
+		}else{
 			res.status(404).json({ message: 'Este promocion no existe' });
 		}
-		res.status(200).json({ message: 'Promocion eliminada' });
+
 	} catch (err) {
 		res.status(500).json({ message: "Error en el servidor",err })	
 	}
@@ -452,7 +455,6 @@ productosCtrl.updateProducto = async (req, res, next) => {
 		next();
 	}
 };
-
 
 productosCtrl.deleteProducto = async (req, res, next) => {
 	try {

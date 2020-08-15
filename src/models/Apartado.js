@@ -13,10 +13,13 @@ const ApartadoSchema = new Schema({
         type: Number,
         required: true
     },
+    medida: [{
+        talla: String,
+        numero: String
+    }],
     estado: {
         type: String,
-        enum: ['PEDIDO', 'ACEPTADO', 'RECHAZADO'],
-        default: 'PEDIDO'
+        required: true
     }
 
 });

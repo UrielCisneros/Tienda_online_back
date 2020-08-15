@@ -3,13 +3,57 @@ const Apartado = require('../models/Apartado');
 const Producto = require('../models/Producto')
 
 apartadoCtrl.agregarApartado = async (req, res) => {
-	const { producto, cliente, cantidad, estado } = req.body;
+	const { producto, cliente, cantidad, estado, medida } = req.body;
 	const datosProducto = await Producto.find({_id: producto})
-	datosProducto.map( async (productos) => {
-		if(cantidad > productos.cantidad){
-			res.status(404).json({ message: 'No puedes apartar mas de la cantidad del stock del producto' });
+	const newApartado = new Apartado({ producto, cliente, cantidad, estado, medida });
+
+	if(req.body.medida){
+		if(medida[0].numero){
+			datosProducto[0].numeros.map(async (numero) => {
+				if(numero.numero == medida[0].numero){
+					if(cantidad > numero.cantidad){
+						res.status(500).send({ message: 'No existen suficientes productos en el inventario' })
+					}else{
+						await newApartado.save((err, response) => {
+							if(err){
+								res.status(500).json({ message: 'Hubo un error al crear apartado', err });
+							}else {
+								if(!response){
+									res.status(404).json({ message: 'Error al Crear apartado' });
+								}else{
+									res.status(200).json({ message: 'Apartado creado', response });
+								}
+							}
+						})
+					}
+				}
+			})
+		}else if(medida[0].talla){
+			datosProducto[0].tallas.map(async (talla) => {
+				if(talla.talla == medida[0].talla){
+					if(cantidad > talla.cantidad){
+						res.status(500).send({ message: 'No existen suficientes productos en el inventario' })
+					}else{
+						await newApartado.save((err, response) => {
+							if(err){
+								res.status(500).json({ message: 'Hubo un error al crear apartado', err });
+							}else {
+								if(!response){
+									res.status(404).json({ message: 'Error al Crear apartado' });
+								}else{
+									res.status(200).json({ message: 'Apartado creado', response });
+								}
+							}
+						})
+					}
+				}
+			})
+		}
+	}else{
+		console.log(datosProducto);
+		if(cantidad > datosProducto[0].cantidad){
+			res.status(500).send({ message: 'No existen suficientes productos en el inventario' })
 		}else{
-			const newApartado = new Apartado({ producto, cliente, cantidad, estado });
 			await newApartado.save((err, response) => {
 				if(err){
 					res.status(500).json({ message: 'Hubo un error al crear apartado', err });
@@ -22,7 +66,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 				}
 			})
 		}
-	})
+	}
 };
 
 apartadoCtrl.obtenerApartados = async (req, res) => {
@@ -40,7 +84,7 @@ apartadoCtrl.obtenerApartados = async (req, res) => {
 
 apartadoCtrl.obtenerApartado = async (req, res) => {
 	try {
-		const apartado = await Apartado.findOne({cliente: req.params.idCliente}).populate('cliente').populate('producto');
+		const apartado = await Apartado.find({cliente: req.params.idCliente}).populate('cliente').populate('producto');
 		if(!apartado){
 			res.status(404).json({ message: 'Apartado no encontrado' });
 		}
@@ -76,5 +120,19 @@ apartadoCtrl.eliminarApartado = async (req, res) => {
 		}	
 	});
 };
+
+apartadoCtrl.obtenerUnApartado = async (req, res) => {
+	try {
+		console.log(req.params.id);
+		const apartado =  await Apartado.findById(req.params.id).populate('cliente').populate('producto');
+		if(apartado){
+			res.status(200).json(apartado);
+		}
+	} catch (err) {
+		res.status(500).json({ message: 'Hubo un error al obtener apartado', err });
+	}
+	
+
+}
 
 module.exports = apartadoCtrl;
