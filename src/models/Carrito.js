@@ -15,6 +15,9 @@ const CarritoSchema = new mongoose.Schema({
             type: Number,
             required: true
         },
+        medida: {
+            type: String
+        },
         subtotal: {
             type: Float,
             required: true
