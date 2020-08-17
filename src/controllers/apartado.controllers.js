@@ -71,12 +71,12 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 
 apartadoCtrl.obtenerApartados = async (req, res) => {
 	try {
-		const { page = 1, limit = 10, filtro } = req.query;
-		console.log(filtro);
+		const { page = 1, limit = 10, filter } = req.query;
+
 		let filtroQuery = {};
 
-		if(filtro){
-			filtroQuery.estado = filtro;
+		if(filter){
+			filtroQuery.estado = filter;
 		}
 		console.log(filtroQuery);
 		const options = {
