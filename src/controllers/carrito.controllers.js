@@ -87,11 +87,9 @@ carritoCtrl.obtenerCarrito = async (req, res) => {
 		const carrito = await Carrito.findOne({ cliente: req.params.idCliente })
 			.populate('cliente', 'nombre apellido')
 			.populate('articulos.idarticulo', 'nombre precio imagen');
-		if (!carrito) {
-			res.status(404).json({ message: 'Carrito no encontrado' });
-		} else {
+			
 			res.status(200).json(carrito);
-		}
+
 	} catch (error) {
 		res.status(500).json({ mensaje: 'Error al obtener carrito', error });
 	}
