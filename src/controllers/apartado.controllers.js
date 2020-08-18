@@ -71,10 +71,20 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 
 apartadoCtrl.obtenerApartados = async (req, res) => {
 	try {
-		const apartado = await Apartado.find().populate('cliente').populate('producto');
-		if(!apartado){
-			res.status(404).json({ message: 'Apartados no Encontrados' });
+		const { page = 1, limit = 10, filter } = req.query;
+
+		let filtroQuery = {};
+
+		if(filter){
+			filtroQuery.estado = filter;
 		}
+		console.log(filtroQuery);
+		const options = {
+			page,
+            limit: parseInt(limit),
+            populate: ['cliente', 'producto']
+		}
+		const apartado = await Apartado.paginate(filtroQuery, options);
 		res.status(200).json(apartado);
 	} catch (error) {
 		res.status(500).json({ message: 'Hubo un error al obtener los apartados', error });
