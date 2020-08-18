@@ -3,56 +3,59 @@ const imagen = require('./uploadFile.controllers');
 const Producto = require('../models/Producto');
 const promocionModel = require('../models/PromocionProducto');
 
-productosCtrl.deleteImagen = async (req,res) => {
+productosCtrl.deleteImagen = async (req, res) => {
 	try {
 		const productoDeBase = await promocionModel.findById(req.params.id);
-		if(productoDeBase.imagenPromocion){
-			await promocionModel.updateOne({"_id":req.params.id},{$unset:{"imagenPromocion":""}},async (err, userStored) => {
-				if (err) {
-					res.status(500).json({ message: 'Ups, algo paso al eliminar la imagen', err});
-				} else {
-					if (!userStored) {
-						res.status(404).json({ message: 'Error al eliminar la imagen' });
+		if (productoDeBase.imagenPromocion) {
+			await promocionModel.updateOne(
+				{ _id: req.params.id },
+				{ $unset: { imagenPromocion: '' } },
+				async (err, userStored) => {
+					if (err) {
+						res.status(500).json({ message: 'Ups, algo paso al eliminar la imagen', err });
 					} else {
-						const promocionBase = await promocionModel.findById(userStored._id);
-						res.status(200).json({ message: 'Imagen eliminada', promocionBase});
+						if (!userStored) {
+							res.status(404).json({ message: 'Error al eliminar la imagen' });
+						} else {
+							const promocionBase = await promocionModel.findById(userStored._id);
+							res.status(200).json({ message: 'Imagen eliminada', promocionBase });
+						}
 					}
 				}
-			});
-		}else{
-			res.status(500).json({ message: "Esta promocion no tiene imagen" })
+			);
+		} else {
+			res.status(500).json({ message: 'Esta promocion no tiene imagen' });
 		}
-		
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })	
+		res.status(500).json({ message: 'Error en el servidor', err });
 		console.log(err);
-		res.json({ err })
+		res.json({ err });
 	}
-}
+};
 
-productosCtrl.getPromociones = async (req,res) => {
+productosCtrl.getPromociones = async (req, res) => {
 	try {
 		const promociones = await promocionModel.find().populate('productoPromocion');
 		res.status(200).json(promociones);
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })	
-        next();
+		res.status(500).json({ message: 'Error en el servidor', err });
+		next();
 	}
-}
+};
 
-productosCtrl.getPromocion = async (req,res,next) => {
+productosCtrl.getPromocion = async (req, res, next) => {
 	try {
 		const promociones = await promocionModel.findById(req.params.id).populate('productoPromocion');
 		res.status(200).json(promociones);
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })	
-        next();
+		res.status(500).json({ message: 'Error en el servidor', err });
+		next();
 	}
-}
+};
 
-productosCtrl.getPromocionCarousel = async (req,res,next) => {
-    try {
-/* 		await promocionModel.aggregate([ { $sample: { size: 10 } }, ]).exec(async function(err, transactions) {
+productosCtrl.getPromocionCarousel = async (req, res, next) => {
+	try {
+		/* 		await promocionModel.aggregate([ { $sample: { size: 10 } }, ]).exec(async function(err, transactions) {
 			if(err){
 				res.send({ message: 'Ups, algo paso al obtenero el pedidos', err });
 			}else{
@@ -68,7 +71,10 @@ productosCtrl.getPromocionCarousel = async (req,res,next) => {
 			}			
 		}); */
 
-		const promocion = await promocionModel.find({imagenPromocion:{$exists:true}}).populate('productoPromocion').limit(10);
+		const promocion = await promocionModel
+			.find({ imagenPromocion: { $exists: true } })
+			.populate('productoPromocion')
+			.limit(10);
 		res.status(200).json(promocion);
 		/* promocion.aggregate([ { $sample: { size: 10 } } ]) */
     } catch (err) {
@@ -85,17 +91,17 @@ productosCtrl.crearPromocion = async (req,res) => {
 		}
 		await newPromocion.save((err, userStored) => {
 			if (err) {
-				res.status(500).json({ message: 'Ups, algo paso al crear la promocion', err});
+				res.status(500).json({ message: 'Ups, algo paso al crear la promocion', err });
 			} else {
 				if (!userStored) {
 					res.status(404).json({ message: 'Error al crear la promocion' });
 				} else {
-					res.status(200).json({ message: 'Promocion creada', userStored});
+					res.status(200).json({ message: 'Promocion creada', userStored });
 				}
 			}
 		});
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })	
+		res.status(500).json({ message: 'Error en el servidor', err });
 	}
 }
 
@@ -103,33 +109,30 @@ productosCtrl.actualizarPromocion = async (req, res) => {
 	try {
 		const promocionBase = await promocionModel.findById(req.params.id);
 		const newPromocion = req.body;
-		if(req.file){
+		if (req.file) {
 			newPromocion.imagenPromocion = req.file.key;
-			if(promocionBase.imagenPromocion){
+			if (promocionBase.imagenPromocion) {
 				await imagen.eliminarImagen(promocionBase.imagenPromocion);
 			}
-		}else{
+		} else {
 			newPromocion.imagenPromocion = promocionBase.imagenPromocion;
 		}
-		 await promocionModel.findByIdAndUpdate(req.params.id, newPromocion, async (err, userStored) => {
+		await promocionModel.findByIdAndUpdate(req.params.id, newPromocion, async (err, userStored) => {
 			if (err) {
-				res.status(500).json({ message: 'Ups, algo paso al crear al actualizar la promocion', err});
+				res.status(500).json({ message: 'Ups, algo paso al crear al actualizar la promocion', err });
 			} else {
 				if (!userStored) {
 					res.status(404).json({ message: 'Error al actualizar promocion' });
 				} else {
 					const promocionBase = await promocionModel.findById(userStored._id);
-					res.status(200).json({ message: 'Promocion actualizada', promocionBase});
+					res.status(200).json({ message: 'Promocion actualizada', promocionBase });
 				}
 			}
 		});
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })	
+		res.status(500).json({ message: 'Error en el servidor', err });
 	}
-
-
-	
-}
+};
 
 productosCtrl.eliminarPromocion = async (req, res) => {
 	try {
@@ -149,16 +152,15 @@ productosCtrl.eliminarPromocion = async (req, res) => {
 		}
 
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })	
+		res.status(500).json({ message: 'Error en el servidor', err });
 	}
-
-}
+};
 
 productosCtrl.actualizarNumero = async (req, res) => {
 	try {
 		const datos = await Producto.findById(req.params.id);
 		const numerosProducto = datos.numeros;
-		const numeros = numerosProducto.filter(x => x._id == req.params.idnumero);
+		const numeros = numerosProducto.filter((x) => x._id == req.params.idnumero);
 		numeros.map(async (numerosArray) => {
 			console.log(req.body);
 			const { numero = numerosArray.numero, cantidad = numerosArray.cantidad } = req.body;
@@ -168,29 +170,30 @@ productosCtrl.actualizarNumero = async (req, res) => {
 				},
 				{
 					$set: { 'numeros.$': { numero, cantidad } }
-				}, (err, response) => {
+				},
+				(err, response) => {
 					if (err) {
-						res.status(500).json({ message: 'Ups algo paso al actualizar', err })
+						res.status(500).json({ message: 'Ups algo paso al actualizar', err });
 					} else {
 						if (!response) {
-							res.status(404).json({ message: 'Este apartado no existe' })
+							res.status(404).json({ message: 'Este apartado no existe' });
 						} else {
-							res.status(200).json({ message: 'Se actualizo con exito' })
+							res.status(200).json({ message: 'Se actualizo con exito' });
 						}
 					}
 				}
 			);
-		})
+		});
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })	
+		res.status(500).json({ message: 'Error en el servidor', err });
 	}
-}
+};
 
 productosCtrl.actualizarTalla = async (req, res) => {
 	try {
 		const datos = await Producto.findById(req.params.id);
 		const tallasProducto = datos.tallas;
-		const tallas = tallasProducto.filter(x => x._id == req.params.idtalla);
+		const tallas = tallasProducto.filter((x) => x._id == req.params.idtalla);
 		tallas.map(async (tallaArray) => {
 			console.log(req.body);
 			const { talla = tallaArray.talla, cantidad = tallaArray.cantidad } = req.body;
@@ -200,23 +203,24 @@ productosCtrl.actualizarTalla = async (req, res) => {
 				},
 				{
 					$set: { 'tallas.$': { talla, cantidad } }
-				}, (err, response) => {
+				},
+				(err, response) => {
 					if (err) {
-						res.status(500).json({ message: 'Ups algo paso al actualizar',err })
+						res.status(500).json({ message: 'Ups algo paso al actualizar', err });
 					} else {
 						if (!response) {
-							res.status(404).json({ message: 'Este apartado no existe' })
+							res.status(404).json({ message: 'Este apartado no existe' });
 						} else {
-							res.status(200).json({ message: 'Se actualizo con exito' })
+							res.status(200).json({ message: 'Se actualizo con exito' });
 						}
 					}
 				}
 			);
-		})
+		});
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })
+		res.status(500).json({ message: 'Error en el servidor', err });
 	}
-}
+};
 
 productosCtrl.eliminarTalla = async (req, res) => {
 	try {
@@ -225,28 +229,28 @@ productosCtrl.eliminarTalla = async (req, res) => {
 				_id: req.params.id
 			},
 			{
-				$pull:
-				{
-					tallas:
-					{
+				$pull: {
+					tallas: {
 						_id: req.params.idtalla
 					}
 				}
-			}, (err, response) => {
+			},
+			(err, response) => {
 				if (err) {
-					res.status(500).json({ message: 'Ups, also paso en la base', err })
+					res.status(500).json({ message: 'Ups, also paso en la base', err });
 				} else {
 					if (!response) {
-						res.status(404).json({ message: 'esa talla no existe' })
+						res.status(404).json({ message: 'esa talla no existe' });
 					} else {
-						res.status(200).json({ message: 'Talla eliminada' })
+						res.status(200).json({ message: 'Talla eliminada' });
 					}
 				}
-			});
+			}
+		);
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })
+		res.status(500).json({ message: 'Error en el servidor', err });
 	}
-}
+};
 
 productosCtrl.eliminarNumero = async (req, res) => {
 	try {
@@ -255,47 +259,48 @@ productosCtrl.eliminarNumero = async (req, res) => {
 				_id: req.params.id
 			},
 			{
-				$pull:
-				{
-					numeros:
-					{
+				$pull: {
+					numeros: {
 						_id: req.params.idnumero
 					}
 				}
-			}, (err, response) => {
+			},
+			(err, response) => {
 				if (err) {
-					res.status(500).json({ message: 'Ups, also paso en la base', err })
+					res.status(500).json({ message: 'Ups, also paso en la base', err });
 				} else {
 					if (!response) {
-						res.status(404).json({ message: 'ese numero no existe' })
+						res.status(404).json({ message: 'ese numero no existe' });
 					} else {
-						res.status(200).json({ message: 'Numero eliminada' })
+						res.status(200).json({ message: 'Numero eliminada' });
 					}
 				}
-			});
+			}
+		);
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })
+		res.status(500).json({ message: 'Error en el servidor', err });
 	}
-}
+};
 
 productosCtrl.addTalla = async (req, res, next) => {
 	try {
 		const { talla, cantidad } = req.body;
-		console.log(req.body)
+		console.log(req.body);
 		await Producto.updateOne(
 			{
 				_id: req.params.id
 			},
 			{
-				$addToSet:
-				{
-					tallas:
-					[{
-						talla: talla,
-						cantidad: cantidad
-					}]
+				$addToSet: {
+					tallas: [
+						{
+							talla: talla,
+							cantidad: cantidad
+						}
+					]
 				}
-			}, (err, response) => {
+			},
+			(err, response) => {
 				if (err) {
 					res.status(500).json({ message: 'Ups, algo al guardar talla', err });
 				} else {
@@ -308,28 +313,27 @@ productosCtrl.addTalla = async (req, res, next) => {
 			}
 		);
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })
+		res.status(500).json({ message: 'Error en el servidor', err });
 	}
-}
+};
 
 productosCtrl.addnumero = async (req, res, next) => {
 	try {
 		const { numero, cantidad } = req.body;
-		console.log(req.body)
+		console.log(req.body);
 		await Producto.updateOne(
 			{
 				_id: req.params.id
 			},
 			{
-				$addToSet:
-				{
-					numeros:
-					{
+				$addToSet: {
+					numeros: {
 						numero: numero,
 						cantidad: cantidad
 					}
 				}
-			}, (err, response) => {
+			},
+			(err, response) => {
 				if (err) {
 					res.status(500).json({ message: 'Ups, algo al guardar numero', err });
 				} else {
@@ -342,22 +346,21 @@ productosCtrl.addnumero = async (req, res, next) => {
 			}
 		);
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })
+		res.status(500).json({ message: 'Error en el servidor', err });
 	}
-
-}
+};
 
 productosCtrl.subirImagen = (req, res, next) => {
-	imagen.upload(req, res, function (err) {
+	imagen.upload(req, res, function(err) {
 		if (err) {
-			res.status(500).json({ message: "formato de imagen no valido", err });
-		}else{
+			res.status(500).json({ message: 'formato de imagen no valido', err });
+		} else {
 			return next();
 		}
 	});
 };
 
-productosCtrl.getProductos = async (req, res) => {
+/* productosCtrl.getProductos = async (req, res) => {
 	try {
 		const { page = 1, limit = 10 } = req.query;
 		const options = {
@@ -378,9 +381,9 @@ productosCtrl.getProductos = async (req, res) => {
 	} catch (err) {
 		res.status(500).json({ message: "Error en el servidor",err })
 	}
-};
+}; */
 
-productosCtrl.getProductosFiltrados = async (req, res) => {
+/* productosCtrl.getProductosFiltrados = async (req, res) => {
 	try {
 		await Producto.find({nombre: { $regex: '.*' + req.params.search + '.*', $options: 'i' } },(err, postStored) => {
 			if (err) {
@@ -396,11 +399,80 @@ productosCtrl.getProductosFiltrados = async (req, res) => {
 	} catch (err) {
 		res.status(500).json({ message: "Error en el servidor",err })
 	}
+}; */
+
+productosCtrl.getProductosFiltrados = async (req, res) => {
+	try {
+		await Producto.aggregate(
+			[
+				{
+					$lookup: {
+						from: 'promocions',
+						localField: '_id',
+						foreignField: 'productoPromocion',
+						as: 'todos'
+					}
+				},
+				{
+					$match: {
+						nombre: { $regex: '.*' + req.params.search + '.*', $options: 'i' }
+					}
+				}
+			],
+			(err, postStored) => {
+				if (err) {
+					res.status(500).json({ message: 'Error en el servidor', err });
+				} else {
+					if (!postStored) {
+						res.status(404).json({ message: 'Error al mostrar Productos' });
+					} else {
+						res.status(200).json({ posts: postStored });
+					}
+				}
+			}
+		);
+	} catch (err) {
+		res.status(500).json({ message: 'Error en el servidor', err });
+	}
+};
+
+productosCtrl.getProductos = async (req, res) => {
+	try {
+		const { page = 1, limit = 10 } = req.query;
+		const options = {
+			page,
+			limit: parseInt(limit)
+		};
+		const aggregate = Producto.aggregate([
+			{
+				$lookup: {
+					from: 'promocions',
+					localField: '_id',
+					foreignField: 'productoPromocion',
+					as: 'todos'
+				}
+			}
+		]);
+
+		await Producto.aggregatePaginate(aggregate, options, (err, postStored) => {
+			if (err) {
+				res.status(500).json({ message: 'Error en el servidor', err });
+			} else {
+				if (!postStored) {
+					res.status(404).json({ message: 'Error al mostrar Blogs' });
+				} else {
+					res.status(200).json({ posts: postStored });
+				}
+			}
+		});
+	} catch (err) {
+		res.status(500).json({ message: 'Error en el servidor', err });
+	}
 };
 
 productosCtrl.createProducto = async (req, res) => {
 	try {
-		console.log(req.body)
+		console.log(req.body);
 		const newProducto = new Producto(req.body);
 		newProducto.activo = true;
 		if (req.file) {
@@ -408,17 +480,17 @@ productosCtrl.createProducto = async (req, res) => {
 		}
 		await newProducto.save((err, userStored) => {
 			if (err) {
-				res.status(500).json({ message: 'Ups, algo paso al registrar el producto', err});
+				res.status(500).json({ message: 'Ups, algo paso al registrar el producto', err });
 			} else {
 				if (!userStored) {
 					res.status(404).json({ message: 'Error al crear el producto' });
 				} else {
-					res.status(200).json({ message: 'Producto almacenado', userStored});
+					res.status(200).json({ message: 'Producto almacenado', userStored });
 				}
 			}
 		});
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })
+		res.status(500).json({ message: 'Error en el servidor', err });
 	}
 };
 
@@ -426,12 +498,12 @@ productosCtrl.getProducto = async (req, res, next) => {
 	try {
 		const producto = await Producto.findById(req.params.id);
 		if (!producto) {
-			res.status(404).json({ message: "Este producto no existe" });
+			res.status(404).json({ message: 'Este producto no existe' });
 			return next();
 		}
 		res.status(200).json(producto);
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })
+		res.status(500).json({ message: 'Error en el servidor', err });
 	}
 };
 
@@ -448,9 +520,9 @@ productosCtrl.updateProducto = async (req, res, next) => {
 			nuevoProducto.imagen = productoDeBase.imagen;
 		}
 		const producto = await Producto.findByIdAndUpdate(req.params.id, nuevoProducto);
-		res.status(200).json({message: 'Producto actualizado', producto});
+		res.status(200).json({ message: 'Producto actualizado', producto });
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })
+		res.status(500).json({ message: 'Error en el servidor', err });
 		console.log(err);
 		next();
 	}
@@ -462,14 +534,14 @@ productosCtrl.deleteProducto = async (req, res, next) => {
 		if (productoDeBase.imagen) {
 			await imagen.eliminarImagen(productoDeBase.imagen);
 		}
-	
+
 		const producto = await Producto.findByIdAndDelete(req.params.id);
 		if (!producto) {
 			res.status(500).json({ message: 'Este producto no existe' });
 		}
 		res.status(200).json({ message: 'Producto eliminado' });
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })
+		res.status(500).json({ message: 'Error en el servidor', err });
 	}
 };
 
