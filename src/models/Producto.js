@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Float = require('mongoose-float').loadType(mongoose,4);
 const mongoodePaginate = require('mongoose-paginate-v2');
+var aggregatePaginate = require('mongoose-aggregate-paginate-v2');
 
 const ProductoSchema = new mongoose.Schema({
 	nombre: {
@@ -44,5 +45,6 @@ const ProductoSchema = new mongoose.Schema({
 });
 
 ProductoSchema.plugin(mongoodePaginate);
+ProductoSchema.plugin(aggregatePaginate);
 
 module.exports = mongoose.model('producto', ProductoSchema);
