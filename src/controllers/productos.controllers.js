@@ -77,13 +77,13 @@ productosCtrl.getPromocionCarousel = async (req, res, next) => {
 			.limit(10);
 		res.status(200).json(promocion);
 		/* promocion.aggregate([ { $sample: { size: 10 } } ]) */
-	} catch (err) {
-		res.status(500).json({ message: 'Error en el servidor', err });
-		next();
-	}
-};
+    } catch (err) {
+        res.status(500).json({ message: "Error en el servidor",err })	
+        next();
+    }
+}
 
-productosCtrl.crearPromocion = async (req, res) => {
+productosCtrl.crearPromocion = async (req,res) => {
 	try {
 		const newPromocion = new promocionModel(req.body);
 		if (req.file) {
@@ -103,7 +103,7 @@ productosCtrl.crearPromocion = async (req, res) => {
 	} catch (err) {
 		res.status(500).json({ message: 'Error en el servidor', err });
 	}
-};
+}
 
 productosCtrl.actualizarPromocion = async (req, res) => {
 	try {
@@ -137,15 +137,20 @@ productosCtrl.actualizarPromocion = async (req, res) => {
 productosCtrl.eliminarPromocion = async (req, res) => {
 	try {
 		const promocionBase = await promocionModel.findById(req.params.id);
-		if (promocionBase.imagenPromocion) {
-			await imagen.eliminarImagen(promocionBase.imagenPromocion);
-		}
-
-		const promocion = await promocionModel.findByIdAndDelete(req.params.id);
-		if (!promocion) {
+		if(promocionBase){
+			if (promocionBase.imagenPromocion) {
+				await imagen.eliminarImagen(promocionBase.imagenPromocion);
+			}
+		
+			const promocion = await promocionModel.findByIdAndDelete(req.params.id);
+			if (!promocion) {
+				res.status(404).json({ message: 'Este promocion no existe' });
+			}
+			res.status(200).json({ message: 'Promocion eliminada' });
+		}else{
 			res.status(404).json({ message: 'Este promocion no existe' });
 		}
-		res.status(200).json({ message: 'Promocion eliminada' });
+
 	} catch (err) {
 		res.status(500).json({ message: 'Error en el servidor', err });
 	}

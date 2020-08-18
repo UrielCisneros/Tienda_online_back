@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const mongoodePaginate = require('mongoose-paginate-v2');
 
 const ApartadoSchema = new Schema({
     producto: {
@@ -13,12 +14,17 @@ const ApartadoSchema = new Schema({
         type: Number,
         required: true
     },
+    medida: [{
+        talla: String,
+        numero: String
+    }],
     estado: {
         type: String,
-        enum: ['PEDIDO', 'ACEPTADO', 'RECHAZADO'],
-        default: 'PEDIDO'
+        required: true
     }
 
 });
+
+ApartadoSchema.plugin(mongoodePaginate);
 
 module.exports = model('apartado', ApartadoSchema);
