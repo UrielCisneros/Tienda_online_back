@@ -106,7 +106,7 @@ apartadoCtrl.obtenerApartado = async (req, res) => {
 };
 
 apartadoCtrl.actualizarApartado = async (req, res) => {
-	await Apartado.findByIdAndUpdate({cliente: req.params.idCliente}, req.body, (err, response) => {
+	await Apartado.findByIdAndUpdate({_id: req.params.idCliente}, req.body, (err, response) => {
 		if(err){
 			res.status(500).json({message: 'Hubo un error al actualizar el apartado', err})
 		}else{
