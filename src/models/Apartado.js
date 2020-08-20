@@ -23,6 +23,9 @@ const ApartadoSchema = new Schema({
         required: true
     }
 
+},
+{
+    timestamps: true
 });
 
 ApartadoSchema.plugin(mongoodePaginate);
