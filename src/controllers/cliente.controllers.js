@@ -235,7 +235,7 @@ clienteCtrl.authFirebase = async (req, res) => {
 				nombre: cliente.nombre,
 				apellido: cliente.apellido,
 				_id: cliente._id,
-				imagen: cliente.imagen,
+				imagenFireBase: cliente.imagen,
 				rol: false
 			},
 			process.env.AUTH_KEY
@@ -267,7 +267,7 @@ clienteCtrl.authFirebase = async (req, res) => {
 									nombre: newcliente.nombre,
 									apellido: newcliente.apellido,
 									_id: newcliente._id,
-									imagen: cliente.imagen,
+									imagenFireBase: cliente.imagen,
 									rol: false
 								},
 								process.env.AUTH_KEY

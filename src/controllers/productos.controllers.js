@@ -2,6 +2,7 @@ const productosCtrl = {};
 const imagen = require('./uploadFile.controllers');
 const Producto = require('../models/Producto');
 const promocionModel = require('../models/PromocionProducto');
+const mongoose = require('mongoose')
 
 productosCtrl.deleteImagen = async (req, res) => {
 	try {
@@ -470,6 +471,34 @@ productosCtrl.getProductos = async (req, res) => {
 	}
 };
 
+productosCtrl.getProducto = async (req, res, next) => {
+	try {
+		const producto = await Producto.aggregate([
+			{
+				$match: {
+					_id: mongoose.Types.ObjectId(req.params.id)
+				}
+			},
+			{
+				$lookup: {
+					from: 'promocions',
+					localField: '_id',
+					foreignField: 'productoPromocion',
+					as: 'promocion'
+				}
+			}
+		]);
+		if (!producto) {
+			res.status(404).json({ message: 'Este producto no existe' });
+			return next();
+		}
+		res.status(200).json(producto);
+	} catch (err) {
+		console.log(err)
+		res.status(500).json({ message: 'Error en el servidor', err });
+	}
+};
+
 productosCtrl.createProducto = async (req, res) => {
 	try {
 		console.log(req.body);
@@ -494,7 +523,7 @@ productosCtrl.createProducto = async (req, res) => {
 	}
 };
 
-productosCtrl.getProducto = async (req, res, next) => {
+/* productosCtrl.getProducto = async (req, res, next) => {
 	try {
 		const producto = await Producto.findById(req.params.id);
 		if (!producto) {
@@ -505,7 +534,7 @@ productosCtrl.getProducto = async (req, res, next) => {
 	} catch (err) {
 		res.status(500).json({ message: 'Error en el servidor', err });
 	}
-};
+}; */
 
 productosCtrl.updateProducto = async (req, res, next) => {
 	try {
