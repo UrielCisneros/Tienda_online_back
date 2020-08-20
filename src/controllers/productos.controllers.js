@@ -492,7 +492,7 @@ productosCtrl.getProducto = async (req, res, next) => {
 			res.status(404).json({ message: 'Este producto no existe' });
 			return next();
 		}
-		res.status(200).json(producto);
+		res.status(200).json(producto[0]);
 	} catch (err) {
 		console.log(err)
 		res.status(500).json({ message: 'Error en el servidor', err });
