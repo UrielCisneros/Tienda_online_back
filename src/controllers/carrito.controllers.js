@@ -221,7 +221,7 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 };
 
 carritoCtrl.eliminarCarrito = async (req, res) => {
-	await Carrito.findByIdAndDelete({ cliente: req.params.idCliente }, (err, response) => {
+	await Carrito.findOneAndDelete({ cliente: req.params.idCliente }, (err, response) => {
 		if (err) {
 			res.status(500).json({ messege: 'hubo un error al eliminar el Carrito', err });
 		} else {

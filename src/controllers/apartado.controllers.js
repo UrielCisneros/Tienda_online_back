@@ -106,7 +106,7 @@ apartadoCtrl.obtenerApartado = async (req, res) => {
 };
 
 apartadoCtrl.actualizarApartado = async (req, res) => {
-	await Apartado.findByIdAndUpdate({_id: req.params.idCliente}, req.body, (err, response) => {
+	await Apartado.findOneAndUpdate({_id: req.params.idCliente}, req.body, (err, response) => {
 		if(err){
 			res.status(500).json({message: 'Hubo un error al actualizar el apartado', err})
 		}else{
@@ -120,7 +120,7 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 };
 
 apartadoCtrl.eliminarApartado = async (req, res) => {
-	await Apartado.findByIdAndDelete({cliente: req.params.idCliente}, (err, response) => {
+	await Apartado.findOneAndDelete({cliente: req.params.idCliente}, (err, response) => {
 		if(err){
 			res.status(500).json({message: 'Hubo un error al eliminar apartado', err})
 		}else if(!response){
@@ -133,7 +133,6 @@ apartadoCtrl.eliminarApartado = async (req, res) => {
 
 apartadoCtrl.obtenerUnApartado = async (req, res) => {
 	try {
-		console.log(req.params.id);
 		const apartado =  await Apartado.findById(req.params.id).populate('cliente').populate('producto');
 		if(apartado){
 			res.status(200).json(apartado);
