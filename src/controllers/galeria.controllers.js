@@ -161,7 +161,7 @@ galeriaCtrl.eliminarGaleria = async (req, res) => {
            res.status(500).json({message: 'hubo un error al eliminar imagen', err})
        }
     })
-    await Galeria.findByIdAndDelete(req.params.idGaleria, (err, response) => {
+    await Galeria.findByIdAndDelete(req.params.idProducto, (err, response) => {
         if(err){
             res.status(404).json({message: 'galeria no encontrada'})  
         }else{
