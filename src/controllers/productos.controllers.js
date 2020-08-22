@@ -538,6 +538,7 @@ productosCtrl.createProducto = async (req, res) => {
 
 productosCtrl.updateProducto = async (req, res, next) => {
 	try {
+		console.log(req.body);
 		const productoDeBase = await Producto.findById(req.params.id);
 		//Construir nuevo producto
 		const nuevoProducto = req.body;
