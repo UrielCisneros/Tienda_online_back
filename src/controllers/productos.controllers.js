@@ -401,6 +401,27 @@ productosCtrl.subirImagen = (req, res, next) => {
 		res.status(500).json({ message: "Error en el servidor",err })
 	}
 }; */
+productosCtrl.getProductosSimilares = async (req, res) => {
+	console.log(req.query)
+	const { categoria, nombre } = req.query
+	try {
+		await Producto.find({categoria: { $regex: '.*' + categoria + '.*', $options: 'i' },nombre: { $regex: '.*' + nombre + '.*', $options: 'i' } },
+			(err, postStored) => {
+				if (err) {
+					res.status(500).json({ message: 'Error en el servidor', err });
+				} else {
+					if (!postStored) {
+						res.status(404).json({ message: 'Error al mostrar Productos' });
+					} else {
+						res.status(200).json({ posts: postStored });
+					}
+				}
+			}
+		);
+	} catch (err) {
+		res.status(500).json({ message: 'Error en el servidor', err });
+	}
+};
 
 productosCtrl.getProductosFiltrados = async (req, res) => {
 	try {

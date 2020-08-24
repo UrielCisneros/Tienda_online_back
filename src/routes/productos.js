@@ -21,9 +21,12 @@ const {
 	getPromociones,
 	getPromocion,
 	deleteImagen,
-	getProductosFiltrados
+	getProductosFiltrados,
+	getProductosSimilares
 } = require('../controllers/productos.controllers');
 const auth = require('../middleware/auth')
+
+router.route('/similares/').get(getProductosSimilares)
 
 router.route('/promocion/carousel/').get(getPromocionCarousel)
 
