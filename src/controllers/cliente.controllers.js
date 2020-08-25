@@ -1,13 +1,12 @@
 const clienteCtrl = {};
 const imagen = require('./uploadFile.controllers');
 const bcrypt = require('bcrypt-nodejs');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 const clienteModel = require('../models/Cliente');
 const adminModel = require('../models/Administrador');
 
-
 clienteCtrl.subirImagen = async (req, res, next) => {
-	await imagen.upload(req, res, function (err) {
+	await imagen.upload(req, res, function(err) {
 		if (err) {
 			res.json({ message: err });
 		}
@@ -15,7 +14,7 @@ clienteCtrl.subirImagen = async (req, res, next) => {
 	});
 };
 
-clienteCtrl.getClientes = async (req, res, next) => {
+/* clienteCtrl.getClientes = async (req, res, next) => {
 	try {
 		const clientes = await clienteModel.find();
 		res.status(200).json(clientes);
@@ -23,6 +22,60 @@ clienteCtrl.getClientes = async (req, res, next) => {
 		res.status(500).json({ message: "Error en el servidor",err })	
 		console.log(error);
 		next();
+	}
+}; */
+clienteCtrl.getClientes = async (req, res, next) => {
+	try {
+		const { page = 1, limit = 10 } = req.query;
+		const options = {
+			page,
+			limit: parseInt(limit)
+		};
+		await clienteModel.paginate({}, options, (err, response) => {
+			if (err) {
+				res.status(500).json({ message: 'Error en el servidor', err });
+			} else {
+				if (!response) {
+					res.status(404).json({ message: 'Error al obtener clientes' });
+				} else {
+					res.status(200).json({ posts: response });
+				}
+			}
+		});
+	} catch (err) {
+		res.status(500).json({ message: 'Error en el servidor', err });
+	}
+};
+
+clienteCtrl.getClientesFiltrados = async (req, res, next) => {
+	try {
+		const { nombre, apellido, direccion } = req.query;
+		await clienteModel.aggregate(
+			[
+				{
+					$match: {
+						$or: [
+							{ nombre: { $regex: '.*' + nombre + '.*', $options: 'i' } },
+							{ apellido: { $regex: '.*' + apellido + '.*', $options: 'i' } },
+							{ 'direccion.calle_numero': { $regex: '.*' + direccion + '.*', $options: 'i' } }
+						]
+					}
+				}
+			],
+			(err, response) => {
+				if (err) {
+					res.status(500).json({ message: 'Error en el servidor', err });
+				} else {
+					if (!response) {
+						res.status(404).json({ message: 'Error al obtener clientes' });
+					} else {
+						res.status(200).json({ posts: response });
+					}
+				}
+			}
+		);
+	} catch (err) {
+		res.status(500).json({ message: 'Error en el servidor', err });
 	}
 };
 
@@ -35,18 +88,17 @@ clienteCtrl.getCliente = async (req, res, next) => {
 		}
 		res.json(cliente);
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })	
+		res.status(500).json({ message: 'Error en el servidor', err });
 	}
-
 };
 
 clienteCtrl.createCliente = (req, res) => {
 	try {
-		console.log("Datos del body: ");
+		console.log('Datos del body: ');
 		console.log(req.body);
-		const repeatContrasena  = req.body.repeatContrasena;
+		const repeatContrasena = req.body.repeatContrasena;
 		const contrasena = req.body.contrasena;
-		console.log("datos contrasena: contrasena: "+ contrasena + " repeatContrasena: "+repeatContrasena);
+		console.log('datos contrasena: contrasena: ' + contrasena + ' repeatContrasena: ' + repeatContrasena);
 		const newCliente = new clienteModel(req.body);
 		newCliente.active = false;
 		if (!contrasena || !repeatContrasena) {
@@ -55,9 +107,9 @@ clienteCtrl.createCliente = (req, res) => {
 			if (contrasena !== repeatContrasena) {
 				res.status(404).json({ message: 'Las contrasenas no son iguales' });
 			} else {
-				bcrypt.hash(contrasena, null, null, function (err, hash) {
+				bcrypt.hash(contrasena, null, null, function(err, hash) {
 					if (err) {
-						res.status(500).json({ message: 'Error al encriptar la contrasena',err });
+						res.status(500).json({ message: 'Error al encriptar la contrasena', err });
 					} else {
 						newCliente.contrasena = hash;
 						newCliente.save((err, userStored) => {
@@ -67,16 +119,18 @@ clienteCtrl.createCliente = (req, res) => {
 								if (!userStored) {
 									res.status(404).json({ message: 'Error al crear el usuario' });
 								} else {
-									const token = jwt.sign({
-										email : newCliente.email,
-										nombre: newCliente.nombre,
-										apellido: newCliente.apellido,
-										_id: newCliente._id,
-										rol:false
-									},
-									process.env.AUTH_KEY);
-									console.log("Token: "+token)
-									res.json({token});
+									const token = jwt.sign(
+										{
+											email: newCliente.email,
+											nombre: newCliente.nombre,
+											apellido: newCliente.apellido,
+											_id: newCliente._id,
+											rol: false
+										},
+										process.env.AUTH_KEY
+									);
+									console.log('Token: ' + token);
+									res.json({ token });
 								}
 							}
 						});
@@ -85,7 +139,7 @@ clienteCtrl.createCliente = (req, res) => {
 			}
 		}
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })	
+		res.status(500).json({ message: 'Error en el servidor', err });
 		console.log(err);
 	}
 };
@@ -105,7 +159,7 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 			nuevoCliente.imagen = clienteBase.imagen;
 		}
 
-		 await clienteModel.findByIdAndUpdate(req.params.id, nuevoCliente, async (err, userStored) => {
+		await clienteModel.findByIdAndUpdate(req.params.id, nuevoCliente, async (err, userStored) => {
 			if (err) {
 				res.status(500).json({ message: 'Ups, algo paso al registrar el usuario', err });
 			} else {
@@ -113,22 +167,24 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 					res.status(404).json({ message: 'Error al crear el usuario' });
 				} else {
 					const clienteBase = await clienteModel.findById(req.params.id);
-					const token = jwt.sign({
-						email : clienteBase.email,
-						nombre: clienteBase.nombre,
-						apellido: clienteBase.apellido,
-						_id: clienteBase._id,
-						imagen: clienteBase.imagen,
-						rol: false
-					},
-					process.env.AUTH_KEY);
+					const token = jwt.sign(
+						{
+							email: clienteBase.email,
+							nombre: clienteBase.nombre,
+							apellido: clienteBase.apellido,
+							_id: clienteBase._id,
+							imagen: clienteBase.imagen,
+							rol: false
+						},
+						process.env.AUTH_KEY
+					);
 					res.json({ token });
 				}
 			}
 		});
 	} catch (err) {
 		console.log(err);
-		res.status(500).json({ message: "Error en el servidor",err })	
+		res.status(500).json({ message: 'Error en el servidor', err });
 		next();
 	}
 };
@@ -138,10 +194,10 @@ function verificarPass(nuevoCliente, contrasena, repeatContrasena) {
 		if (contrasena !== repeatContrasena) {
 			res.status(404).json({ message: 'Las contrasenas no son iguales' });
 		} else {
-			verificarPass
-			bcrypt.hash(contrasena, null, null, function (err, hash) {
+			verificarPass;
+			bcrypt.hash(contrasena, null, null, function(err, hash) {
 				if (err) {
-					res.status(404).json({ message: 'Error al encriptar la contrasena',err });
+					res.status(404).json({ message: 'Error al encriptar la contrasena', err });
 				} else {
 					nuevoCliente.contrasena = hash;
 				}
@@ -159,91 +215,93 @@ clienteCtrl.deleteCliente = async (req, res, next) => {
 		await clienteModel.findByIdAndDelete(req.params.id);
 		res.json({ message: 'Cliente Deleted' });
 	} catch (err) {
-		res.status(500).json({ message: "Error en el servidor",err })	
+		res.status(500).json({ message: 'Error en el servidor', err });
 	}
 };
 
 clienteCtrl.authCliente = async (req, res, next) => {
 	const { email } = req.body;
 	const contrasena = req.body.contrasena;
-	const admin = await adminModel.findOne({email});
-	if(admin){
+	const admin = await adminModel.findOne({ email });
+	if (admin) {
 		try {
-			if(!bcrypt.compareSync(contrasena, admin.contrasena)){
+			if (!bcrypt.compareSync(contrasena, admin.contrasena)) {
 				res.status(404).json({ message: 'Contraseña incorrecta' });
 				next();
-			}else{
-				const token = jwt.sign({
-					email : admin.email,
-					nombre: admin.nombre,
-					_id: admin._id,
-					rol: true
-				},
-				process.env.AUTH_KEY
-				);
-				//token
-				res.json({token});
-			}
-		} catch (err) {
-			console.log(err)
-			res.status(500).json({ message: "Error en el servidor",err })	
-		}
-	}else{
-		try {
-			const cliente = await clienteModel.findOne({ email });
-			console.log(cliente,contrasena);
-			if(!cliente){
-				 res.status(404).json({ message: 'Este usuario no existe' });
-			}else{
-				if(!bcrypt.compareSync(contrasena, cliente.contrasena)){
-					console.log("entro")
-					 res.status(500).json({ message: 'Contraseña incorrecta' });
-					next();
-				}else{
-					const token = jwt.sign({
-						email : cliente.email,
-						nombre: cliente.nombre,
-						apellido: cliente.apellido,
-						_id: cliente._id,
-						imagen: cliente.imagen,
-						rol: false
+			} else {
+				const token = jwt.sign(
+					{
+						email: admin.email,
+						nombre: admin.nombre,
+						_id: admin._id,
+						rol: true
 					},
 					process.env.AUTH_KEY
+				);
+				//token
+				res.json({ token });
+			}
+		} catch (err) {
+			console.log(err);
+			res.status(500).json({ message: 'Error en el servidor', err });
+		}
+	} else {
+		try {
+			const cliente = await clienteModel.findOne({ email });
+			console.log(cliente, contrasena);
+			if (!cliente) {
+				res.status(404).json({ message: 'Este usuario no existe' });
+			} else {
+				if (!bcrypt.compareSync(contrasena, cliente.contrasena)) {
+					console.log('entro');
+					res.status(500).json({ message: 'Contraseña incorrecta' });
+					next();
+				} else {
+					const token = jwt.sign(
+						{
+							email: cliente.email,
+							nombre: cliente.nombre,
+							apellido: cliente.apellido,
+							_id: cliente._id,
+							imagen: cliente.imagen,
+							rol: false
+						},
+						process.env.AUTH_KEY
 					);
 					//token
-					res.json({token});
+					res.json({ token });
 				}
 			}
 		} catch (err) {
-			console.log(err)
-			res.status(500).json({ message: "Error en el servidor",err })	
+			console.log(err);
+			res.status(500).json({ message: 'Error en el servidor', err });
 		}
 	}
-}
-
+};
 
 clienteCtrl.authFirebase = async (req, res) => {
-	const { email, nombre,apellido, imagen, uid } = req.body;
-	const cliente = await clienteModel.findOne({email});
-	if(cliente){
-		if(!bcrypt.compareSync(uid, cliente.contrasena)){
+	const { email, nombre, apellido, imagen, uid } = req.body;
+	const cliente = await clienteModel.findOne({ email });
+	if (cliente) {
+		if (!bcrypt.compareSync(uid, cliente.contrasena)) {
 			res.status(500).json({ message: 'Contraseña incorrecta' });
 			next();
-		}else{
-			const token = jwt.sign({
-				email : cliente.email,
-				nombre: cliente.nombre,
-				apellido: cliente.apellido,
-				_id: cliente._id,
-				imagenFireBase: cliente.imagen,
-				rol: false
-			},
-			process.env.AUTH_KEY
+		} else {
+			const token = jwt.sign(
+				{
+					email: cliente.email,
+					nombre: cliente.nombre,
+					apellido: cliente.apellido,
+					_id: cliente._id,
+					imagenFireBase: cliente.imagen,
+					rol: false
+				},
+				process.env.AUTH_KEY
 			);
 			//token
-			res.json({token});
+			res.json({ token });
 		}
-	}else{
+	} else {
 		try {
 			const newcliente = new clienteModel();
 			newcliente.nombre = nombre;
@@ -252,28 +310,29 @@ clienteCtrl.authFirebase = async (req, res) => {
 			newcliente.imagen = imagen;
 			bcrypt.hash(uid, null, null, function(err, hash) {
 				if (err) {
-					res.status(500).json({ message: 'Error al encriptar la contrasena',err });
+					res.status(500).json({ message: 'Error al encriptar la contrasena', err });
 				} else {
 					newcliente.contrasena = hash;
 					newcliente.save((err, userStored) => {
 						if (err) {
-							res.status(500).json({ message: 'Ups, algo paso al registrar el usuario',err });
+							res.status(500).json({ message: 'Ups, algo paso al registrar el usuario', err });
 						} else {
 							if (!userStored) {
 								res.status(500).json({ message: 'Error al crear el usuario' });
 							} else {
-								const token = jwt.sign({
-									email : newcliente.email,
-									nombre: newcliente.nombre,
-									apellido: newcliente.apellido,
-									_id: newcliente._id,
-									imagenFireBase: cliente.imagen,
-									rol: false
-								},
-								process.env.AUTH_KEY
+								const token = jwt.sign(
+									{
+										email: newcliente.email,
+										nombre: newcliente.nombre,
+										apellido: newcliente.apellido,
+										_id: newcliente._id,
+										imagenFireBase: cliente.imagen,
+										rol: false
+									},
+									process.env.AUTH_KEY
 								);
 								//token
-								res.json({token});
+								res.json({ token });
 							}
 						}
 					});
@@ -281,10 +340,9 @@ clienteCtrl.authFirebase = async (req, res) => {
 			});
 		} catch (err) {
 			console.log(err);
-			res.status(500).json({ message: "Error en el servidor",err })	
+			res.status(500).json({ message: 'Error en el servidor', err });
 		}
 	}
-}
+};
 
 module.exports = clienteCtrl;
-
