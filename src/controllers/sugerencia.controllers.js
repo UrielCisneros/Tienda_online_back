@@ -67,7 +67,7 @@ sugerenciaCtrl.obtenerSugerencia = async (req, res) => {
 					if (err) {
 						res.send({ message: 'Error al obtener sugerencia', err });
 					} else {
-						res.json(populatedTransactions);
+						res.json(populatedTransactions[0]);
 					}
 				});
 			}
