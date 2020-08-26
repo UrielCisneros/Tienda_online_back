@@ -22,9 +22,12 @@ const ApartadoSchema = new Schema({
         type: String,
         required: true
     },
-    tipoEnvio: {
+    tipoEntrega: {
         type: String,
         required: true
+    },
+    url:{
+        type: String
     },
     servicio: {
         type: String
