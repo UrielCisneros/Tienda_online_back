@@ -70,8 +70,8 @@ pedidoCtrl.getPedidosUser = async (req, res, next) => {
 pedidoCtrl.createPedido = async (req, res, next) => {
     const newpedido = new pedidoModel(req.body);
     newpedido.pagado = false;
-    newpedido.estado_pedido = "En proceso";
-    newpedido.mensaje_admin = "Tu pedido esta siendo procesado";
+/*     newpedido.estado_pedido = "En proceso";
+    newpedido.mensaje_admin = "Tu pedido esta siendo procesado"; */
     try {
         await newpedido.save((err, userStored) => {
             if (err) {
@@ -92,21 +92,29 @@ pedidoCtrl.createPedido = async (req, res, next) => {
 
 pedidoCtrl.updateEstadoPedido = async (req, res, next) => {
     try {
-        const {estado_pedido,mensaje_admin} = req.body;
-        if(estado_pedido === "Enviado"){
-            const pedido = await pedidoModel.findByIdAndUpdate({ _id: req.params.id }, {
-                fecha_envio: new Date(),
-                estado_pedido,
-                mensaje_admin
-            }, { new: true });
-            console.log(pedido);
-            res.status(200).json({ message: 'Pedido Actualizado'});
+        const pedidoPagado = await pedidoModel.findById(req.params.id);
+        if(pedidoPagado.pagado === false){
+            res.status(500).json({ message: 'Este pedido aun no a sido pagado'});
         }else{
-            const pedido = await pedidoModel.findByIdAndUpdate({ _id: req.params.id }, {
-                mensaje_admin
-            }, { new: true });
-            console.log(pedido);
-            res.status(200).json({ message: 'Mensaje del pedido actualizado'});
+            const {estado_pedido,mensaje_admin,url,paqueteria,codigo_seguimiento} = req.body;
+            if(estado_pedido === "Enviado"){
+                const pedido = await pedidoModel.findByIdAndUpdate({ _id: req.params.id }, {
+                    fecha_envio: new Date(),
+                    estado_pedido,
+                    mensaje_admin,
+                    url,
+                    paqueteria,
+                    codigo_seguimiento
+                }, { new: true });
+                console.log(pedido);
+                res.status(200).json({ message: 'Pedido Actualizado'});
+            }else{
+                const pedido = await pedidoModel.findByIdAndUpdate({ _id: req.params.id }, {
+                    mensaje_admin
+                }, { new: true });
+                console.log(pedido);
+                res.status(200).json({ message: 'Mensaje del pedido actualizado'});
+            }
         }
     } catch (err) {
         res.status(500).json({ message: 'Ups, algo paso al obtenero el pedidos', err });

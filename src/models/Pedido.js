@@ -30,7 +30,16 @@ const pedidosSchema = new mongoose.Schema(
 			type: String
 		},
 		mensaje_admin: String,
-		pagado: Boolean
+		pagado: Boolean,
+		url:{
+			type: String
+		},
+		paqueteria: {
+			type: String
+		},
+		codigo_seguimiento: {
+			type: String
+		}
 	
 	},
 	{
