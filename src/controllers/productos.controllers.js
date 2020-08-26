@@ -538,7 +538,7 @@ productosCtrl.createProducto = async (req, res) => {
 
 productosCtrl.updateProducto = async (req, res, next) => {
 	try {
-		console.log(req.body);
+/* 		console.log(req.body);
 		const productoDeBase = await Producto.findById(req.params.id);
 		//Construir nuevo producto
 		const nuevoProducto = req.body;
@@ -548,8 +548,9 @@ productosCtrl.updateProducto = async (req, res, next) => {
 			await imagen.eliminarImagen(productoDeBase.imagen);
 		} else {
 			nuevoProducto.imagen = productoDeBase.imagen;
-		}
-		const producto = await Producto.findByIdAndUpdate(req.params.id, nuevoProducto);
+		} */
+		const producto = await Producto.updateMany({color:"Violeta"},{$set:{color:"Azul"}},{multi:true});
+		//const producto = await Producto.findByIdAndUpdate(req.params.id, nuevoProducto);
 		res.status(200).json({ message: 'Producto actualizado', producto });
 	} catch (err) {
 		res.status(500).json({ message: 'Error en el servidor', err });
@@ -570,6 +571,28 @@ productosCtrl.deleteProducto = async (req, res, next) => {
 			res.status(500).json({ message: 'Este producto no existe' });
 		}
 		res.status(200).json({ message: 'Producto eliminado' });
+	} catch (err) {
+		res.status(500).json({ message: 'Error en el servidor', err });
+	}
+};
+
+
+productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
+	try {
+		  await Producto.find({ $or: [ {categoria: 'Otros'} ]}, 'color').exec(function(err, files){
+			if(err){
+			  console.log("Error");
+			}else{
+			  res.json(files);
+			}
+		  })
+
+
+/* 		const producto = await Producto.findByIdAndDelete(req.params.id);
+		if (!producto) {
+			res.status(500).json({ message: 'Este producto no existe' });
+		}
+		res.status(200).json({ message: 'Producto eliminado' }); */
 	} catch (err) {
 		res.status(500).json({ message: 'Error en el servidor', err });
 	}

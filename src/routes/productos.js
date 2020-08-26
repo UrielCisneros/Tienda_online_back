@@ -21,9 +21,17 @@ const {
 	getPromociones,
 	getPromocion,
 	deleteImagen,
-	getProductosFiltrados
+	getProductosFiltrados,
+	crecarFiltrosNavbar
 } = require('../controllers/productos.controllers');
-const auth = require('../middleware/auth')
+const auth = require('../middleware/auth');
+const { route } = require('./administrador');
+
+
+
+router.route('/filtrosNavbar/').get(crecarFiltrosNavbar)
+
+router.route('/calarModificacion/').put(updateProducto)
 
 router.route('/promocion/carousel/').get(getPromocionCarousel)
 
