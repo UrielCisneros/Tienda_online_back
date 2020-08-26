@@ -21,6 +21,16 @@ const ApartadoSchema = new Schema({
     estado: {
         type: String,
         required: true
+    },
+    tipoEnvio: {
+        type: String,
+        required: true
+    },
+    servicio: {
+        type: String
+    },
+    codigo_seguimiento: {
+        type: String
     }
 
 },
