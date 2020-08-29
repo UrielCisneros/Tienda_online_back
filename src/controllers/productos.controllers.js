@@ -3,6 +3,8 @@ const imagen = require('./uploadFile.controllers');
 const Producto = require('../models/Producto');
 const promocionModel = require('../models/PromocionProducto');
 const mongoose = require('mongoose')
+const util = require('util')
+const sleep = util.promisify(setTimeout);
 
 productosCtrl.deleteImagen = async (req, res) => {
 	try {
@@ -538,7 +540,7 @@ productosCtrl.createProducto = async (req, res) => {
 
 productosCtrl.updateProducto = async (req, res, next) => {
 	try {
-/* 		console.log(req.body);
+		console.log(req.body);
 		const productoDeBase = await Producto.findById(req.params.id);
 		//Construir nuevo producto
 		const nuevoProducto = req.body;
@@ -548,9 +550,12 @@ productosCtrl.updateProducto = async (req, res, next) => {
 			await imagen.eliminarImagen(productoDeBase.imagen);
 		} else {
 			nuevoProducto.imagen = productoDeBase.imagen;
-		} */
-		const producto = await Producto.updateMany({color:"Violeta"},{$set:{color:"Azul"}},{multi:true});
-		//const producto = await Producto.findByIdAndUpdate(req.params.id, nuevoProducto);
+		}
+
+		if(productoDeBase.subCategoria !== nuevoProducto.subCategoria){
+			await Producto.updateMany({subCategoria: productoDeBase.subCategoria},{$set:{subCategoria: nuevoProducto.subCategoria}},{multi:true});
+		}
+		const producto = await Producto.findByIdAndUpdate(req.params.id, nuevoProducto);
 		res.status(200).json({ message: 'Producto actualizado', producto });
 	} catch (err) {
 		res.status(500).json({ message: 'Error en el servidor', err });
@@ -576,26 +581,95 @@ productosCtrl.deleteProducto = async (req, res, next) => {
 	}
 };
 
+productosCtrl.categoriasAgrupadas = async (req,res) => {
+	try {
+		 const categorias = await Producto.aggregate([ {"$group" : {_id:"$categoria"}}]);
+		 res.status(200).json(categorias);
+		console.log(categorias);
+	} catch (err) {
+		res.status(500).json({ message: 'Error en el servidor', err });
+	}
+}
+
+productosCtrl.subCategorias = async (req,res) => {
+	try {
+		const subCategorias = await Producto.aggregate([
+			{$match:
+			  {
+				$or: [{categoria: req.params.idCategoria}],
+			  }
+			},
+			{
+			  $group: { _id: '$subCategoria'}
+			}
+		  ]);
+		  res.status(200).json(subCategorias);
+	} catch (err) {
+		res.status(500).json({ message: 'Error en el servidor', err });
+	}
+
+}
 
 productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 	try {
-		  await Producto.find({ $or: [ {categoria: 'Otros'} ]}, 'color').exec(function(err, files){
-			if(err){
-			  console.log("Error");
-			}else{
-			  res.json(files);
-			}
-		  })
-
-
-/* 		const producto = await Producto.findByIdAndDelete(req.params.id);
-		if (!producto) {
-			res.status(500).json({ message: 'Este producto no existe' });
-		}
-		res.status(200).json({ message: 'Producto eliminado' }); */
+		 await Producto.aggregate([ {"$group" : {_id:"$categoria"}}],async function (err, categorias){
+			await categorias.forEach(async (item,index) => {
+				arrayCategorias = []
+				if(categorias.lenght === (index + 1) ){
+					return arrayCategorias
+				}else{
+					if(item._id !== null){
+						await Producto.aggregate([
+						   {$match:
+							   {
+							   $or: [{categoria: item._id}],
+							   }
+						   },
+						   {
+							   $group: { _id: '$subCategoria'}
+						   }
+						   ],async function(err,subCategoriasBase){
+							   arrayCategorias.push({
+								   categoria: item._id,
+								   subcCategoria: subCategoriasBase
+							   });
+						   });
+					   }
+				}
+			});
+			await sleep(3000)
+			res.status(200).json(arrayCategorias);
+		});
 	} catch (err) {
 		res.status(500).json({ message: 'Error en el servidor', err });
 	}
 };
+
+async function calar(categorias){
+	const nuevo = await categorias.forEach(async (item,index,arrayCategorias) => {
+		arrayCategorias = [];
+		console.log(item);
+		if(item._id !== null){
+			const subCategoriasBase = await Producto.aggregate([
+				{$match:
+					{
+					$or: [{categoria: item._id}],
+					}
+				},
+				{
+					$group: { _id: '$subCategoria'}
+				}
+				]);
+	
+				arrayCategorias.push({
+					categoria: item._id,
+					subcCategoria: subCategoriasBase
+				});
+	
+				console.log(arrayCategorias);
+			}
+	});
+	return nuevo
+}
 
 module.exports = productosCtrl;

@@ -145,7 +145,7 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 				productos.tallas.map(async (talla) => {
 					if (medida === talla.talla && cantidad > talla.cantidad) {
 						res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
-					} else if(medida === talla.talla && cantidad < talla.cantidad) {
+					} else if(medida === talla.talla && cantidad <= talla.cantidad) {
 						const precio = productos.precio;
 						const subtotal = precio * cantidad;
 						await Carrito.updateOne(
@@ -182,7 +182,7 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 				productos.numeros.map(async (numero) => {
 					if (medida === numero.numero && cantidad > numero.cantidad) {
 						res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
-					} else if (medida === numero.numero && cantidad < numero.cantidad) {
+					} else if (medida === numero.numero && cantidad <= numero.cantidad) {
 						const precio = productos.precio;
 						const subtotal = precio * cantidad;
 						await Carrito.updateOne(

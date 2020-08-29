@@ -14,6 +14,8 @@ const ProductoSchema = new mongoose.Schema({
 		required: true,
 		trim: true
 	},
+	tipoCategoria: String,
+	subCategoria: String,
 	tallas: [{
 		talla: String,
 		cantidad: Number

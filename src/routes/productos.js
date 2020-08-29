@@ -22,12 +22,17 @@ const {
 	getPromocion,
 	deleteImagen,
 	getProductosFiltrados,
-	crecarFiltrosNavbar
+	crecarFiltrosNavbar,
+	categoriasAgrupadas,
+	subCategorias
 } = require('../controllers/productos.controllers');
 const auth = require('../middleware/auth');
 const { route } = require('./administrador');
 
 
+router.route('/categorias/').get(categoriasAgrupadas);
+
+router.route('/Subcategorias/:idCategoria').get(subCategorias);
 
 router.route('/filtrosNavbar/').get(crecarFiltrosNavbar)
 
@@ -50,8 +55,6 @@ router.route('/addNumero/:id').post(auth,addnumero);
 router.route('/action/:id/talla/:idtalla').delete(auth,eliminarTalla).put(auth,actualizarTalla);
 
 router.route('/action/:id/numero/:idnumero').delete(auth,eliminarNumero).put(auth,actualizarNumero);
-
-
 
 router.route('/promocion/:id').put(auth,subirImagen,actualizarPromocion).delete(auth,eliminarPromocion).get(getPromocion);
 
