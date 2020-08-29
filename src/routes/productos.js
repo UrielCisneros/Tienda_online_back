@@ -31,13 +31,11 @@ const auth = require('../middleware/auth');
 const { route } = require('./administrador');
 
 
-router.route('/categorias/').get(categoriasAgrupadas);
+router.route('/categorias/').get(auth,categoriasAgrupadas);
 
-router.route('/Subcategorias/:idCategoria').get(subCategorias);
+router.route('/Subcategorias/:idCategoria').get(auth,subCategorias);
 
 router.route('/filtrosNavbar/').get(crecarFiltrosNavbar)
-
-router.route('/calarModificacion/').put(updateProducto)
 
 router.route('/similares/').get(getProductosSimilares)
 
@@ -45,7 +43,7 @@ router.route('/promocion/carousel/').get(getPromocionCarousel)
 
 router.route('/promocion/').post(auth,subirImagen,crearPromocion).get(getPromociones)
 
-router.route('/').get(getProductos).post(subirImagen, createProducto);
+router.route('/').get(getProductos).post(auth,subirImagen, createProducto);
 
 router.route('/search/:search').get(getProductosFiltrados)
 
