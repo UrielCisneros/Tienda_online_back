@@ -16,6 +16,9 @@ const PoliticasEnvio = new mongoose.Schema({
     },
     promocionEnvio: {
         type: Float
+    },
+    descuento:{
+        type: Float
     }
 },
 {
