@@ -12,7 +12,7 @@ const {
 } = require('../controllers/apartado.controllers');
 
 router.route('/')
-    .get(obtenerApartados)
+    .get(auth,obtenerApartados)
 
 router.route('/nuevo/:idCliente')
     .post(auth,agregarApartado)

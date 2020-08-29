@@ -11,7 +11,8 @@ const {
 	deleteCliente,
 	subirImagen,
 	authCliente,
-	authFirebase
+	authFirebase,
+	getClientesFiltrados
 } = require('../controllers/cliente.controllers');
 
 router.route('/auth').post(authCliente);
@@ -19,6 +20,8 @@ router.route('/auth').post(authCliente);
 router.route('/auth/firebase').post(authFirebase);
 
 router.route('/').get(auth,getClientes).post(createCliente);
+
+router.route('/filtrados').get(auth,getClientesFiltrados);
 
 router.route('/:id').get(auth,getCliente).put(auth,subirImagen, updateCliente).delete(auth,deleteCliente);
 

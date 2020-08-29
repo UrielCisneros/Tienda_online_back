@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const mongoodePaginate = require('mongoose-paginate-v2');
 
 const ClienteSchema = new Schema({
 	nombre: {
@@ -51,5 +52,7 @@ const ClienteSchema = new Schema({
 	},
 	imagen: String
 });
+
+ClienteSchema.plugin(mongoodePaginate);
 
 module.exports = model('cliente', ClienteSchema);

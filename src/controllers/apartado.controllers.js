@@ -3,9 +3,10 @@ const Apartado = require('../models/Apartado');
 const Producto = require('../models/Producto')
 
 apartadoCtrl.agregarApartado = async (req, res) => {
-	const { producto, cliente, cantidad, estado, medida } = req.body;
+
+	const { producto, cliente, cantidad, estado, medida,tipoEntrega } = req.body;
 	const datosProducto = await Producto.find({_id: producto})
-	const newApartado = new Apartado({ producto, cliente, cantidad, estado, medida });
+	const newApartado = new Apartado({ producto, cliente, cantidad, estado, medida, tipoEntrega });
 
 	if(req.body.medida){
 		if(medida[0].numero){
@@ -106,7 +107,9 @@ apartadoCtrl.obtenerApartado = async (req, res) => {
 };
 
 apartadoCtrl.actualizarApartado = async (req, res) => {
-	await Apartado.findOneAndUpdate({_id: req.params.idCliente}, req.body, (err, response) => {
+	const apatadoActualizado = req.body;
+	apatadoActualizado.fecha_envio = new Date();
+	await Apartado.findOneAndUpdate({_id: req.params.idCliente}, apatadoActualizado, (err, response) => {
 		if(err){
 			res.status(500).json({message: 'Hubo un error al actualizar el apartado', err})
 		}else{
