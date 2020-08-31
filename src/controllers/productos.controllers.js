@@ -405,9 +405,20 @@ productosCtrl.subirImagen = (req, res, next) => {
 }; */
 productosCtrl.getProductosSimilares = async (req, res) => {
 	console.log(req.query)
-	const { categoria, nombre } = req.query
+	const { nombre, categoria, subcategoria } = req.query
 	try {
-		await Producto.find({categoria: { $regex: '.*' + categoria + '.*', $options: 'i' },nombre: { $regex: '.*' + nombre + '.*', $options: 'i' } },
+		await Producto.aggregate([
+			{
+				$match:{
+					$or: [
+						{nombre: { $regex: '.*' + nombre + '.*', $options: 'i' }},
+						{categoria: { $regex: '.*' + categoria + '.*', $options: 'i' }},
+						{subCategoria: { $regex: '.*' + subcategoria + '.*', $options: 'i' }},
+
+					],
+				}
+			}
+		],
 			(err, postStored) => {
 				if (err) {
 					res.status(500).json({ message: 'Error en el servidor', err });
