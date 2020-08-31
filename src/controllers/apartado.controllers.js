@@ -1,6 +1,7 @@
 const apartadoCtrl = {};
 const Apartado = require('../models/Apartado');
 const Producto = require('../models/Producto')
+const mongoose = require('mongoose');
 
 apartadoCtrl.agregarApartado = async (req, res) => {
 
@@ -95,6 +96,43 @@ apartadoCtrl.obtenerApartados = async (req, res) => {
 
 apartadoCtrl.obtenerApartado = async (req, res) => {
 	try {
+		await Apartado.aggregate([
+            {
+				$lookup: {
+					from: 'promocions',
+					localField: 'producto',
+					foreignField: 'productoPromocion',
+					as: 'promocion'
+				}
+            },
+            {
+                $match: {
+                    cliente: mongoose.Types.ObjectId(req.params.idCliente)
+                }
+            }
+		]).exec(async function(err, transactions) {
+			if (err) {
+				res.send({ message: 'Error al obtener apartado', err });
+			} else {
+				await Apartado.populate(transactions, { path: 'cliente producto' }, function(err, populatedTransactions
+				) {
+					// Your populated translactions are inside populatedTransactions
+					if (err) {
+						res.send({ message: 'Error al obtener apartado', err });
+					} else {
+						res.json(populatedTransactions[0]);
+					}
+				});
+			}
+		});
+	} catch (error) {
+		res.status(500).json({ message: 'Hubo un error al obtener apartado', error });
+	}
+	
+};
+
+/* apartadoCtrl.obtenerApartado = async (req, res) => {
+	try {
 		const apartado = await Apartado.find({cliente: req.params.idCliente}).populate('cliente').populate('producto');
 		if(!apartado){
 			res.status(404).json({ message: 'Apartado no encontrado' });
@@ -104,7 +142,7 @@ apartadoCtrl.obtenerApartado = async (req, res) => {
 		res.status(500).json({ message: 'Hubo un error al obtener apartado', error });
 	}
 	
-};
+}; */
 
 apartadoCtrl.actualizarApartado = async (req, res) => {
 	const apatadoActualizado = req.body;

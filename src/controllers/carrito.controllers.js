@@ -1,18 +1,37 @@
 const carritoCtrl = {};
 const Carrito = require('../models/Carrito');
 const Producto = require('../models/Producto');
+const mongoose = require('mongoose');
 
 carritoCtrl.crearCarrito = async (req, res, next) => {
 	const carrito = await Carrito.findOne({ cliente: req.params.idCliente });
 	if (!carrito) {
 		const { cliente, articulos: [ { idarticulo, cantidad, medida } ] } = req.body;
-		const articulos = await Producto.find({ _id: idarticulo });
+		const articulos = await Producto.aggregate([
+			{
+				$lookup: {
+					from: 'promocions',
+					localField: '_id',
+					foreignField: 'productoPromocion',
+					as: 'promocion'
+				}
+			},
+			{
+				$match: {
+					_id: mongoose.Types.ObjectId(idarticulo)
+				}
+			}
+		]);
 		articulos.map(async (productos) => {
 			if (!medida) {
 				if (cantidad > productos.cantidad) {
 					res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
 				} else {
-					const precio = productos.precio;
+					if (productos.promocion.length) {
+						var precio = productos.promocion[0].precioPromocion;
+					} else {
+						var precio = productos.precio;
+					}
 					const subtotal = precio * cantidad;
 					const newCarrito = new Carrito({
 						cliente,
@@ -37,7 +56,12 @@ carritoCtrl.crearCarrito = async (req, res, next) => {
 						if (medida === talla.talla && cantidad > talla.cantidad) {
 							res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock (talla)' });
 						} else if (medida === talla.talla && cantidad < talla.cantidad) {
-							const precio = productos.precio;
+							if (productos.promocion.length) {
+								var precio = productos.promocion[0].precioPromocion;
+							} else {
+								var precio = productos.precio;
+							}
+							/* const precio = productos.precio; */
 							const subtotal = precio * cantidad;
 							const newCarrito = new Carrito({
 								cliente,
@@ -58,7 +82,16 @@ carritoCtrl.crearCarrito = async (req, res, next) => {
 						if (medida === numero.numero && cantidad > numero.cantidad) {
 							res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock (numero)' });
 						} else if (medida === numero.numero && cantidad < numero.cantidad) {
-							const precio = productos.precio;
+							console.log(productos.promocion);
+							if (productos.promocion.length) {
+								console.log('hay promocion');
+								var precio = productos.promocion[0].precioPromocion;
+							} else {
+								console.log('no hay promocion');
+								var precio = productos.precio;
+							}
+							console.log(precio);
+							/* const precio = productos.precio; */
 							const subtotal = precio * cantidad;
 							const newCarrito = new Carrito({
 								cliente,
@@ -88,13 +121,11 @@ carritoCtrl.obtenerCarrito = async (req, res) => {
 			.populate('cliente', 'nombre apellido')
 			.populate('articulos.idarticulo', 'nombre precio imagen');
 
-			if(!carrito){
-				res.status(200).json([]);
-			}else{
-				res.status(200).json(carrito);
-			}
-			
-
+		if (!carrito) {
+			res.status(200).json([]);
+		} else {
+			res.status(200).json(carrito);
+		}
 	} catch (error) {
 		res.status(500).json({ mensaje: 'Error al obtener carrito', error });
 	}
@@ -103,13 +134,32 @@ carritoCtrl.obtenerCarrito = async (req, res) => {
 carritoCtrl.agregarArticulo = async (req, res) => {
 	const carrito = await Carrito.findOne({ cliente: req.params.idCliente });
 	const { articulos: [ { idarticulo, cantidad, medida } ] } = req.body;
-	const articulos = await Producto.find({ _id: idarticulo });
+	const articulos = await Producto.aggregate([
+		{
+			$lookup: {
+				from: 'promocions',
+				localField: '_id',
+				foreignField: 'productoPromocion',
+				as: 'promocion'
+			}
+		},
+		{
+			$match: {
+				_id: mongoose.Types.ObjectId(idarticulo)
+			}
+		}
+	]);
 	articulos.map(async (productos) => {
 		if (!medida) {
 			if (cantidad > productos.cantidad) {
 				res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
 			} else {
-				const precio = productos.precio;
+				if (productos.promocion.length) {
+					var precio = productos.promocion[0].precioPromocion;
+				} else {
+					var precio = productos.precio;
+				}
+				/* const precio = productos.precio; */
 				const subtotal = precio * cantidad;
 				await Carrito.updateOne(
 					{
@@ -145,8 +195,13 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 				productos.tallas.map(async (talla) => {
 					if (medida === talla.talla && cantidad > talla.cantidad) {
 						res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
-					} else if(medida === talla.talla && cantidad <= talla.cantidad) {
-						const precio = productos.precio;
+					} else if (medida === talla.talla && cantidad <= talla.cantidad) {
+						if (productos.promocion.length) {
+							var precio = productos.promocion[0].precioPromocion;
+						} else {
+							var precio = productos.precio;
+						}
+						/* const precio = productos.precio; */
 						const subtotal = precio * cantidad;
 						await Carrito.updateOne(
 							{
@@ -183,7 +238,12 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 					if (medida === numero.numero && cantidad > numero.cantidad) {
 						res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
 					} else if (medida === numero.numero && cantidad <= numero.cantidad) {
-						const precio = productos.precio;
+						if (productos.promocion.length) {
+							var precio = productos.promocion[0].precioPromocion;
+						} else {
+							var precio = productos.precio;
+						}
+						/* const precio = productos.precio; */
 						const subtotal = precio * cantidad;
 						await Carrito.updateOne(
 							{
