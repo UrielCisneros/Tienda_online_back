@@ -57,7 +57,7 @@ tiendaCtrl.obtenerTienda = async (req, res) => {
 };
 
 tiendaCtrl.actualizarTienda = async (req, res) => {
-    const {nombre,telefono,calle_numero,cp,colonia,ciudad,lat,lng,politicas,imagenCorp,linkFace,linkInsta,linkTweeter} = req.body;
+    const {nombre,telefono,calle_numero,cp,colonia,ciudad,lat,lng,politicas,imagenCorp,linkFace,linkInsta,linkTweeter,estado} = req.body;
     const infoTiendaBase =  await Tienda.findById(req.params.idTienda);
     const newTienda = {
         nombre: nombre,
@@ -66,7 +66,8 @@ tiendaCtrl.actualizarTienda = async (req, res) => {
             calle_numero:calle_numero,
             cp:cp,
             colonia:colonia,
-            ciudad:ciudad
+            ciudad:ciudad,
+            estado:estado
         }],
         ubicacion:[{
             lat:lat,
