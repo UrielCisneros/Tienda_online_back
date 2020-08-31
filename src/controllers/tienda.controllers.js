@@ -13,7 +13,7 @@ tiendaCtrl.subirImagen = async (req,res,next) => {
 }
 
 tiendaCtrl.crearTienda = async (req, res) => {
-    const {nombre,telefono,calle_numero,cp,colonia,ciudad,lat,lng,politicas,imagenCorp,linkFace,linkInsta,linkTweeter} = req.body;
+    const {nombre,telefono,calle_numero,cp,colonia,ciudad,lat,lng,politicas,imagenCorp,linkFace,linkInsta,linkTweeter,estado} = req.body;
     const newTienda = new Tienda({
         nombre: nombre,
         telefono: telefono,
@@ -21,7 +21,8 @@ tiendaCtrl.crearTienda = async (req, res) => {
             calle_numero:calle_numero,
             cp:cp,
             colonia:colonia,
-            ciudad:ciudad
+            ciudad:ciudad,
+            estado:estado
         }],
         ubicacion:[{
             lat:lat,
