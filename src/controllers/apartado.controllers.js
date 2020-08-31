@@ -107,7 +107,7 @@ apartadoCtrl.obtenerApartado = async (req, res) => {
             },
             {
                 $match: {
-                    cliente: mongoose.Types.ObjectId(req.params.idCliente)
+                    _id: mongoose.Types.ObjectId(req.params.idCliente)
                 }
             }
 		]).exec(async function(err, transactions) {

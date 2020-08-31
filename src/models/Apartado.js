@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose');
 const mongoodePaginate = require('mongoose-paginate-v2');
+var aggregatePaginate = require('mongoose-aggregate-paginate-v2');
 
 const ApartadoSchema = new Schema({
     producto: {
@@ -44,5 +45,6 @@ const ApartadoSchema = new Schema({
 });
 
 ApartadoSchema.plugin(mongoodePaginate);
+ApartadoSchema.plugin(aggregatePaginate);
 
 module.exports = model('apartado', ApartadoSchema);
