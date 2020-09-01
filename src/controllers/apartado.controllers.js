@@ -74,21 +74,44 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 
 apartadoCtrl.obtenerApartados = async (req, res) => {
 	try {
-		const { page = 1, limit = 10, filter } = req.query;
-
-		let filtroQuery = {};
-
-		if(filter){
-			filtroQuery.estado = filter;
-		}
-		console.log(filtroQuery);
+		const { page = 1, limit = 10} = req.query;
 		const options = {
 			page,
-            limit: parseInt(limit),
-            populate: ['cliente', 'producto']
+            limit: parseInt(limit)
 		}
-		const apartado = await Apartado.paginate(filtroQuery, options);
-		res.status(200).json(apartado);
+
+		const aggregate = Apartado.aggregate([
+			{
+				$lookup: {
+					from: 'productos',
+					localField: 'producto',
+					foreignField: '_id',
+					as: 'producto'
+				}
+			},
+			{
+				$lookup: {
+					from: 'clientes',
+					localField: 'cliente',
+					foreignField: '_id',
+					as: 'cliente'
+				}
+			},
+		]);
+
+		await Apartado.aggregatePaginate(aggregate,options, (err, postStored) => {
+			if (err) {
+				res.status(500).json({ message: 'Error en el servidor', err });
+			} else {
+				if (!postStored) {
+					res.status(404).json({ message: 'Error al mostrar Blogs' });
+				} else {
+					res.status(200).json({ posts: postStored });
+				}
+			}
+		});
+
+
 	} catch (error) {
 		res.status(500).json({ message: 'Hubo un error al obtener los apartados', error });
 	}
