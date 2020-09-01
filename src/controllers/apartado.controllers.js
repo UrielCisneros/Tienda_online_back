@@ -155,9 +155,14 @@ apartadoCtrl.filtroApartadosCliente = async (req,res) => {
 			{
 				$match: {
 					$or: [
-						{ 'cliente.nombre': { $regex: '.*' + req.params.filter + '.*', $options: 'i' } }
+						{ 'cliente.nombre': { $regex: '.*' + req.params.filter + '.*', $options: 'i' } },
+						{ 'cliente.email': { $regex: '.*' + req.params.filter + '.*', $options: 'i' } },
+						{ tipoEntrega: { $regex: '.*' + req.params.filter + '.*', $options: 'i' } },
+						{ estado: { $regex: '.*' + req.params.filter + '.*', $options: 'i' } },
+						{ paqueteria: { $regex: '.*' + req.params.filter + '.*', $options: 'i' } },
+						{ fecha_envio: { $regex: '.*' + req.params.filter + '.*', $options: 'i' } },
+						{ 'producto.nombre': { $regex: '.*' + req.params.filter + '.*', $options: 'i' } }
 					]
-					
 				}
 			}
 		],

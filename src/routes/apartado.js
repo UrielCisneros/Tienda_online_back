@@ -16,7 +16,7 @@ router.route('/')
     .get(auth,obtenerApartados)
 
 router.route('/filtroCliente/:filter')
-    .get(filtroApartadosCliente)
+    .get(auth,filtroApartadosCliente)
 
 router.route('/nuevo/:idCliente')
     .post(auth,agregarApartado)
