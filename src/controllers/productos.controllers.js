@@ -453,7 +453,7 @@ productosCtrl.getProductosFiltrados = async (req, res) => {
 					$match: {
 						$or: [
 							{ nombre: { $regex: '.*' + nombre + '.*', $options: 'i' } },
-							{ categorias: { $regex: '.*' + categoria + '.*', $options: 'i' } },
+							{ categoria: { $regex: '.*' + categoria + '.*', $options: 'i' } },
 							{ subCategoria: { $regex: '.*' + subcategoria + '.*', $options: 'i' } }
 						]
 						
