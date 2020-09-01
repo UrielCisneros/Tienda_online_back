@@ -2,6 +2,7 @@ const apartadoCtrl = {};
 const Apartado = require('../models/Apartado');
 const Producto = require('../models/Producto')
 const mongoose = require('mongoose');
+const { response } = require('express');
 
 apartadoCtrl.agregarApartado = async (req, res) => {
 
@@ -130,6 +131,49 @@ apartadoCtrl.obtenerApartado = async (req, res) => {
 	}
 	
 };
+
+apartadoCtrl.filtroApartadosCliente = async (req,res) => {
+
+	await Apartado.aggregate(
+		[
+			{
+				$lookup: {
+					from: 'productos',
+					localField: 'producto',
+					foreignField: '_id',
+					as: 'producto'
+				}
+			},
+			{
+				$lookup: {
+					from: 'clientes',
+					localField: 'cliente',
+					foreignField: '_id',
+					as: 'cliente'
+				}
+			},
+			{
+				$match: {
+					$or: [
+						{ 'cliente.nombre': { $regex: '.*' + req.params.filter + '.*', $options: 'i' } }
+					]
+					
+				}
+			}
+		],
+		(err, postStored) => {
+			if (err) {
+				res.status(500).json({ message: 'Error en el servidor', err });
+			} else {
+				if (!postStored) {
+					res.status(404).json({ message: 'Error al mostrar Productos' });
+				} else {
+					res.status(200).json(postStored);
+				}
+			}
+		}
+	);
+}
 
 /* apartadoCtrl.obtenerApartado = async (req, res) => {
 	try {

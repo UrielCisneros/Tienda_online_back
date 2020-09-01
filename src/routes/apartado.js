@@ -8,11 +8,15 @@ const {
     actualizarApartado, 
     obtenerApartados,
     eliminarApartado,
-    obtenerUnApartado
+    obtenerUnApartado,
+    filtroApartadosCliente
 } = require('../controllers/apartado.controllers');
 
 router.route('/')
     .get(auth,obtenerApartados)
+
+router.route('/filtroCliente/:filter')
+    .get(filtroApartadosCliente)
 
 router.route('/nuevo/:idCliente')
     .post(auth,agregarApartado)

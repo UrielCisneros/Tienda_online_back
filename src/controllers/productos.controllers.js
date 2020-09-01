@@ -450,7 +450,12 @@ productosCtrl.getProductosFiltrados = async (req, res) => {
 				},
 				{
 					$match: {
-						nombre: { $regex: '.*' + req.params.search + '.*', $options: 'i' }
+						$or: [
+							{ nombre: { $regex: '.*' + req.params.search + '.*', $options: 'i' } },
+							{ categorias: { $regex: '.*' + req.params.search + '.*', $options: 'i' } },
+							{ subCategoria: { $regex: '.*' + req.params.search + '.*', $options: 'i' } }
+						]
+						
 					}
 				}
 			],
@@ -676,32 +681,5 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 		res.status(500).json({ message: 'Error en el servidor', err });
 	}
 };
-
-async function calar(categorias){
-	const nuevo = await categorias.forEach(async (item,index,arrayCategorias) => {
-		arrayCategorias = [];
-		console.log(item);
-		if(item._id !== null){
-			const subCategoriasBase = await Producto.aggregate([
-				{$match:
-					{
-					$or: [{categoria: item._id}],
-					}
-				},
-				{
-					$group: { _id: '$subCategoria'}
-				}
-				]);
-	
-				arrayCategorias.push({
-					categoria: item._id,
-					subcCategoria: subCategoriasBase
-				});
-	
-				console.log(arrayCategorias);
-			}
-	});
-	return nuevo
-}
 
 module.exports = productosCtrl;
