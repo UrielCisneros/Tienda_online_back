@@ -324,7 +324,7 @@ clienteCtrl.authFirebase = async (req, res) => {
 			newcliente.apellido = apellido;
 			newcliente.email = email;
 			newcliente.imagen = imagen;
-			newCliente.tipoSesion = "FireBase";
+			newcliente.tipoSesion = "FireBase";
 
 			bcrypt.hash(uid, null, null, function(err, hash) {
 				if (err) {
