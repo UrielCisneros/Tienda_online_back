@@ -403,7 +403,7 @@ productosCtrl.subirImagen = (req, res, next) => {
 		res.status(500).json({ message: "Error en el servidor",err })
 	}
 }; */
-productosCtrl.getProductosSimilares = async (req, res) => {
+/* productosCtrl.getProductosSimilares = async (req, res) => {
 	console.log(req.query)
 	const { nombre, categoria, subcategoria } = req.query
 	try {
@@ -434,9 +434,10 @@ productosCtrl.getProductosSimilares = async (req, res) => {
 	} catch (err) {
 		res.status(500).json({ message: 'Error en el servidor', err });
 	}
-};
+}; */
 
 productosCtrl.getProductosFiltrados = async (req, res) => {
+	const { nombre, categoria, subcategoria } = req.query
 	try {
 		await Producto.aggregate(
 			[
@@ -451,9 +452,9 @@ productosCtrl.getProductosFiltrados = async (req, res) => {
 				{
 					$match: {
 						$or: [
-							{ nombre: { $regex: '.*' + req.params.search + '.*', $options: 'i' } },
-							{ categorias: { $regex: '.*' + req.params.search + '.*', $options: 'i' } },
-							{ subCategoria: { $regex: '.*' + req.params.search + '.*', $options: 'i' } }
+							{ nombre: { $regex: '.*' + nombre + '.*', $options: 'i' } },
+							{ categoria: { $regex: '.*' + categoria + '.*', $options: 'i' } },
+							{ subCategoria: { $regex: '.*' + subcategoria + '.*', $options: 'i' } }
 						]
 						
 					}

@@ -37,7 +37,7 @@ router.route('/Subcategorias/:idCategoria').get(auth,subCategorias);
 
 router.route('/filtrosNavbar/').get(crecarFiltrosNavbar)
 
-router.route('/similares/').get(getProductosSimilares)
+/* router.route('/similares/').get(getProductosSimilares) */
 
 router.route('/promocion/carousel/').get(getPromocionCarousel)
 
@@ -45,7 +45,7 @@ router.route('/promocion/').post(auth,subirImagen,crearPromocion).get(getPromoci
 
 router.route('/').get(getProductos).post(auth,subirImagen, createProducto);
 
-router.route('/search/:search').get(getProductosFiltrados)
+router.route('/search').get(getProductosFiltrados)
 
 router.route('/:id').get(getProducto).put(auth,subirImagen, updateProducto).delete(auth,deleteProducto);
 
