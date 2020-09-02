@@ -50,7 +50,8 @@ const ClienteSchema = new Schema({
 		type: String,
 		required: true
 	},
-	imagen: String
+	imagen: String,
+	tipoSesion: String
 });
 
 ClienteSchema.plugin(mongoodePaginate);
