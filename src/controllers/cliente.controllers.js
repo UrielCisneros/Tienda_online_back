@@ -98,7 +98,6 @@ clienteCtrl.createCliente = (req, res) => {
 		console.log(req.body);
 		const repeatContrasena = req.body.repeatContrasena;
 		const contrasena = req.body.contrasena;
-		console.log('datos contrasena: contrasena: ' + contrasena + ' repeatContrasena: ' + repeatContrasena);
 		const newCliente = new clienteModel(req.body);
 		newCliente.active = false;
 		if (!contrasena || !repeatContrasena) {
@@ -146,9 +145,23 @@ clienteCtrl.createCliente = (req, res) => {
 
 clienteCtrl.updateCliente = async (req, res, next) => {
 	try {
+		const {nombre,apellido,email,telefono,calle_numero,entre_calles,cp,colonia,ciudad,estado,pais,contrasena,repeatContrasena} = req.body;
 		const clienteBase = await clienteModel.findById(req.params.id);
-		const nuevoCliente = req.body;
-		const { contrasena, repeatContrasena } = req.body;
+		const nuevoCliente = {
+			nombre,
+			apellido,
+			email,
+			telefono,
+			direccion: [{
+				calle_numero,
+				entre_calles,
+				cp,
+				colonia,
+				ciudad,
+				estado,
+				pais
+			}]
+		}
 
 		await verificarPass(nuevoCliente, contrasena, repeatContrasena);
 
@@ -194,7 +207,6 @@ function verificarPass(nuevoCliente, contrasena, repeatContrasena) {
 		if (contrasena !== repeatContrasena) {
 			res.status(404).json({ message: 'Las contrasenas no son iguales' });
 		} else {
-			verificarPass;
 			bcrypt.hash(contrasena, null, null, function(err, hash) {
 				if (err) {
 					res.status(404).json({ message: 'Error al encriptar la contrasena', err });
