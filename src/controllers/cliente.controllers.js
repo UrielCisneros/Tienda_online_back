@@ -344,7 +344,7 @@ clienteCtrl.authFirebase = async (req, res) => {
 										nombre: newcliente.nombre,
 										apellido: newcliente.apellido,
 										_id: newcliente._id,
-										imagenFireBase: cliente.imagen,
+										imagenFireBase: newcliente.imagen,
 										tipoSesion: "FireBase",
 										rol: false
 									},
