@@ -100,6 +100,7 @@ clienteCtrl.createCliente = (req, res) => {
 		const contrasena = req.body.contrasena;
 		const newCliente = new clienteModel(req.body);
 		newCliente.active = false;
+		newCliente.tipoSesion = "APIRestAB";
 		if (!contrasena || !repeatContrasena) {
 			res.status(404).json({ message: 'Las contrasenas son obligatorias' });
 		} else {
@@ -186,6 +187,7 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 							nombre: clienteBase.nombre,
 							apellido: clienteBase.apellido,
 							_id: clienteBase._id,
+							tipoSesion: clienteBase.tipoSesion,
 							imagen: clienteBase.imagen,
 							rol: false
 						},
@@ -275,6 +277,7 @@ clienteCtrl.authCliente = async (req, res, next) => {
 							nombre: cliente.nombre,
 							apellido: cliente.apellido,
 							_id: cliente._id,
+							tipoSesion: "APIRestAB",
 							imagen: cliente.imagen,
 							rol: false
 						},
@@ -305,6 +308,7 @@ clienteCtrl.authFirebase = async (req, res) => {
 					nombre: cliente.nombre,
 					apellido: cliente.apellido,
 					_id: cliente._id,
+					tipoSesion: "FireBase",
 					imagenFireBase: cliente.imagen,
 					rol: false
 				},
@@ -320,6 +324,8 @@ clienteCtrl.authFirebase = async (req, res) => {
 			newcliente.apellido = apellido;
 			newcliente.email = email;
 			newcliente.imagen = imagen;
+			newcliente.tipoSesion = "FireBase";
+
 			bcrypt.hash(uid, null, null, function(err, hash) {
 				if (err) {
 					res.status(500).json({ message: 'Error al encriptar la contrasena', err });
@@ -338,7 +344,8 @@ clienteCtrl.authFirebase = async (req, res) => {
 										nombre: newcliente.nombre,
 										apellido: newcliente.apellido,
 										_id: newcliente._id,
-										imagenFireBase: cliente.imagen,
+										imagenFireBase: newcliente.imagen,
+										tipoSesion: "FireBase",
 										rol: false
 									},
 									process.env.AUTH_KEY
