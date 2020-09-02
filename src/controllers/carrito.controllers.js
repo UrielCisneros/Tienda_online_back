@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 carritoCtrl.crearCarrito = async (req, res, next) => {
 	const carrito = await Carrito.findOne({ cliente: req.params.idCliente });
 	if (!carrito) {
-		const { cliente, articulos: [ { idarticulo, cantidad, medida } ] } = req.body;
+		const { cliente, articulos: [ { idarticulo, cantidad, medida: [ { talla, numero } ] } ] } = req.body;
 		const articulos = await Producto.aggregate([
 			{
 				$lookup: {
@@ -23,7 +23,7 @@ carritoCtrl.crearCarrito = async (req, res, next) => {
 			}
 		]);
 		articulos.map(async (productos) => {
-			if (!medida) {
+			if (!talla && !numero) {
 				if (cantidad > productos.cantidad) {
 					res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
 				} else {
@@ -35,7 +35,7 @@ carritoCtrl.crearCarrito = async (req, res, next) => {
 					const subtotal = precio * cantidad;
 					const newCarrito = new Carrito({
 						cliente,
-						articulos: [ { idarticulo, cantidad, medida, subtotal } ]
+						articulos: [ { idarticulo, cantidad, subtotal } ]
 					});
 
 					await newCarrito.save((err, response) => {
@@ -52,10 +52,10 @@ carritoCtrl.crearCarrito = async (req, res, next) => {
 				}
 			} else {
 				if (!productos.numeros.length) {
-					productos.tallas.map(async (talla) => {
-						if (medida === talla.talla && cantidad > talla.cantidad) {
+					productos.tallas.map(async (tallas) => {
+						if (talla === tallas.talla && cantidad > tallas.cantidad) {
 							res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock (talla)' });
-						} else if (medida === talla.talla && cantidad < talla.cantidad) {
+						} else if (talla === tallas.talla && cantidad < tallas.cantidad) {
 							if (productos.promocion.length) {
 								var precio = productos.promocion[0].precioPromocion;
 							} else {
@@ -65,7 +65,7 @@ carritoCtrl.crearCarrito = async (req, res, next) => {
 							const subtotal = precio * cantidad;
 							const newCarrito = new Carrito({
 								cliente,
-								articulos: [ { idarticulo, cantidad, medida, subtotal } ]
+								articulos: [ { idarticulo, cantidad, medida: [ { talla } ], subtotal } ]
 							});
 
 							await newCarrito.save((err, response) => {
@@ -78,10 +78,10 @@ carritoCtrl.crearCarrito = async (req, res, next) => {
 						}
 					});
 				} else if (!productos.tallas.length) {
-					productos.numeros.map(async (numero) => {
-						if (medida === numero.numero && cantidad > numero.cantidad) {
+					productos.numeros.map(async (numeros) => {
+						if (numero === numeros.numero && cantidad > numeros.cantidad) {
 							res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock (numero)' });
-						} else if (medida === numero.numero && cantidad < numero.cantidad) {
+						} else if (numero === numeros.numero && cantidad < numeros.cantidad) {
 							console.log(productos.promocion);
 							if (productos.promocion.length) {
 								console.log('hay promocion');
@@ -95,7 +95,7 @@ carritoCtrl.crearCarrito = async (req, res, next) => {
 							const subtotal = precio * cantidad;
 							const newCarrito = new Carrito({
 								cliente,
-								articulos: [ { idarticulo, cantidad, medida, subtotal } ]
+								articulos: [ { idarticulo, cantidad, medida: [ { numero } ], subtotal } ]
 							});
 
 							await newCarrito.save((err, response) => {
@@ -133,7 +133,7 @@ carritoCtrl.obtenerCarrito = async (req, res) => {
 
 carritoCtrl.agregarArticulo = async (req, res) => {
 	const carrito = await Carrito.findOne({ cliente: req.params.idCliente });
-	const { articulos: [ { idarticulo, cantidad, medida } ] } = req.body;
+	const { articulos: [ { idarticulo, cantidad, medida: [ { talla, numero } ] } ] } = req.body;
 	const articulos = await Producto.aggregate([
 		{
 			$lookup: {
@@ -150,7 +150,7 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 		}
 	]);
 	articulos.map(async (productos) => {
-		if (!medida) {
+		if (!talla && !numero) {
 			if (cantidad > productos.cantidad) {
 				res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
 			} else {
@@ -171,7 +171,6 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 								{
 									idarticulo,
 									cantidad,
-									medida,
 									subtotal
 								}
 							]
@@ -192,10 +191,10 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 			}
 		} else {
 			if (!productos.numeros.length) {
-				productos.tallas.map(async (talla) => {
-					if (medida === talla.talla && cantidad > talla.cantidad) {
+				productos.tallas.map(async (tallas) => {
+					if (talla === tallas.talla && cantidad > tallas.cantidad) {
 						res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
-					} else if (medida === talla.talla && cantidad <= talla.cantidad) {
+					} else if (talla === tallas.talla && cantidad <= tallas.cantidad) {
 						if (productos.promocion.length) {
 							var precio = productos.promocion[0].precioPromocion;
 						} else {
@@ -213,7 +212,7 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 										{
 											idarticulo,
 											cantidad,
-											medida,
+											medida: [ { talla } ],
 											subtotal
 										}
 									]
@@ -234,10 +233,10 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 					}
 				});
 			} else if (!productos.tallas.length) {
-				productos.numeros.map(async (numero) => {
-					if (medida === numero.numero && cantidad > numero.cantidad) {
+				productos.numeros.map(async (numeros) => {
+					if (numero === numeros.numero && cantidad > numeros.cantidad) {
 						res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
-					} else if (medida === numero.numero && cantidad <= numero.cantidad) {
+					} else if (numero === numeros.numero && cantidad <= numeros.cantidad) {
 						if (productos.promocion.length) {
 							var precio = productos.promocion[0].precioPromocion;
 						} else {
@@ -255,7 +254,7 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 										{
 											idarticulo,
 											cantidad,
-											medida,
+											medida: [ { numero } ],
 											subtotal
 										}
 									]
