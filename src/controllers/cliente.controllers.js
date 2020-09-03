@@ -162,8 +162,7 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 				ciudad,
 				estado,
 				pais
-			}],
-			imagen: ""
+			}]
 		}
 
 		await verificarPass(nuevoCliente, contrasena, repeatContrasena);
@@ -172,7 +171,9 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 		
 		if (req.file) {
 			nuevoCliente.imagen = req.file.key;
-			await imagen.eliminarImagen(clienteBase.imagen);
+			if(clienteBase.imagen){
+				await imagen.eliminarImagen(clienteBase.imagen);
+			}
 		} else {
 			nuevoCliente.imagen = clienteBase.imagen;
 		}
