@@ -31,7 +31,7 @@ const fileFilter = (req, file, cb) => {
       metadata: function (req, file, cb) {
         cb(null, {fieldName: 'Testing_metadata'});
       },
-      Key: function (req, file, cb) {
+      key: function (req, file, cb) {
         cb(null, Date.now().toString())
       }
     }) 
