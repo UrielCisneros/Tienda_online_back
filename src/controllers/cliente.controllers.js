@@ -186,7 +186,7 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 					res.status(404).json({ message: 'Error al crear el usuario' });
 				} else {
 					const clienteBase = await clienteModel.findById(req.params.id);
-					const token = null;
+					let token = null;
 					if(clienteBase.tipoSesion === "FireBase"){
 						token = jwt.sign(
 							{
