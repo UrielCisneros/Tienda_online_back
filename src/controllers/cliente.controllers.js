@@ -166,7 +166,7 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 		}
 
 		await verificarPass(nuevoCliente, contrasena, repeatContrasena);
-
+		console.log(req.file);
 		if (req.file) {
 			nuevoCliente.imagen = req.file.key;
 			await imagen.eliminarImagen(clienteBase.imagen);
