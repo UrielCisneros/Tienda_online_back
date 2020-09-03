@@ -23,7 +23,7 @@ router.route('/').get(auth,getClientes).post(createCliente);
 
 router.route('/filtrados').get(auth,getClientesFiltrados);
 
-router.route('/:id').get(auth,getCliente).put(auth,subirImagen, updateCliente).delete(auth,deleteCliente);
+router.route('/:id').get(auth,getCliente).put(auth,subirImagen,updateCliente).delete(auth,deleteCliente);
 
 
 module.exports = router;

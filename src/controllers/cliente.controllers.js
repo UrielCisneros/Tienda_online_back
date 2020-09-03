@@ -162,13 +162,16 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 				ciudad,
 				estado,
 				pais
-			}]
+			}],
+			imagen: ""
 		}
 
 		await verificarPass(nuevoCliente, contrasena, repeatContrasena);
+
 		console.log(req.file);
+		
 		if (req.file) {
-			nuevoCliente.imagen = req.file.key;
+			nuevoCliente.imagen = req.file.Key;
 			await imagen.eliminarImagen(clienteBase.imagen);
 		} else {
 			nuevoCliente.imagen = clienteBase.imagen;
@@ -205,7 +208,7 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 	}
 };
 
-function verificarPass(nuevoCliente, contrasena, repeatContrasena) {
+async function verificarPass(nuevoCliente, contrasena, repeatContrasena) {
 	if (contrasena && repeatContrasena) {
 		if (contrasena !== repeatContrasena) {
 			res.status(404).json({ message: 'Las contrasenas no son iguales' });

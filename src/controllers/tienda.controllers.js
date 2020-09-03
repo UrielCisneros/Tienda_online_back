@@ -79,7 +79,7 @@ tiendaCtrl.actualizarTienda = async (req, res) => {
         linkInsta:linkInsta,
         linkTweeter:linkTweeter
     };
-
+    console.log(req.file);
     if(req.file){
         if(infoTiendaBase.imagenLogo){
             await imagen.eliminarImagen(infoTiendaBase.imagenLogo);
