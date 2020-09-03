@@ -171,7 +171,7 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 		console.log(req.file);
 		
 		if (req.file) {
-			nuevoCliente.imagen = req.file.Key;
+			nuevoCliente.imagen = req.file.key;
 			await imagen.eliminarImagen(clienteBase.imagen);
 		} else {
 			nuevoCliente.imagen = clienteBase.imagen;
