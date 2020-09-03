@@ -186,18 +186,35 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 					res.status(404).json({ message: 'Error al crear el usuario' });
 				} else {
 					const clienteBase = await clienteModel.findById(req.params.id);
-					const token = jwt.sign(
-						{
-							email: clienteBase.email,
-							nombre: clienteBase.nombre,
-							apellido: clienteBase.apellido,
-							_id: clienteBase._id,
-							tipoSesion: clienteBase.tipoSesion,
-							imagen: clienteBase.imagen,
-							rol: false
-						},
-						process.env.AUTH_KEY
-					);
+					const token = null;
+					if(clienteBase.tipoSesion === "FireBase"){
+						token = jwt.sign(
+							{
+								email: clienteBase.email,
+								nombre: clienteBase.nombre,
+								apellido: clienteBase.apellido,
+								_id: clienteBase._id,
+								tipoSesion: clienteBase.tipoSesion,
+								imagenFireBase: clienteBase.imagen,
+								rol: false
+							},
+							process.env.AUTH_KEY
+						);
+					}else{
+					    token = jwt.sign(
+							{
+								email: clienteBase.email,
+								nombre: clienteBase.nombre,
+								apellido: clienteBase.apellido,
+								_id: clienteBase._id,
+								tipoSesion: clienteBase.tipoSesion,
+								imagen: clienteBase.imagen,
+								rol: false
+							},
+							process.env.AUTH_KEY
+						);
+					}
+
 					res.json({ token });
 				}
 			}
