@@ -125,6 +125,7 @@ clienteCtrl.createCliente = (req, res) => {
 											nombre: newCliente.nombre,
 											apellido: newCliente.apellido,
 											_id: newCliente._id,
+											tipoSesion: "APIRestAB",
 											rol: false
 										},
 										process.env.AUTH_KEY
