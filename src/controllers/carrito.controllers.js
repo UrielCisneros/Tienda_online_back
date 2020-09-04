@@ -54,8 +54,8 @@ carritoCtrl.crearCarrito = async (req, res, next) => {
 				if (!productos.numeros.length) {
 					productos.tallas.map(async (tallas) => {
 						if (talla === tallas.talla && cantidad > tallas.cantidad) {
-							res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock (talla)' });
-						} else if (talla === tallas.talla && cantidad < tallas.cantidad) {
+							res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
+						} else if (talla === tallas.talla && cantidad <= tallas.cantidad) {
 							if (productos.promocion.length) {
 								var precio = productos.promocion[0].precioPromocion;
 							} else {
@@ -80,8 +80,8 @@ carritoCtrl.crearCarrito = async (req, res, next) => {
 				} else if (!productos.tallas.length) {
 					productos.numeros.map(async (numeros) => {
 						if (numero === numeros.numero && cantidad > numeros.cantidad) {
-							res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock (numero)' });
-						} else if (numero === numeros.numero && cantidad < numeros.cantidad) {
+							res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock ' });
+						} else if (numero === numeros.numero && cantidad <= numeros.cantidad) {
 							console.log(productos.promocion);
 							if (productos.promocion.length) {
 								console.log('hay promocion');
@@ -319,33 +319,123 @@ carritoCtrl.modificarCantidadArticulo = async (req, res) => {
 
 	articuloFiltrado.map(async (articulo) => {
 		const idarticulo = articulo.idarticulo;
-		const productos = await Producto.find({ _id: idarticulo });
-		const { cantidad } = req.body;
-		productos.map(async (producto) => {
-			if (cantidad > producto.cantidad) {
-				res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
-			} else {
-				const precio = producto.precio;
-				const subtotal = cantidad * precio;
-				await Carrito.updateOne(
-					{
-						'articulos._id': req.params.idArticulo
-					},
-					{
-						$set: { 'articulos.$': { idarticulo, cantidad, subtotal } }
-					},
-					(err, response) => {
-						if (err) {
-							res.status(500).json({ message: 'Hubo un error al modificar la cantidad', err });
-						} else {
-							if (!response) {
-								res.status(404).json({ message: 'Error al modificar la cantidad' });
+		const { cantidad, talla, numero } = req.body;
+		const productos = await Producto.aggregate([
+			{
+				$lookup: {
+					from: 'promocions',
+					localField: '_id',
+					foreignField: 'productoPromocion',
+					as: 'promocion'
+				}
+			},
+			{
+				$match: {
+					_id: mongoose.Types.ObjectId(idarticulo)
+				}
+			}
+		]);
+		productos.map(async (productos) => {
+			if (!articulo.medida.length) {
+				console.log("otros")
+				if (cantidad > productos.cantidad) {
+					res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
+				} else {
+					if (productos.promocion.length) {
+						var precio = productos.promocion[0].precioPromocion;
+					} else {
+						var precio = productos.precio;
+					}
+					const subtotal = precio * cantidad;
+					await Carrito.updateOne(
+						{
+							'articulos._id': req.params.idArticulo
+						},
+						{
+							$set: { 'articulos.$': { idarticulo, cantidad, subtotal } }
+						},
+						(err, response) => {
+							if (err) {
+								res.status(500).json({ message: 'Hubo un error al actualizar la cantidad', err });
 							} else {
-								res.status(200).json({ message: 'Cantidad Modificada', response });
+								if (!response) {
+									res.status(404).json({ message: 'Error al actualizar la cantidad' });
+								} else {
+									res.status(200).json({ message: 'Sus cambios fueron realizados correctamente', response });
+								}
 							}
 						}
-					}
-				);
+					);
+				}
+			}else{
+				console.log("es ropa o calzado")
+				if (!articulo.medida[0].numero) {
+					console.log("es talla")
+					productos.tallas.map(async (tallas) => {
+						if (talla === tallas.talla && cantidad > tallas.cantidad) {
+							res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock (talla)' });
+						} else if (talla === tallas.talla && cantidad <= tallas.cantidad) {
+							if (productos.promocion.length) {
+								var precio = productos.promocion[0].precioPromocion;
+							} else {
+								var precio = productos.precio;
+							}
+							const subtotal = precio * cantidad;
+							await Carrito.updateOne(
+								{
+									'articulos._id': req.params.idArticulo
+								},
+								{
+									$set: { 'articulos.$': { idarticulo, cantidad, medida: [{ talla }], subtotal } }
+								},
+								(err, response) => {
+									if (err) {
+										res.status(500).json({ message: 'Hubo un error al actualizar la medida o cantidad', err });
+									} else {
+										if (!response) {
+											res.status(404).json({ message: 'Error al modificar la medida o cantidad' });
+										} else {
+											res.status(200).json({ message: 'Se actualizo correctamente', response });
+										}
+									}
+								}
+							);
+						}
+					});
+				} else if (!articulo.medida[0].talla) {
+					console.log('es numero')
+					productos.numeros.map(async (numeros) => {
+						if (numero === numeros.numero && cantidad > numeros.cantidad) {
+							res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock (numero)' });
+						} else if (numero === numeros.numero && cantidad <= numeros.cantidad) {
+							if (productos.promocion.length) {
+								var precio = productos.promocion[0].precioPromocion;
+							} else {
+								var precio = productos.precio;
+							}
+							const subtotal = precio * cantidad;
+							await Carrito.updateOne(
+								{
+									'articulos._id': req.params.idArticulo
+								},
+								{
+									$set: { 'articulos.$': { idarticulo, cantidad, medida: [{ numero }], subtotal } }
+								},
+								(err, response) => {
+									if (err) {
+										res.status(500).json({ message: 'Hubo un error al actualizar la medida o cantidad', err });
+									} else {
+										if (!response) {
+											res.status(404).json({ message: 'Error al modificar la medida o cantidad' });
+										} else {
+											res.status(200).json({ message: 'Se actualizo correctamente', response });
+										}
+									}
+								}
+							);
+						}
+					});
+				}
 			}
 		});
 	});
