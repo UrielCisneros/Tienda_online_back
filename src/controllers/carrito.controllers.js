@@ -118,8 +118,7 @@ carritoCtrl.crearCarrito = async (req, res, next) => {
 carritoCtrl.obtenerCarrito = async (req, res) => {
 	try {
 		const carrito = await Carrito.findOne({ cliente: req.params.idCliente })
-			.populate('cliente', 'nombre apellido')
-			.populate('articulos.idarticulo', 'nombre precio imagen');
+			.populate('cliente articulos.idarticulo');
 
 		if (!carrito) {
 			res.status(200).json([]);
