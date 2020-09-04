@@ -147,8 +147,10 @@ clienteCtrl.createCliente = (req, res) => {
 
 clienteCtrl.updateCliente = async (req, res, next) => {
 	try {
-		const {nombre,apellido,email,telefono,calle_numero,entre_calles,cp,colonia,ciudad,estado,pais,contrasena,repeatContrasena} = req.body;
+		const {nombre,apellido,email,telefono,calle_numero,entre_calles,cp,colonia,ciudad,estado,pais,contrasena,repeatContrasena,contrasenaActual} = req.body;
 		const clienteBase = await clienteModel.findById(req.params.id);
+		console.log(contrasena);
+		console.log(repeatContrasena);
 		const nuevoCliente = {
 			nombre,
 			apellido,
@@ -164,11 +166,8 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 				pais
 			}]
 		}
-
-		await verificarPass(nuevoCliente, contrasena, repeatContrasena);
-
-		console.log(req.file);
 		
+
 		if (req.file) {
 			nuevoCliente.imagen = req.file.key;
 			if(clienteBase.imagen){
@@ -178,69 +177,118 @@ clienteCtrl.updateCliente = async (req, res, next) => {
 			nuevoCliente.imagen = clienteBase.imagen;
 		}
 
-		await clienteModel.findByIdAndUpdate(req.params.id, nuevoCliente, async (err, userStored) => {
-			if (err) {
-				res.status(500).json({ message: 'Ups, algo paso al registrar el usuario', err });
-			} else {
-				if (!userStored) {
-					res.status(404).json({ message: 'Error al crear el usuario' });
-				} else {
-					const clienteBase = await clienteModel.findById(req.params.id);
-					let token = null;
-					if(clienteBase.tipoSesion === "FireBase"){
-						token = jwt.sign(
-							{
-								email: clienteBase.email,
-								nombre: clienteBase.nombre,
-								apellido: clienteBase.apellido,
-								_id: clienteBase._id,
-								tipoSesion: clienteBase.tipoSesion,
-								imagenFireBase: clienteBase.imagen,
-								rol: false
-							},
-							process.env.AUTH_KEY
-						);
-					}else{
-					    token = jwt.sign(
-							{
-								email: clienteBase.email,
-								nombre: clienteBase.nombre,
-								apellido: clienteBase.apellido,
-								_id: clienteBase._id,
-								tipoSesion: clienteBase.tipoSesion,
-								imagen: clienteBase.imagen,
-								rol: false
-							},
-							process.env.AUTH_KEY
-						);
+		if(contrasenaActual){
+			if (!bcrypt.compareSync(contrasenaActual, clienteBase.contrasena)) {
+				res.status(404).json({ message: 'Contraseña incorrecta' });
+				next();
+			}else{
+				if (contrasena && repeatContrasena) {
+					if (contrasena !== repeatContrasena) {
+						res.status(404).json({ message: 'Las contrasenas no son iguales' });
+					} else {
+						await bcrypt.hash(contrasena, null, null, async function(err, hash) {
+							if (err) {
+								res.status(404).json({ message: 'Error al encriptar la contrasena', err });
+							} else {
+								console.log(hash);
+								nuevoCliente.contrasena = hash;
+								await clienteModel.findByIdAndUpdate(req.params.id, nuevoCliente, async (err, userStored) => {
+									if (err) {
+										res.status(500).json({ message: 'Ups, algo paso al registrar el usuario', err });
+									} else {
+										if (!userStored) {
+											res.status(404).json({ message: 'Error al crear el usuario' });
+										} else {
+											const clienteBase = await clienteModel.findById(req.params.id);
+											let token = null;
+											if(clienteBase.tipoSesion === "FireBase"){
+												token = jwt.sign(
+													{
+														email: clienteBase.email,
+														nombre: clienteBase.nombre,
+														apellido: clienteBase.apellido,
+														_id: clienteBase._id,
+														tipoSesion: clienteBase.tipoSesion,
+														imagenFireBase: clienteBase.imagen,
+														rol: false
+													},
+													process.env.AUTH_KEY
+												);
+											}else{
+												token = jwt.sign(
+													{
+														email: clienteBase.email,
+														nombre: clienteBase.nombre,
+														apellido: clienteBase.apellido,
+														_id: clienteBase._id,
+														tipoSesion: clienteBase.tipoSesion,
+														imagen: clienteBase.imagen,
+														rol: false
+													},
+													process.env.AUTH_KEY
+												);
+											}
+						
+											res.json({ token });
+										}
+									}
+								});
+							}
+						});
 					}
-
-					res.json({ token });
 				}
 			}
-		});
+		}else{
+			await clienteModel.findByIdAndUpdate(req.params.id, nuevoCliente, async (err, userStored) => {
+				if (err) {
+					res.status(500).json({ message: 'Ups, algo paso al registrar el usuario', err });
+				} else {
+					if (!userStored) {
+						res.status(404).json({ message: 'Error al crear el usuario' });
+					} else {
+						const clienteBase = await clienteModel.findById(req.params.id);
+						let token = null;
+						if(clienteBase.tipoSesion === "FireBase"){
+							token = jwt.sign(
+								{
+									email: clienteBase.email,
+									nombre: clienteBase.nombre,
+									apellido: clienteBase.apellido,
+									_id: clienteBase._id,
+									tipoSesion: clienteBase.tipoSesion,
+									imagenFireBase: clienteBase.imagen,
+									rol: false
+								},
+								process.env.AUTH_KEY
+							);
+						}else{
+							token = jwt.sign(
+								{
+									email: clienteBase.email,
+									nombre: clienteBase.nombre,
+									apellido: clienteBase.apellido,
+									_id: clienteBase._id,
+									tipoSesion: clienteBase.tipoSesion,
+									imagen: clienteBase.imagen,
+									rol: false
+								},
+								process.env.AUTH_KEY
+							);
+						}
+	
+						res.json({ token });
+					}
+				}
+			});
+		}
+
+
 	} catch (err) {
 		console.log(err);
 		res.status(500).json({ message: 'Error en el servidor', err });
 		next();
 	}
 };
-
-async function verificarPass(nuevoCliente, contrasena, repeatContrasena) {
-	if (contrasena && repeatContrasena) {
-		if (contrasena !== repeatContrasena) {
-			res.status(404).json({ message: 'Las contrasenas no son iguales' });
-		} else {
-			bcrypt.hash(contrasena, null, null, function(err, hash) {
-				if (err) {
-					res.status(404).json({ message: 'Error al encriptar la contrasena', err });
-				} else {
-					nuevoCliente.contrasena = hash;
-				}
-			});
-		}
-	}
-}
 
 clienteCtrl.deleteCliente = async (req, res, next) => {
 	try {
