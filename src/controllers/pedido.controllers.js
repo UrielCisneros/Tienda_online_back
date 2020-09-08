@@ -80,7 +80,7 @@ pedidoCtrl.createPedido = async (req, res, next) => {
                 if (!userStored) {
                     res.status(404).json({ message: 'Error al crear el Pedodo' });
                 } else {
-                    res.status(200).json({ message: "Se agrego el pedido" });
+                    res.status(200).json({ message: "Se agrego el pedido",pedido: userStored });
                 }
             }
         });
