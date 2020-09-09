@@ -60,7 +60,10 @@ pedidoCtrl.getPedido = async (req, res, next) => {
 
 pedidoCtrl.getPedidosUser = async (req, res, next) => {
     try {
-        const pedidosUser = await pedidoModel.find({ cliente: req.params.id });
+        const pedidosUser = await pedidoModel.find({ cliente: req.params.id }).populate('cliente').populate({
+            path: 'pedido.producto',
+            model: 'producto'
+        });
         res.status(200).json(pedidosUser);
     } catch (err) {
         res.status(500).json({ message: 'Ups, algo paso al obtenero el pedidos', err });
