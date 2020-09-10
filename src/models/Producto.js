@@ -26,6 +26,7 @@ const ProductoSchema = new mongoose.Schema({
 		cantidad: Number
 	}],
 	color: String,
+	colorHex: String,
 	cantidad: {
 		type: Number
 	},

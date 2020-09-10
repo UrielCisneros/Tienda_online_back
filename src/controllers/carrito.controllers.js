@@ -82,7 +82,6 @@ carritoCtrl.crearCarrito = async (req, res, next) => {
 						if (numero === numeros.numero && cantidad > numeros.cantidad) {
 							res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock ' });
 						} else if (numero === numeros.numero && cantidad <= numeros.cantidad) {
-							console.log(productos.promocion);
 							if (productos.promocion.length) {
 								console.log('hay promocion');
 								var precio = productos.promocion[0].precioPromocion;
