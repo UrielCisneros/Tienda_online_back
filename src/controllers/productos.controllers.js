@@ -437,7 +437,7 @@ productosCtrl.subirImagen = (req, res, next) => {
 }; */
 
 productosCtrl.getProductosFiltrados = async (req, res) => {
-	const { nombre, categoria, subcategoria, genero } = req.query
+	const { nombre, categoria, subcategoria, genero, color } = req.query
 	try {
 		await Producto.aggregate(
 			[
@@ -455,7 +455,8 @@ productosCtrl.getProductosFiltrados = async (req, res) => {
 							{ nombre: { $regex: '.*' + nombre + '.*', $options: 'i' } },
 							{ categoria: { $regex: '.*' + categoria + '.*', $options: 'i' } },
 							{ subCategoria: { $regex: '.*' + subcategoria + '.*', $options: 'i' } },
-							{ genero: { $regex: '.*' + genero + '.*', $options: 'i' } }
+							{ genero: { $regex: '.*' + genero + '.*', $options: 'i' } },
+							{ genero: { $regex: '.*' + color + '.*', $options: 'i' } }
 						]
 						
 					}
