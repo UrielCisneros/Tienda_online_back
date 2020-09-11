@@ -456,7 +456,7 @@ productosCtrl.getProductosFiltrados = async (req, res) => {
 							{ categoria: { $regex: '.*' + categoria + '.*', $options: 'i' } },
 							{ subCategoria: { $regex: '.*' + subcategoria + '.*', $options: 'i' } },
 							{ genero: { $regex: '.*' + genero + '.*', $options: 'i' } },
-							{ genero: { $regex: '.*' + color + '.*', $options: 'i' } }
+							{ color: { $regex: '.*' + color + '.*', $options: 'i' } }
 						]
 						
 					}
