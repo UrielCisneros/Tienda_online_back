@@ -25,6 +25,7 @@ const {
 	crecarFiltrosNavbar,
 	categoriasAgrupadas,
 	subCategorias,
+	getPromocionesPaginadas,
 	getProductosSimilares
 } = require('../controllers/productos.controllers');
 const auth = require('../middleware/auth');
@@ -42,6 +43,8 @@ router.route('/filtrosNavbar/').get(crecarFiltrosNavbar)
 router.route('/promocion/carousel/').get(getPromocionCarousel)
 
 router.route('/promocion/').post(auth,subirImagen,crearPromocion).get(getPromociones)
+
+router.route('/promociones/').get(getPromocionesPaginadas)
 
 router.route('/').get(getProductos).post(auth,subirImagen, createProducto);
 
