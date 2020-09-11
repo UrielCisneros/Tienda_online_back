@@ -38,12 +38,33 @@ productosCtrl.deleteImagen = async (req, res) => {
 
 productosCtrl.getPromociones = async (req, res) => {
 	try {
+		const { page = 1, limit = 10 } = req.query;
+		const options = {
+			page,
+			limit: parseInt(limit),
+			populate: ['productoPromocion']
+		}
+		await promocionModel.paginate({}, options, (err, postStored) => {
+			if (err) {
+				res.status(500).json({  message: "Error en el servidor", err });
+			} else {
+				if (!postStored) {
+					res.status(404).json({ message: "Error al mostrar promociones" })
+				} else {
+					res.status(200).json({ posts: postStored });
+				}
+			}
+		});
+	} catch (err) {
+		res.status(500).json({ message: "Error en el servidor",err })
+	}
+	/* try {
 		const promociones = await promocionModel.find().populate('productoPromocion');
 		res.status(200).json(promociones);
 	} catch (err) {
 		res.status(500).json({ message: 'Error en el servidor', err });
 		next();
-	}
+	} */
 };
 
 productosCtrl.getPromocion = async (req, res, next) => {
