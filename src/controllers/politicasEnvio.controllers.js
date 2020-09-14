@@ -4,7 +4,7 @@ const politicasModel = require('../models/PoliticasEnvio');
 politicasCtrl.getPoliticas = async (req, res) => {
 	try {
 		const politicas = await politicasModel.find().populate("idTienda").populate("idAdministrador");
-		res.json(politicas);
+		res.json(politicas[0]);
 	} catch (err) {
 		res.status(500).json({ message: "Error en el servidor",err })	
 	}
