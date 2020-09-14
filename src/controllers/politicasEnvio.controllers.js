@@ -14,6 +14,7 @@ politicasCtrl.getPoliticas = async (req, res) => {
 politicasCtrl.createPoliticas = async (req,res) => {
     try {
         const newPolticas = new politicasModel(req.body);
+        console.log(req.body)
         newPolticas.save((err, userStored) => {
             if (err) {
                 res.status(500).json({ message: 'Ups, algo paso al registrar el usuario',err });
