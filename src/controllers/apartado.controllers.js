@@ -144,7 +144,7 @@ apartadoCtrl.obtenerApartado = async (req, res) => {
 					if (err) {
 						res.send({ message: 'Error al obtener apartado', err });
 					} else {
-						res.json(populatedTransactions[0]);
+						res.json(populatedTransactions);
 					}
 				});
 			}
