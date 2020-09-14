@@ -131,7 +131,44 @@ apartadoCtrl.obtenerApartado = async (req, res) => {
             },
             {
                 $match: {
-                    _id: mongoose.Types.ObjectId(req.params.idCliente)
+                    _id: mongoose.Types.ObjectId(req.params.idApartado)
+                }
+            }
+		]).exec(async function(err, transactions) {
+			if (err) {
+				res.send({ message: 'Error al obtener apartado', err });
+			} else {
+				await Apartado.populate(transactions, { path: 'cliente producto' }, function(err, populatedTransactions
+				) {
+					// Your populated translactions are inside populatedTransactions
+					if (err) {
+						res.send({ message: 'Error al obtener apartado', err });
+					} else {
+						res.json(populatedTransactions[0]);
+					}
+				});
+			}
+		});
+	} catch (error) {
+		res.status(500).json({ message: 'Hubo un error al obtener apartado', error });
+	}
+	
+};
+
+apartadoCtrl.obtenerApartadosCliente = async (req, res) => {
+	try {
+		await Apartado.aggregate([
+            {
+				$lookup: {
+					from: 'promocions',
+					localField: 'producto',
+					foreignField: 'productoPromocion',
+					as: 'promocion'
+				}
+            },
+            {
+                $match: {
+                    cliente: mongoose.Types.ObjectId(req.params.idCliente)
                 }
             }
 		]).exec(async function(err, transactions) {
@@ -219,7 +256,7 @@ apartadoCtrl.filtroApartadosCliente = async (req,res) => {
 apartadoCtrl.actualizarApartado = async (req, res) => {
 	const apatadoActualizado = req.body;
 	apatadoActualizado.fecha_envio = new Date();
-	await Apartado.findOneAndUpdate({_id: req.params.idCliente}, apatadoActualizado, (err, response) => {
+	await Apartado.findOneAndUpdate({_id: req.params.idApartado}, apatadoActualizado, (err, response) => {
 		if(err){
 			res.status(500).json({message: 'Hubo un error al actualizar el apartado', err})
 		}else{
@@ -233,7 +270,7 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 };
 
 apartadoCtrl.eliminarApartado = async (req, res) => {
-	await Apartado.findOneAndDelete({cliente: req.params.idCliente}, (err, response) => {
+	await Apartado.findOneAndDelete({_id: req.params.idApartado}, (err, response) => {
 		if(err){
 			res.status(500).json({message: 'Hubo un error al eliminar apartado', err})
 		}else if(!response){
