@@ -20,7 +20,8 @@ const pedidosSchema = new mongoose.Schema(
 				},
 				cantidad: Number,
 				talla: String,
-				numero: String
+				numero: String,
+				precio: String
 			}
 		],
 		total: {
