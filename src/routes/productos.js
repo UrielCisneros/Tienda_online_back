@@ -32,6 +32,7 @@ const {
 const auth = require('../middleware/auth');
 const { route } = require('./administrador');
 
+router.route('/generos/').get(generoAgrupado);
 
 router.route('/categorias/').get(auth,categoriasAgrupadas);
 
@@ -39,7 +40,7 @@ router.route('/Subcategorias/:idCategoria').get(auth,subCategorias);
 
 router.route('/filtrosNavbar/').get(crecarFiltrosNavbar);
 
-router.route('/generos/').get(generoAgrupado);
+
 
 
 /* router.route('/similares/').get(getProductosSimilares) */
