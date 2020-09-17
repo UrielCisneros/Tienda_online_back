@@ -26,7 +26,8 @@ const {
 	categoriasAgrupadas,
 	subCategorias,
 	getPromocionesPaginadas,
-	getProductosSimilares
+	getProductosSimilares,
+	generoAgrupado
 } = require('../controllers/productos.controllers');
 const auth = require('../middleware/auth');
 const { route } = require('./administrador');
@@ -36,7 +37,10 @@ router.route('/categorias/').get(auth,categoriasAgrupadas);
 
 router.route('/Subcategorias/:idCategoria').get(auth,subCategorias);
 
-router.route('/filtrosNavbar/').get(crecarFiltrosNavbar)
+router.route('/filtrosNavbar/').get(crecarFiltrosNavbar);
+
+router.route('/generos/').get(generoAgrupado);
+
 
 /* router.route('/similares/').get(getProductosSimilares) */
 

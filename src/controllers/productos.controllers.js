@@ -708,4 +708,14 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 	}
 };
 
+productosCtrl.generoAgrupado = async (req,res) => {
+	try {
+		 const genero = await Producto.aggregate([ {"$group" : {_id:"$genero"}}]);
+		 res.status(200).json(genero);
+		console.log(genero);
+	} catch (err) {
+		res.status(500).json({ message: 'Error en el servidor', err });
+	}
+}
+
 module.exports = productosCtrl;
