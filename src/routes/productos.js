@@ -26,13 +26,14 @@ const {
 	categoriasAgrupadas,
 	subCategorias,
 	getPromocionesPaginadas,
+	generosAgrupados,
 	getProductosSimilares,
-	generoAgrupado
+	
 } = require('../controllers/productos.controllers');
 const auth = require('../middleware/auth');
 const { route } = require('./administrador');
 
-router.route('/generos/').get(generoAgrupado);
+router.route('/agrupar/generos').get(generosAgrupados);
 
 router.route('/categorias/').get(auth,categoriasAgrupadas);
 
