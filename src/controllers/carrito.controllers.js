@@ -116,6 +116,68 @@ carritoCtrl.crearCarrito = async (req, res, next) => {
 
 carritoCtrl.obtenerCarrito = async (req, res) => {
 	try {
+		await Carrito.aggregate([
+            {
+				$lookup: {
+					from: 'promocions',
+					localField: 'articulos.idarticulo',
+					foreignField: 'productoPromocion',
+					as: 'promocion'
+				}
+            },
+            {
+                $match: {
+                    cliente: mongoose.Types.ObjectId(req.params.idCliente)
+                }
+			}
+		]).exec(async function(err, transactions) {
+			const { promocion, articulos } = transactions[0]
+
+			const nuevo_array = {
+				_id: transactions[0]._id,
+				cliente: transactions[0].cliente,
+				articulos: []
+			}
+			const nuevo_array_articulos = articulos.map((articulos) => {
+				const array_articulos = {
+					_id: articulos._id,
+					idarticulo: articulos.idarticulo,
+					cantidad: articulos.cantidad,
+					subtotal: articulos.subtotal,
+					medida: articulos.medida
+				}
+				 promocion.forEach((promocion) => {
+					 if(articulos.idarticulo.equals(promocion.productoPromocion)){
+						array_articulos.promocion = promocion
+					}
+				 })
+				
+				return array_articulos
+			})
+
+			nuevo_array.articulos = nuevo_array_articulos;
+			
+			if (err) {
+				res.send({ message: 'Error al obtener apartado', err });
+			} else {
+				await Carrito.populate([nuevo_array], { path: 'cliente articulos.idarticulo' }, function(err, populatedTransactions
+				) {
+					// Your populated translactions are inside populatedTransactions
+					if (err) {
+						res.status(404).json({ message: 'Error al obtener carrito', err });
+					} else {
+						res.status(200).json(populatedTransactions[0]);
+					}
+				});
+			}
+		})
+	} catch (error) {
+		res.status(500).json({ mensaje: 'Error al obtener carrito', error });
+	}
+};
+
+/* carritoCtrl.obtenerCarrito = async (req, res) => {
+	try {
 		const carrito = await Carrito.findOne({ cliente: req.params.idCliente })
 			.populate('cliente articulos.idarticulo');
 
@@ -127,7 +189,7 @@ carritoCtrl.obtenerCarrito = async (req, res) => {
 	} catch (error) {
 		res.status(500).json({ mensaje: 'Error al obtener carrito', error });
 	}
-};
+}; */
 
 carritoCtrl.agregarArticulo = async (req, res) => {
 	const carrito = await Carrito.findOne({ cliente: req.params.idCliente });
