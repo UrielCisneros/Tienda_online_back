@@ -2,6 +2,7 @@ const { Router } = require('express');
 const router = Router();
 
 const {
+	generosAgrupados,
 	getProductos,
 	createProducto,
 	getProducto,
@@ -26,12 +27,9 @@ const {
 	categoriasAgrupadas,
 	subCategorias,
 	getPromocionesPaginadas,
-	generosAgrupados,
-	getProductosSimilares,
 	
 } = require('../controllers/productos.controllers');
 const auth = require('../middleware/auth');
-const { route } = require('./administrador');
 
 router.route('/agrupar/generos').get(generosAgrupados);
 
