@@ -131,31 +131,34 @@ carritoCtrl.obtenerCarrito = async (req, res) => {
                 }
 			}
 		]).exec(async function(err, transactions) {
-			const { promocion, articulos } = transactions[0]
+			if(transactions.length > 0){
+				const { promocion, articulos } = transactions[0]
 
-			const nuevo_array = {
-				_id: transactions[0]._id,
-				cliente: transactions[0].cliente,
-				articulos: []
-			}
-			const nuevo_array_articulos = articulos.map((articulos) => {
-				const array_articulos = {
-					_id: articulos._id,
-					idarticulo: articulos.idarticulo,
-					cantidad: articulos.cantidad,
-					subtotal: articulos.subtotal,
-					medida: articulos.medida
+				const nuevo_array = {
+					_id: transactions[0]._id,
+					cliente: transactions[0].cliente,
+					articulos: []
 				}
-				 promocion.forEach((promocion) => {
-					 if(articulos.idarticulo.equals(promocion.productoPromocion)){
-						array_articulos.promocion = promocion
+				const nuevo_array_articulos = articulos.map((articulos) => {
+					const array_articulos = {
+						_id: articulos._id,
+						idarticulo: articulos.idarticulo,
+						cantidad: articulos.cantidad,
+						subtotal: articulos.subtotal,
+						medida: articulos.medida
 					}
-				 })
-				
-				return array_articulos
-			})
+					 promocion.forEach((promocion) => {
+						 if(articulos.idarticulo.equals(promocion.productoPromocion)){
+							array_articulos.promocion = promocion
+						}
+					 })
+					
+					return array_articulos
+				})
+	
+				nuevo_array.articulos = nuevo_array_articulos;
+			}
 
-			nuevo_array.articulos = nuevo_array_articulos;
 			
 			if (err) {
 				res.send({ message: 'Error al obtener apartado', err });
