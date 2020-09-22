@@ -1,10 +1,22 @@
 const pagoCtrl = {};
 const pagoModel = require('../models/Pago');
+const Stripe = require('stripe');
 
 pagoCtrl.createPago = async (req, res) => {
     try {
+        const {sesionStripe,pedidoCompleto,amount} = req.body;
+        const stripe = new Stripe(process.env.LLAVE_SECRETA_STRIPE);
 
-        console.log(req.body);
+       const payment = await stripe.paymentIntents.create({
+            amount,
+            currency:"USD",
+            description: pedidoCompleto._id,
+            payment_method: sesionStripe.id,
+            confirm:true
+        })
+
+        res.status(200).json({ message: "Pago realzado",payment });
+        
 /*         const newPago = new pagoModel(req.body);
         await newPago.save((err, postStored) => {
             if (err) {
