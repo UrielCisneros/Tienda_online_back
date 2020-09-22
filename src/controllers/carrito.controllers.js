@@ -131,10 +131,11 @@ carritoCtrl.obtenerCarrito = async (req, res) => {
                 }
 			}
 		]).exec(async function(err, transactions) {
+			let nuevo_array = {};
 			if(transactions.length > 0){
 				const { promocion, articulos } = transactions[0]
 
-				const nuevo_array = {
+				 nuevo_array = {
 					_id: transactions[0]._id,
 					cliente: transactions[0].cliente,
 					articulos: []
