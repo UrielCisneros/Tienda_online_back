@@ -9,7 +9,7 @@ pagoCtrl.createPago = async (req, res) => {
 
        const payment = await stripe.paymentIntents.create({
             amount,
-            currency:"USD",
+            currency:"MXN",
             description: pedidoCompleto._id,
             payment_method: sesionStripe.id,
             confirm:true
