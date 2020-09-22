@@ -7,7 +7,7 @@ const pagoSchema = new Schema({
     intento_pago: {
         type: String
     },
-    orden: {
+    pedido: {
         type: Schema.ObjectId,
         ref: 'Pedidos'
     },
