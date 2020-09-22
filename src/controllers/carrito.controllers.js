@@ -166,7 +166,7 @@ carritoCtrl.obtenerCarrito = async (req, res) => {
 					if (err) {
 						res.status(404).json({ message: 'Error al obtener carrito', err });
 					} else {
-						if(populatedTransactions.length){
+						if(populatedTransactions.length > 0){
 							res.status(200).json(populatedTransactions[0]);
 						}else{
 							res.status(404).json({mensaje: 'No hay datos en el carrito'});
