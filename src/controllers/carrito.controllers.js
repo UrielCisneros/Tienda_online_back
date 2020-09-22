@@ -156,28 +156,25 @@ carritoCtrl.obtenerCarrito = async (req, res) => {
 					
 					return array_articulos
 				})
-	
 				nuevo_array.articulos = nuevo_array_articulos;
-			}
-
-			
-			if (err) {
-				res.send({ message: 'Error al obtener apartado', err });
-			} else {
-				await Carrito.populate([nuevo_array], { path: 'cliente articulos.idarticulo' }, function(err, populatedTransactions
-				) {
-					// Your populated translactions are inside populatedTransactions
-					if (err) {
-						res.status(404).json({ message: 'Error al obtener carrito', err });
-					} else {
-						if(populatedTransactions.length > 0){
-							res.status(200).json(populatedTransactions[0]);
-						}else{
-							res.status(404).json({mensaje: 'No hay datos en el carrito'});
+				if (err) {
+					res.send({ message: 'Error al obtener apartado', err });
+				} else {
+					await Carrito.populate([nuevo_array], { path: 'cliente articulos.idarticulo' }, function(err, populatedTransactions
+					) {
+						// Your populated translactions are inside populatedTransactions
+						if (err) {
+							res.status(404).json({ message: 'Error al obtener carrito', err });
+						} else {
+							if(populatedTransactions.length > 0){
+								res.status(200).json(populatedTransactions[0]);
+							}else{
+								res.status(404).json({mensaje: 'No hay datos en el carrito'});
+							}
+							
 						}
-						
-					}
-				});
+					});
+				}
 			}
 		})
 	} catch (error) {
