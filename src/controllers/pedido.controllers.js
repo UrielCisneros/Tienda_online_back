@@ -60,7 +60,7 @@ pedidoCtrl.getPedido = async (req, res, next) => {
 
 pedidoCtrl.getPedidosUser = async (req, res, next) => {
     try {
-        const pedidosUser = await pedidoModel.find({ cliente: req.params.id },{"sort" : ['createdAt', 'asc']}).populate('cliente').populate({
+        const pedidosUser = await pedidoModel.find({ cliente: req.params.id }).populate('cliente').populate({
             path: 'pedido.producto',
             model: 'producto'
         });
