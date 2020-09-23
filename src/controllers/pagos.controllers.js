@@ -23,7 +23,7 @@ pagoCtrl.createPago = async (req, res) => {
                 pedido: pedidoCompleto._id,
                 cliente: pedidoCompleto.cliente._id
             });
-            await newPago.save((err, postStored) => {
+            await newPago.save(async (err, postStored) => {
                 if (err) {
                     res.status(500).json({ message: "Error en el servidor" })
                 } else {
