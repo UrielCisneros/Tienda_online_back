@@ -27,6 +27,7 @@ const pedidosSchema = new mongoose.Schema(
 		total: {
 			type: Float
 		},
+		carrito: Boolean,
 		estado_pedido: {
 			type: String
 		},

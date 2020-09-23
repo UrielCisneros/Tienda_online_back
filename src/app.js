@@ -31,7 +31,6 @@ app.use('/api/admin', require('./routes/administrador'));
 app.use('/api/blog', require('./routes/blog'));
 app.use('/api/pedidos', require('./routes/pedidos'));
 app.use('/api/pago', require('./routes/pagos'));
-app.use('/api/detallePedido', require('./routes/detallePedido'));
 app.use('/api/cliente', require('./routes/cliente'));
 //routes
 app.use('/api/productos', require('./routes/productos'));
