@@ -1,6 +1,8 @@
 const pagoCtrl = {};
 const pagoModel = require('../models/Pago');
 const Stripe = require('stripe');
+const productoModel = require('../models/Producto');
+const pedidoModel = require('../models/Pedido');
 
 pagoCtrl.createPago = async (req, res) => {
     try {
