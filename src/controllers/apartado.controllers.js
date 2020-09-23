@@ -171,7 +171,7 @@ apartadoCtrl.obtenerApartadosCliente = async (req, res) => {
                     cliente: mongoose.Types.ObjectId(req.params.idCliente)
                 }
             }
-		]).exec(async function(err, transactions) {
+		]).sort({ "createdAt" : -1}).exec(async function(err, transactions) {
 			if (err) {
 				res.send({ message: 'Error al obtener apartado', err });
 			} else {
