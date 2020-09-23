@@ -19,7 +19,6 @@ pagoCtrl.createPago = async (req, res) => {
         })
 
         if(payment){
-            
             const newPago = new pagoModel({
                 id_objeto_sesion_stripe: sesionStripe.id,
                 intento_pago: payment.id,
@@ -120,7 +119,6 @@ pagoCtrl.createPago = async (req, res) => {
                                 }
                             }
                         })
-
                         if(pedidoCompleto.carrito === true){
                             await Carrito.findOneAndDelete({ cliente: pedidoCompleto.cliente._id });
                         }
@@ -140,7 +138,6 @@ pagoCtrl.createPago = async (req, res) => {
                     }
                 }
             });
-
         }else{
             res.status(404).json({ message: "No se a podido crear el Pago" });
         }
