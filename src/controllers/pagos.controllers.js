@@ -14,21 +14,27 @@ pagoCtrl.createPago = async (req, res) => {
             payment_method: sesionStripe.id,
             confirm:true
         })
+        console.log(payment);
+        if(payment){
+            res.status(200).json({ message: "Pago realzado",payment });
+/*             const newPago = new pagoModel({
 
-        res.status(200).json({ message: "Pago realzado",payment });
-        
-/*         const newPago = new pagoModel(req.body);
-        await newPago.save((err, postStored) => {
-            if (err) {
-                res.status(500).json({ message: "Error en el servidor" })
-            } else {
-                if (!postStored) {
-                    res.status(404).json({ message: "No se a podido crear el Pago" });
+            });
+            await newPago.save((err, postStored) => {
+                if (err) {
+                    res.status(500).json({ message: "Error en el servidor" })
                 } else {
-                    res.status(200).json({ message: "Pago creado correctamente",postStored });
+                    if (!postStored) {
+                        res.status(404).json({ message: "No se a podido crear el Pago" });
+                    } else {
+                        res.status(200).json({ message: "Pago creado correctamente",postStored });
+                    }
                 }
-            }
-        }); */
+            }); */
+        }else{
+            res.status(404).json({ message: "No se a podido crear el Pago" });
+        }
+        
 
     } catch (err) {
         res.status(500).json({ message: "Error en el servidor",err });	
