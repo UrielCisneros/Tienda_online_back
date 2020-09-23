@@ -3,6 +3,7 @@ const pagoModel = require('../models/Pago');
 const Stripe = require('stripe');
 const productoModel = require('../models/Producto');
 const pedidoModel = require('../models/Pedido');
+const Carrito = require('../models/Carrito');
 
 pagoCtrl.createPago = async (req, res) => {
     try {
@@ -119,6 +120,10 @@ pagoCtrl.createPago = async (req, res) => {
                                 }
                             }
                         })
+
+                        if(pedidoCompleto.carrito === true){
+                            await Carrito.findOneAndDelete({ cliente: pedidoCompleto.cliente._id });
+                        }
                         const pedidoPagado = await pedidoModel.findById(pedidoCompleto._id);
                         pedidoPagado.pagado = true;  
                          await pedidoModel.findByIdAndUpdate({ _id: pedidoPagado._id },pedidoPagado, { new: true },(err, userStored) => {
@@ -135,6 +140,7 @@ pagoCtrl.createPago = async (req, res) => {
                     }
                 }
             });
+
         }else{
             res.status(404).json({ message: "No se a podido crear el Pago" });
         }
