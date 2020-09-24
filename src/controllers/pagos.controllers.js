@@ -10,11 +10,18 @@ pagoCtrl.createPago = async (req, res) => {
         const {sesionStripe,pedidoCompleto,amount} = req.body;
         const stripe = new Stripe(process.env.LLAVE_SECRETA_STRIPE);
 
+        let sesion = "";
+        if(sesionStripe.id){
+            sesion = sesionStripe.id;
+        }else{
+            sesion = sesionStripe.tokenId;
+        }
+
        const payment = await stripe.paymentIntents.create({
             amount,
             currency:"MXN",
             description: pedidoCompleto._id,
-            payment_method: sesionStripe.id,
+            payment_method: sesion,
             confirm:true
         })
 
