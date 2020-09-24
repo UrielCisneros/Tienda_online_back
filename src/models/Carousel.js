@@ -6,6 +6,9 @@ const CarouselSchema = new Schema({
         ref: 'producto'
     },
     imagen: String
+},
+{
+    timestamps: true
 });
 
 module.exports = model('carousel', CarouselSchema);

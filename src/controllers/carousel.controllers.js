@@ -31,7 +31,7 @@ carouselCtrl.crearCarousel = async (req, res) => {
 
 carouselCtrl.obtenerTodosCarousels = async (req, res, next) => {
     try {
-		const carousel = await Carousel.find().populate('producto');
+		const carousel = await Carousel.find().populate('producto').sort({ "createdAt" : -1});
 		res.status(200).json(carousel);
     } catch (error) {
         res.status(500).json({ message: 'Hubo un error al obtener carouseles', error });
