@@ -9,7 +9,7 @@ pagoCtrl.createPago = async (req, res) => {
     try {
         const {sesionStripe,pedidoCompleto,amount} = req.body;
         const stripe = new Stripe(process.env.LLAVE_SECRETA_STRIPE);
-
+        console.log(req.body);
         let sesion = "";
         if(sesionStripe.id){
             sesion = sesionStripe.id;
