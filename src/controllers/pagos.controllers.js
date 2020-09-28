@@ -25,6 +25,8 @@ pagoCtrl.createPago = async (req, res) => {
             confirm:true
         })
 
+        console.log(payment);
+
         if(payment){
             const newPago = new pagoModel({
                 id_objeto_sesion_stripe: sesionStripe.id,
