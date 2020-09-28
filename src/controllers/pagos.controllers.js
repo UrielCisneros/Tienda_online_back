@@ -157,4 +157,14 @@ pagoCtrl.createPago = async (req, res) => {
 
 }
 
+pagoCtrl.obtenerPagosCliente = async (req, res) => {
+	try {
+        const pagos = await pagoModel.find({cliente: req.params.idCliente}).populate('pedido cliente');
+		res.status(200).json(pagos);
+	} catch (err) {
+		res.status(500).json({ message: 'Error en el servidor', err });
+		next();
+	}
+};
+
 module.exports = pagoCtrl;
