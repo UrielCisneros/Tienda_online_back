@@ -4,7 +4,7 @@ const { getPoliticas,createPoliticas,updatePoliticas } = require('../controllers
 const auth = require('../middleware/auth');
 
 router.route('/')
-    .get(auth,getPoliticas)//Get all admin dates
+    .get(getPoliticas)//Get all admin dates
     .post(auth,createPoliticas);//Add a admin 
 
 
