@@ -44,7 +44,6 @@ pedidoCtrl.getPedidosAdminFiltrados = async (req, res, next) => {
         next();
     }
 }
-
 pedidoCtrl.getPedido = async (req, res, next) => {
     try {
         const pedidos = await pedidoModel.findById(req.params.id).populate('cliente').populate({
@@ -123,6 +122,21 @@ pedidoCtrl.updateEstadoPedido = async (req, res, next) => {
         res.status(500).json({ message: 'Ups, algo paso al obtenero el pedidos', err });
         next();
     }
+}
+
+pedidoCtrl.updatePedido = async (req,res) => {
+try {
+    const {total} = req.body;
+    const pedidoBase = await pedidoModel.findById(req.params.id);
+    const newPedido = pedidoBase;
+    newPedido.total = total;
+    await pedidoModel.findByIdAndUpdate(req.params.id,newPedido);
+
+    res.status(200).json({ message: "Pedido Actualizado" });
+
+} catch (error) {
+    res.status(500).json({ message: 'Ups, algo paso.', err });
+}
 }
 
 module.exports = pedidoCtrl;
