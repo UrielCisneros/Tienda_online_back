@@ -16,6 +16,9 @@ router.route('/pedido/:id')
         .get(auth,getPedido)
         .put(auth,updatePedido);
 
+router.route('/pedido/total/:id')
+        .put(auth,updatePedido);
+
 router.route('/info/:id')
     .put(auth,updateEstadoPedido);
 
