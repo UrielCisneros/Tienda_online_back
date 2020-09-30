@@ -10,7 +10,7 @@ pedidoCtrl.getPedidos = async (req, res, next) => {
         });
         res.status(200).json(pedidos);
     } catch (err) {
-        res.status(500).json({ message: 'Ups, algo paso al obtenero el pedidos', err });
+        res.status(500).json({ message: 'Ups, algo paso al obtener los pedidos', err });
         next();
     }
 }
@@ -25,7 +25,7 @@ pedidoCtrl.getPedidosAdmin = async (req, res, next) => {
         const pedidos = await pedidoModel.paginate({pagado: true}, options);
         res.status(200).json(pedidos);
     } catch (err) {
-        res.status(500).json({ message: 'Ups, algo paso al obtenero el pedidos', err });
+        res.status(500).json({ message: 'Ups, algo paso al obtener los pedidos', err });
         next();
     }
 }
@@ -40,7 +40,7 @@ pedidoCtrl.getPedidosAdminFiltrados = async (req, res, next) => {
         const pedidos = await pedidoModel.paginate({pagado: true, estado_pedido: filtro}, options);
         res.status(200).json(pedidos);
     } catch (err) {
-        res.status(500).json({ message: 'Ups, algo paso al obtenero el pedidos', err });
+        res.status(500).json({ message: 'Ups, algo paso al obtener los pedidos', err });
         next();
     }
 }
@@ -53,12 +53,12 @@ pedidoCtrl.getPedido = async (req, res, next) => {
         });
         res.status(200).json(pedidos);
     } catch (err) {
-        res.status(500).json({ message: 'Ups, algo paso al obtenero el pedidos', err });
+        res.status(500).json({ message: 'Ups, algo paso al obtener los pedidos', err });
         next();
     }
 }
 
-pedidoCtrl.getPedidosUser = async (req, res, next) => {
+pedidoCtrl.getTodosPedidosUser = async (req, res, next) => {
     try {
         const pedidosUser = await pedidoModel.find({ cliente: req.params.id }).populate('cliente').populate({
             path: 'pedido.producto',
@@ -66,7 +66,19 @@ pedidoCtrl.getPedidosUser = async (req, res, next) => {
         }).sort({ "createdAt" : -1});
         res.status(200).json(pedidosUser);
     } catch (err) {
-        res.status(500).json({ message: 'Ups, algo paso al obtenero el pedidos', err });
+        res.status(500).json({ message: 'Ups, algo paso al obtener los pedidos', err });
+    }
+}
+
+pedidoCtrl.getPedidosUser = async (req, res, next) => {
+    try {
+        const pedidosUser = await pedidoModel.find({ cliente: req.params.id, pagado: true }).populate('cliente').populate({
+            path: 'pedido.producto',
+            model: 'producto'
+        }).sort({ "createdAt" : -1});
+        res.status(200).json(pedidosUser);
+    } catch (err) {
+        res.status(500).json({ message: 'Ups, algo paso al obtener los pedidos', err });
     }
 }
 
@@ -120,7 +132,7 @@ pedidoCtrl.updateEstadoPedido = async (req, res, next) => {
             }
         }
     } catch (err) {
-        res.status(500).json({ message: 'Ups, algo paso al obtenero el pedidos', err });
+        res.status(500).json({ message: 'Ups, algo paso al obtener los pedidos', err });
         next();
     }
 }
