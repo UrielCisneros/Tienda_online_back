@@ -12,7 +12,9 @@ router.route('/admin/filtrados').get(auth,getPedidosAdminFiltrados);
 
 router.route('/:id').get(auth,getPedidosUser);
 
-router.route('/pedido/:id').get(auth,getPedido).put(auth,updatePedido);
+router.route('/pedido/:id')
+        .get(auth,getPedido)
+        .put(auth,updatePedido);
 
 router.route('/info/:id')
     .put(auth,updateEstadoPedido);
