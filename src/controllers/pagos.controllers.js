@@ -74,7 +74,7 @@ pagoCtrl.createPago = async (req, res) => {
                                                             console.log(productoNuevo);
                                                             let contador = 0;
                                                             for(let i = 0; i <= productoNuevo.tallas.length; i++){
-                                                                contador += arreglo[i].cantidad;
+                                                                contador += productoNuevo.tallas[i].cantidad;
                                                             }
                                                             console.log(contador);
     /*                                                         console.log(verificarArreglo(productoNuevo.tallas));
