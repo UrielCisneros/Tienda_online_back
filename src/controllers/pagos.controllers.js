@@ -72,11 +72,16 @@ pagoCtrl.createPago = async (req, res) => {
                                                         }else{
                                                             const productoNuevo = await productoModel.findById(pedido.producto);
                                                             console.log(productoNuevo);
-                                                            console.log(verificarArreglo(productoNuevo.tallas));
+                                                            let contador = 0;
+                                                            for(let i = 0; i <= productoNuevo.tallas.length; i++){
+                                                                contador += arreglo[i].cantidad;
+                                                            }
+                                                            console.log(contador);
+    /*                                                         console.log(verificarArreglo(productoNuevo.tallas));
                                                             if(verificarArreglo(productoNuevo.tallas) === 0){
                                                                 productoNuevo.activo  = false;
                                                                 await productoModel.findByIdAndUpdate(productoNuevo._id,productoNuevo);
-                                                            }
+                                                            } */
                                                         }
                                                     }
                                                 }
@@ -166,14 +171,6 @@ pagoCtrl.createPago = async (req, res) => {
         console.log(err);
     }
 
-}
-
-function verificarArreglo(arreglo){
-    let contador = 0;
-    for(let i; i < arreglo.length; i++){
-        contador += arreglo[i].cantidad;
-    }
-    return contador
 }
 
 pagoCtrl.obtenerPagosCliente = async (req, res) => {
