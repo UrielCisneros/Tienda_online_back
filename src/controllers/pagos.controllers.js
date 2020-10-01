@@ -74,15 +74,13 @@ pagoCtrl.createPago = async (req, res) => {
                                                             console.log(productoNuevo);
                                                             let contador = 0;
                                                             for(let i = 0; i < productoNuevo.tallas.length; i++){
-                                                                console.log(productoNuevo.tallas[i]._id);
                                                                 contador += productoNuevo.tallas[i].cantidad;
                                                             }
                                                             console.log(contador);
-    /*                                                         console.log(verificarArreglo(productoNuevo.tallas));
-                                                            if(verificarArreglo(productoNuevo.tallas) === 0){
+                                                            if(contador === 0){
                                                                 productoNuevo.activo  = false;
                                                                 await productoModel.findByIdAndUpdate(productoNuevo._id,productoNuevo);
-                                                            } */
+                                                            }
                                                         }
                                                     }
                                                 }
