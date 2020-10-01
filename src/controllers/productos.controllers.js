@@ -668,14 +668,14 @@ productosCtrl.updateProducto = async (req, res, next) => {
 		}
 		const producto = await Producto.findByIdAndUpdate(req.params.id, nuevoProducto);
 
-		const productoNuevo = await productoModel.findById(req.params.id);
+		const productoNuevo = await Producto.findById(req.params.id);
 		console.log(productoNuevo.cantidad);
 		if(productoNuevo.cantidad > 0){
 			productoNuevo.activo  = true;
-			await productoModel.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+			await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
 		}else{
 			productoNuevo.activo  = false;
-			await productoModel.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+			await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
 		}
 		res.status(200).json({ message: 'Producto actualizado', producto });
 	} catch (err) {
