@@ -70,9 +70,10 @@ pagoCtrl.createPago = async (req, res) => {
                                                             throw err;
                                                         }else{
                                                             const productoNuevo = await productoModel.findById(pedido.producto);
+                                                            console.log(verificarArreglo(productoNuevo.tallas));
                                                             if(verificarArreglo(productoNuevo.tallas) === 0){
                                                                 productoNuevo.activo  = false;
-                                                                productoModel.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+                                                                await productoModel.findByIdAndUpdate(productoNuevo._id,productoNuevo);
                                                             }
                                                         }
                                                     }
@@ -155,7 +156,7 @@ pagoCtrl.createPago = async (req, res) => {
         }else{
             res.status(404).json({ message: "No se a podido crear el Pago" });
         }
-        
+
     } catch (err) {
         res.status(500).json({ message: "Error en el servidor",err });	
         console.log(err);
