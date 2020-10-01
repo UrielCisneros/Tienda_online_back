@@ -104,7 +104,7 @@ pagoCtrl.createPago = async (req, res) => {
                                                     $set: { 'numeros.$': { 
                                                         numero: numero.numero, 
                                                         cantidad: cantidad } }
-                                                }, (err, response) => {
+                                                },async (err, response) => {
                                                     if (err) {
                                                         res.status(500).send({ message: 'Ups algo paso al restar la talla' })
                                                         throw err;
@@ -138,7 +138,7 @@ pagoCtrl.createPago = async (req, res) => {
                                     throw error;
                                 }else{
                                     newProducto.cantidad = parseInt(producto.cantidad) - parseInt(pedido.cantidad);
-                                    await productoModel.findByIdAndUpdate(pedido.producto, newProducto,(err, userStored) => {
+                                    await productoModel.findByIdAndUpdate(pedido.producto, newProducto,async (err, userStored) => {
                                        if (err) {
                                            throw userStored;
                                        } else {
