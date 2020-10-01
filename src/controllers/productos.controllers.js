@@ -197,7 +197,7 @@ productosCtrl.actualizarNumero = async (req, res) => {
 				{
 					$set: { 'numeros.$': { numero, cantidad } }
 				},
-				(err, response) => {
+				async (err, response) => {
 					if (err) {
 						res.status(500).json({ message: 'Ups algo paso al actualizar', err });
 					} else {
@@ -205,6 +205,18 @@ productosCtrl.actualizarNumero = async (req, res) => {
 							res.status(404).json({ message: 'Este apartado no existe' });
 						} else {
 							res.status(200).json({ message: 'Se actualizo con exito' });
+							const productoNuevo = await Producto.findById(req.params.id);
+							let contador = 0;
+							for(let i = 0; i < productoNuevo.numeros.length; i++){
+								contador += productoNuevo.numeros[i].cantidad;
+							}
+							if(contador > 0){
+								productoNuevo.activo  = true;
+								await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+							}else{
+								productoNuevo.activo  = false;
+								await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+							}
 						}
 					}
 				}
@@ -230,7 +242,7 @@ productosCtrl.actualizarTalla = async (req, res) => {
 				{
 					$set: { 'tallas.$': { talla, cantidad } }
 				},
-				(err, response) => {
+				async (err, response) => {
 					if (err) {
 						res.status(500).json({ message: 'Ups algo paso al actualizar', err });
 					} else {
@@ -238,6 +250,18 @@ productosCtrl.actualizarTalla = async (req, res) => {
 							res.status(404).json({ message: 'Este apartado no existe' });
 						} else {
 							res.status(200).json({ message: 'Se actualizo con exito' });
+							const productoNuevo = await Producto.findById(req.params.id);
+							let contador = 0;
+							for(let i = 0; i < productoNuevo.tallas.length; i++){
+								contador += productoNuevo.tallas[i].cantidad;
+							}
+							if(contador > 0){
+								productoNuevo.activo  = true;
+								await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+							}else{
+								productoNuevo.activo  = false;
+								await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+							}
 						}
 					}
 				}
@@ -326,7 +350,7 @@ productosCtrl.addTalla = async (req, res, next) => {
 					]
 				}
 			},
-			(err, response) => {
+			async (err, response) => {
 				if (err) {
 					res.status(500).json({ message: 'Ups, algo al guardar talla', err });
 				} else {
@@ -334,6 +358,18 @@ productosCtrl.addTalla = async (req, res, next) => {
 						res.status(404).json({ message: 'Error al guardar' });
 					} else {
 						res.status(200).json({ message: 'talla guardada' });
+						const productoNuevo = await Producto.findById(req.params.id);
+						let contador = 0;
+						for(let i = 0; i < productoNuevo.tallas.length; i++){
+							contador += productoNuevo.tallas[i].cantidad;
+						}
+						if(contador > 0){
+							productoNuevo.activo = true;
+							await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+						}else{
+							productoNuevo.activo = false;
+							await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+						}
 					}
 				}
 			}
@@ -359,7 +395,7 @@ productosCtrl.addnumero = async (req, res, next) => {
 					}
 				}
 			},
-			(err, response) => {
+			async (err, response) => {
 				if (err) {
 					res.status(500).json({ message: 'Ups, algo al guardar numero', err });
 				} else {
@@ -367,6 +403,18 @@ productosCtrl.addnumero = async (req, res, next) => {
 						res.status(404).json({ message: 'Error al guardar' });
 					} else {
 						res.status(200).json({ message: 'numero guardado' });
+						const productoNuevo = await Producto.findById(req.params.id);
+						let contador = 0;
+						for(let i = 0; i < productoNuevo.numeros.length; i++){
+							contador += productoNuevo.numeros[i].cantidad;
+						}
+						if(contador > 0){
+							productoNuevo.activo  = true;
+							await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+						}else{
+							productoNuevo.activo  = false;
+							await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+						}
 					}
 				}
 			}
@@ -614,6 +662,8 @@ productosCtrl.updateProducto = async (req, res, next) => {
 		} else {
 			nuevoProducto.imagen = productoDeBase.imagen;
 		}
+
+		if()
 
 		if(productoDeBase.subCategoria !== nuevoProducto.subCategoria){
 			await Producto.updateMany({subCategoria: productoDeBase.subCategoria},{$set:{subCategoria: nuevoProducto.subCategoria}},{multi:true});
