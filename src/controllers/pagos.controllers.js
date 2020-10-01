@@ -21,7 +21,7 @@ pagoCtrl.createPago = async (req, res) => {
             amount,
             currency:"MXN",
             description: pedidoCompleto._id,
-            payment_method_types: ['card'],
+            payment_method_types: ['card'], 
             payment_method: sesion,
             confirm:true
         })
@@ -71,6 +71,7 @@ pagoCtrl.createPago = async (req, res) => {
                                                             throw err;
                                                         }else{
                                                             const productoNuevo = await productoModel.findById(pedido.producto);
+                                                            console.log(productoNuevo);
                                                             console.log(verificarArreglo(productoNuevo.tallas));
                                                             if(verificarArreglo(productoNuevo.tallas) === 0){
                                                                 productoNuevo.activo  = false;
@@ -108,6 +109,8 @@ pagoCtrl.createPago = async (req, res) => {
                                                         if (!response) {
                                                             res.status(500).send({ message: 'Ups algo paso al restar la talla' })
                                                             throw err;
+                                                        }else{
+                                                            
                                                         }
                                                     }
                                                 }
