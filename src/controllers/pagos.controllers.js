@@ -73,8 +73,8 @@ pagoCtrl.createPago = async (req, res) => {
                                                             const productoNuevo = await productoModel.findById(pedido.producto);
                                                             console.log(productoNuevo);
                                                             let contador = 0;
-                                                            for(let i = 0; i <= productoNuevo.tallas.length; i++){
-                                                                console.log(productoNuevo.tallas[i]);
+                                                            for(let i = 0; i < productoNuevo.tallas.length; i++){
+                                                                console.log(productoNuevo.tallas[i]._id);
                                                                 contador += productoNuevo.tallas[i].cantidad;
                                                             }
                                                             console.log(contador);
