@@ -663,12 +663,20 @@ productosCtrl.updateProducto = async (req, res, next) => {
 			nuevoProducto.imagen = productoDeBase.imagen;
 		}
 
-		/* if() */
-
 		if(productoDeBase.subCategoria !== nuevoProducto.subCategoria){
 			await Producto.updateMany({subCategoria: productoDeBase.subCategoria},{$set:{subCategoria: nuevoProducto.subCategoria}},{multi:true});
 		}
 		const producto = await Producto.findByIdAndUpdate(req.params.id, nuevoProducto);
+
+		const productoNuevo = await productoModel.findById(req.params.id);
+		console.log(productoNuevo.cantidad);
+		if(productoNuevo.cantidad > 0){
+			productoNuevo.activo  = true;
+			await productoModel.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+		}else{
+			productoNuevo.activo  = false;
+			await productoModel.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+		}
 		res.status(200).json({ message: 'Producto actualizado', producto });
 	} catch (err) {
 		res.status(500).json({ message: 'Error en el servidor', err });

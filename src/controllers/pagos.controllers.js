@@ -145,12 +145,12 @@ pagoCtrl.createPago = async (req, res) => {
                                            if (!userStored) {
                                                throw userStored;
                                            }else{
-                                            const productoNuevo = await productoModel.findById(pedido.producto);
-                                            console.log(productoNuevo.cantidad);
-                                            if(productoNuevo.cantidad === 0){
-                                                productoNuevo.activo  = false;
-                                                await productoModel.findByIdAndUpdate(productoNuevo._id,productoNuevo);
-                                            }
+                                                const productoNuevo = await productoModel.findById(pedido.producto);
+                                                console.log(productoNuevo.cantidad);
+                                                if(productoNuevo.cantidad === 0){
+                                                    productoNuevo.activo  = false;
+                                                    await productoModel.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+                                                }
                                            }
                                        }
                                    });
