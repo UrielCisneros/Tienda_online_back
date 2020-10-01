@@ -71,7 +71,6 @@ pagoCtrl.createPago = async (req, res) => {
                                                             throw err;
                                                         }else{
                                                             const productoNuevo = await productoModel.findById(pedido.producto);
-                                                            console.log(productoNuevo);
                                                             let contador = 0;
                                                             for(let i = 0; i < productoNuevo.tallas.length; i++){
                                                                 contador += productoNuevo.tallas[i].cantidad;
@@ -114,7 +113,16 @@ pagoCtrl.createPago = async (req, res) => {
                                                             res.status(500).send({ message: 'Ups algo paso al restar la talla' })
                                                             throw err;
                                                         }else{
-                                                            
+                                                            const productoNuevo = await productoModel.findById(pedido.producto);
+                                                            let contador = 0;
+                                                            for(let i = 0; i < productoNuevo.numeros.length; i++){
+                                                                contador += productoNuevo.numeros[i].cantidad;
+                                                            }
+                                                            console.log(contador);
+                                                            if(contador === 0){
+                                                                productoNuevo.activo  = false;
+                                                                await productoModel.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -136,6 +144,13 @@ pagoCtrl.createPago = async (req, res) => {
                                        } else {
                                            if (!userStored) {
                                                throw userStored;
+                                           }else{
+                                            const productoNuevo = await productoModel.findById(pedido.producto);
+                                            console.log(productoNuevo.cantidad);
+                                            if(productoNuevo.cantidad === 0){
+                                                productoNuevo.activo  = false;
+                                                await productoModel.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+                                            }
                                            }
                                        }
                                    });
