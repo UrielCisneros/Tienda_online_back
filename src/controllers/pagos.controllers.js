@@ -21,6 +21,7 @@ pagoCtrl.createPago = async (req, res) => {
             amount,
             currency:"MXN",
             description: pedidoCompleto._id,
+            payment_method_types: ['card'],
             payment_method: sesion,
             confirm:true
         })
