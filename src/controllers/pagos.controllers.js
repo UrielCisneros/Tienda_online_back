@@ -41,7 +41,6 @@ pagoCtrl.createPago = async (req, res) => {
                     if (!postStored) {
                         res.status(404).json({ message: "No se a podido crear el Pago" });
                     } else {
-
                         const pedidoBase = await pedidoModel.findById(pedidoCompleto._id)
                         pedidoBase.pedido.map(async (pedido) => {
                             if(pedido.talla){
@@ -61,7 +60,7 @@ pagoCtrl.createPago = async (req, res) => {
                                                     $set: { 'tallas.$': { 
                                                         talla: talla.talla, 
                                                         cantidad: cantidad } }
-                                                }, (err, response) => {
+                                                }, async (err, response) => {
                                                     if (err) {
                                                         res.status(500).send({ message: 'Ups algo paso al restar la talla' })
                                                         throw err;
@@ -69,6 +68,12 @@ pagoCtrl.createPago = async (req, res) => {
                                                         if (!response) {
                                                             res.status(500).send({ message: 'Ups algo paso al restar la talla' })
                                                             throw err;
+                                                        }else{
+                                                            const productoNuevo = await productoModel.findById(pedido.producto);
+                                                            if(verificarArreglo(productoNuevo.tallas) === 0){
+                                                                productoNuevo.activo  = false;
+                                                                productoModel.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -151,12 +156,19 @@ pagoCtrl.createPago = async (req, res) => {
             res.status(404).json({ message: "No se a podido crear el Pago" });
         }
         
-
     } catch (err) {
         res.status(500).json({ message: "Error en el servidor",err });	
         console.log(err);
     }
 
+}
+
+function verificarArreglo(arreglo){
+    let contador = 0;
+    for(let i; i < arreglo.length; i++){
+        contador += arreglo[i].cantidad;
+    }
+    return contador
 }
 
 pagoCtrl.obtenerPagosCliente = async (req, res) => {
