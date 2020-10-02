@@ -197,4 +197,14 @@ pagoCtrl.obtenerPagosCliente = async (req, res) => {
 	}
 };
 
+
+pagoCtrl.createPagoMovil = async (req,res) => {
+    try {
+        /* const stripe = new Stripe(process.env.LLAVE_SECRETA_STRIPE); */
+        console.log(req.body);
+    } catch (error) {
+        
+    }
+}
+
 module.exports = pagoCtrl;
