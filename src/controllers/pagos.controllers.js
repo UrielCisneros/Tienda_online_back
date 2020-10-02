@@ -203,14 +203,165 @@ pagoCtrl.createPagoMovil = async (req,res) => {
         const {sesionStripe,pedidoCompleto,amount} = req.body;
         const stripe = new Stripe(process.env.LLAVE_SECRETA_STRIPE);
         console.log(req.body);
-        const charge = await stripe.charges.create({
+        const payment = await stripe.charges.create({
             amount: amount,
             currency: 'mxn',
             description: pedidoCompleto._id,
             source: sesionStripe.tokenId,
           });
-          console.log(charge);
-        res.status(200).json({ message: "Pago generado" });
+          console.log(payment);
+          if(payment){
+            const newPago = new pagoModel({
+                id_objeto_sesion_stripe: sesionStripe.id,
+                intento_pago: payment.id,
+                pedido: pedidoCompleto._id,
+                cliente: pedidoCompleto.cliente._id
+            });
+            await newPago.save(async (err, postStored) => {
+                if (err) {
+                    res.status(500).json({ message: "Error en el servidor" })
+                } else {
+                    if (!postStored) {
+                        res.status(404).json({ message: "No se a podido crear el Pago" });
+                    } else {
+                        const pedidoBase = await pedidoModel.findById(pedidoCompleto._id)
+                        pedidoBase.pedido.map(async (pedido) => {
+                            if(pedido.talla){
+                                const producto = await productoModel.findById(pedido.producto);
+                                producto.tallas.map(async (talla) => {
+                                    if(talla.talla == pedido.talla){
+                                        if(talla.cantidad == '0' || talla.cantidad < pedido.cantidad){
+                                            res.status(500).send({ message: 'No existen suficientes productos en el inventario' })
+                                            throw talla.cantidad;
+                                        }else{
+                                            let cantidad = talla.cantidad - pedido.cantidad;
+                                            await productoModel.updateOne(
+                                                {
+                                                    'tallas._id': talla._id
+                                                },
+                                                {
+                                                    $set: { 'tallas.$': { 
+                                                        talla: talla.talla, 
+                                                        cantidad: cantidad } }
+                                                }, async (err, response) => {
+                                                    if (err) {
+                                                        res.status(500).send({ message: 'Ups algo paso al restar la talla' })
+                                                        throw err;
+                                                    } else {
+                                                        if (!response) {
+                                                            res.status(500).send({ message: 'Ups algo paso al restar la talla' })
+                                                            throw err;
+                                                        }else{
+                                                            const productoNuevo = await productoModel.findById(pedido.producto);
+                                                            let contador = 0;
+                                                            for(let i = 0; i < productoNuevo.tallas.length; i++){
+                                                                contador += productoNuevo.tallas[i].cantidad;
+                                                            }
+                                                            console.log(contador);
+                                                            if(contador === 0){
+                                                                productoNuevo.activo  = false;
+                                                                await productoModel.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            );
+                                        }
+                                    }
+                                }) 
+                            }else if(pedido.numero){
+                                const producto = await productoModel.findById(pedido.producto);
+                                producto.numeros.map(async (numero) => {
+                                    if(numero.numero == pedido.numero){
+                                        if(numero.cantidad == '0' || numero.cantidad < pedido.cantidad){
+                                            res.status(500).send({ message: 'No existen suficientes productos en el inventario' })
+                                            throw numero.cantidad;
+                                        }else{
+                                            let cantidad = numero.cantidad - pedido.cantidad;
+                                            await productoModel.updateOne(
+                                                {
+                                                    'numeros._id': numero._id
+                                                },
+                                                {
+                                                    $set: { 'numeros.$': { 
+                                                        numero: numero.numero, 
+                                                        cantidad: cantidad } }
+                                                },async (err, response) => {
+                                                    if (err) {
+                                                        res.status(500).send({ message: 'Ups algo paso al restar la talla' })
+                                                        throw err;
+                                                    } else {
+                                                        if (!response) {
+                                                            res.status(500).send({ message: 'Ups algo paso al restar la talla' })
+                                                            throw err;
+                                                        }else{
+                                                            const productoNuevo = await productoModel.findById(pedido.producto);
+                                                            let contador = 0;
+                                                            for(let i = 0; i < productoNuevo.numeros.length; i++){
+                                                                contador += productoNuevo.numeros[i].cantidad;
+                                                            }
+                                                            console.log(contador);
+                                                            if(contador === 0){
+                                                                productoNuevo.activo  = false;
+                                                                await productoModel.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            );
+                                        }
+                                    }
+                                }) 
+                            }else{
+                                const producto = await productoModel.findById(pedido.producto);
+                                const newProducto = producto;
+                                if(producto.cantidad == 0 || producto.cantidad < pedido.cantidad){
+                                    res.status(500).send({ message: 'No exixten suficientes en el inventario' })
+                                    throw error;
+                                }else{
+                                    newProducto.cantidad = parseInt(producto.cantidad) - parseInt(pedido.cantidad);
+                                    await productoModel.findByIdAndUpdate(pedido.producto, newProducto,async (err, userStored) => {
+                                       if (err) {
+                                           throw userStored;
+                                       } else {
+                                           if (!userStored) {
+                                               throw userStored;
+                                           }else{
+                                                const productoNuevo = await productoModel.findById(pedido.producto);
+                                                console.log(productoNuevo.cantidad);
+                                                if(productoNuevo.cantidad === 0){
+                                                    productoNuevo.activo  = false;
+                                                    await productoModel.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+                                                }
+                                           }
+                                       }
+                                   });
+                                }
+                            }
+                        })
+                        if(pedidoCompleto.carrito === true){
+                            await Carrito.findOneAndDelete({ cliente: pedidoCompleto.cliente._id });
+                        }
+                        const pedidoPagado = await pedidoModel.findById(pedidoCompleto._id);
+                        pedidoPagado.pagado = true;  
+                         await pedidoModel.findByIdAndUpdate({ _id: pedidoPagado._id },pedidoPagado, { new: true },(err, userStored) => {
+                            if (err) {
+                                res.status(500).send({ message: 'Ups, parece que algo salio mal', err });
+                            } else {
+                                if (!userStored) {
+                                    res.status(404).send({ message: 'Error al actualizar pedido' });
+                                } else {
+                                    res.status(200).json({ message: "Pago realzado con exito" });
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }else{
+            res.status(404).json({ message: "No se a podido crear el Pago" });
+        }
+          
     } catch (error) {
         res.status(500).json({ message: "Error en el servidor",error });	
         console.log(error);
