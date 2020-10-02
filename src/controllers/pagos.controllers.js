@@ -201,7 +201,7 @@ pagoCtrl.obtenerPagosCliente = async (req, res) => {
 pagoCtrl.createPagoMovil = async (req,res) => {
     try {
         const {sesionStripe,pedidoCompleto,amount} = req.body;
-        /* const stripe = new Stripe(process.env.LLAVE_SECRETA_STRIPE); */
+        const stripe = new Stripe(process.env.LLAVE_SECRETA_STRIPE);
         console.log(req.body);
         const charge = await stripe.charges.create({
             amount: amount,
