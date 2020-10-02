@@ -209,7 +209,8 @@ pagoCtrl.createPagoMovil = async (req,res) => {
             description: pedidoCompleto._id,
             source: sesionStripe.tokenId,
           });
-        res.status(200).json({ message: "Pago generado" },charge);
+          console.log(charge);
+        res.status(200).json({ message: "Pago generado" });
     } catch (error) {
         res.status(500).json({ message: "Error en el servidor",error });	
         console.log(error);
