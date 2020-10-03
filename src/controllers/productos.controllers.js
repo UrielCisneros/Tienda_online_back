@@ -552,7 +552,7 @@ productosCtrl.getProductosFiltrados = async (req, res) => {
 
 productosCtrl.getProductos = async (req, res) => {
 	try {
-		const { page = 1, limit = 10 } = req.query;
+		const { page = 1, limit = 20 } = req.query;
 		const options = {
 			page,
 			limit: parseInt(limit)
