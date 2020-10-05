@@ -2,6 +2,7 @@ const apartadoCtrl = {};
 const Apartado = require('../models/Apartado');
 const Producto = require('../models/Producto')
 const mongoose = require('mongoose');
+const nodemailer = require('nodemailer');
 const { response } = require('express');
 
 apartadoCtrl.agregarApartado = async (req, res) => {
@@ -70,6 +71,33 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 			})
 		}
 	}
+
+	const contentHTML = `
+		<h1> Informacion user </h1>
+	`;
+
+	const transporter = nodemailer.createTransport({
+		host: 'smtp.hostinger.mx',
+		port: 587,
+		secure: false,
+		auth: {
+			user: 'correo_cafi@cursosuniline.com',
+			pass: 'erk&I/H[*L5'
+		},
+		tls: {
+			rejectUnauthorize: false
+		}
+	})
+
+	const info = transporter.sendMail({
+		from:` 'Cafi server' <correo_cafi@cursosuniline.com>`,
+		to: 'urielcisne96@gmail.com',
+		subject: "Solicitud de un producto a apartar",
+		text: "enviado"
+	})
+
+	console.log(info);
+
 };
 
 apartadoCtrl.obtenerApartados = async (req, res) => {
