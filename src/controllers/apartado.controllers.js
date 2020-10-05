@@ -93,7 +93,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 		from:` 'Cafi server' <correo_cafi@cursosuniline.com>`,
 		to: 'urielcisne96@gmail.com',
 		subject: "Solicitud de un producto a apartar",
-		text: "enviado"
+		html: contentHTML,
 	})
 
 	console.log(info);
