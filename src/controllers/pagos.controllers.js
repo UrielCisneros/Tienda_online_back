@@ -210,7 +210,8 @@ pagoCtrl.createPagoMovil = async (req,res) => {
             source: sesionStripe.tokenId,
           });
           console.log(payment);
-          if(payment){
+          res.status(200).json({ message: "Pago realzado con exito" });
+          /* if(payment){
             const newPago = new pagoModel({
                 id_objeto_sesion_stripe: sesionStripe.id,
                 intento_pago: payment.id,
@@ -360,7 +361,7 @@ pagoCtrl.createPagoMovil = async (req,res) => {
             });
         }else{
             res.status(404).json({ message: "No se a podido crear el Pago" });
-        }
+        } */
           
     } catch (error) {
         res.status(500).json({ message: "Error en el servidor",error });	
