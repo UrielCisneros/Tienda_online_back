@@ -84,7 +84,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 	<div>
 		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Parece que tienes una nueva solicitud de apartado</h3>
 		<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
-			<img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${datosProducto.imagen}" />
+			<img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${datosProducto[0].imagen}" />
 			<div class="" style="margin-top: 20px; padding: 5px;">
 				<p style="text-align: center; font-family: sans-serif;" > <span style="font-weight: bold;">Solicitud de:</span> ${clienteBase.nombre} ${clienteBase.apellido}</p>
 
@@ -98,7 +98,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 					<p style="text-align: center; font-family: sans-serif;font-size: 13px;" ><span style="font-weight: bold;">Direccion:</span> ${clienteBase.direccion[0].calle_numero} Colonia ${clienteBase.direccion[0].colonia} ${clienteBase.direccion[0].ciudad} ${clienteBase.direccion[0].estado} ${clienteBase.direccion[0].pais}.</p>
 				</div>
 
-				<p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${datosProducto.nombre}</p>
+				<p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${datosProducto[0].nombre}</p>
 				<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> 10</p>
 				${req.body.medida ? req.body.medida[0].numero ? 
 					`<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${req.body.medida[0].numero}</p>` : 
@@ -112,7 +112,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 
 	`;
 
-	/* const transporter = nodemailer.createTransport({
+	const transporter = nodemailer.createTransport({
 		host: 'smtp.hostinger.mx',
 		port: 587,
 		secure: false,
@@ -130,7 +130,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 		to: admin[0].email,
 		subject: "Solicitud de un producto a apartar",
 		html: contentHTML,
-	}) */
+	})
 
 	console.log(info);
 
