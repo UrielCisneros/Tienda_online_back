@@ -16,7 +16,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 	const clienteBase = await clienteModel.findById(cliente);
 	const admin = await adminModel.find({});
 	const tienda = await Tienda.find();
-	console.log(tienda);
+
 
 
 	if(req.body.medida){
@@ -128,9 +128,9 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 	</div>
 	`;
 
-/* 	email.sendEmail(admin[0].email,"Solicitud de apartado",htmlContent,"Cafi service");
+	email.sendEmail(admin[0].email,"Solicitud de apartado",htmlContent,"Cafi service");
 
-	email.sendEmail(clienteBase.email,"Apartado en proceso",htmlContentUer,"Cafi service"); */
+	email.sendEmail(clienteBase.email,"Apartado en proceso",htmlContentUer,tienda[0].nombre);
 
 };
 
