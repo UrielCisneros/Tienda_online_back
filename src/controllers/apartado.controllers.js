@@ -15,6 +15,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 	const clienteBase = await clienteModel.findById(cliente);
 	const admin = await adminModel.find({});
 	console.log(datosProducto);
+	console.log(clienteBase);
 
 	if(req.body.medida){
 		if(medida[0].numero){
