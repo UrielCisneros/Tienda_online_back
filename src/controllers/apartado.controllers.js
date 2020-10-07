@@ -110,7 +110,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 	</div>
 	`;
 
-	const htmlContentUer = `
+	const htmlContentUser = `
 	<div>
 		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu apartado esta siendo <span style="color: #09ABF6;">procesado</span></h3>
 		<h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Te pedimos que tengas paciencia, en breve se contactaran contigo para mas detalle.</h4>
@@ -130,7 +130,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 
 	email.sendEmail(admin[0].email,"Solicitud de apartado",htmlContent,"Cafi service");
 
-	email.sendEmail(clienteBase.email,"Apartado en proceso",htmlContentUer,tienda[0].nombre);
+	email.sendEmail(clienteBase.email,"Apartado en proceso",htmlContentUser,tienda[0].nombre);
 
 };
 
@@ -320,6 +320,8 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 	console.log(apatadoActualizado);
 	apatadoActualizado.fecha_envio = new Date();
 	const apartadoBase = await Apartado.findById(req.params.idApartado).populate("producto cliente");
+	const tienda = await Tienda.find();
+
 	await Apartado.findOneAndUpdate({_id: req.params.idApartado}, apatadoActualizado, (err, response) => {
 		if(err){
 			res.status(500).json({message: 'Hubo un error al actualizar el apartado', err})
@@ -356,10 +358,10 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 			break;
 	}
 
-	const htmlContentUer = `
+	const htmlContentUser = `
 	<div>
 		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu apartado a sido: <span style="color: ${color};">${apatadoActualizado.estado}</span></h3>
-		<h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Te pedimos que tengas paciencia, en breve se contactaran contigo para mas detalle.</h4>
+		<h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">${mensaje}</h4>
 
 		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
 		<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
@@ -382,8 +384,9 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 	</div>
 	`;
 
-	email.sendEmail(clienteBase.email,"Apartado en proceso",htmlContentUer,tienda[0].nombre);
+	email.sendEmail(apartadoBase.cliente.email,`Apartado ${apatadoActualizado.estado}`,htmlContentUser,tienda[0].nombre);
 };
+
 
 apartadoCtrl.eliminarApartado = async (req, res) => {
 	await Apartado.findOneAndDelete({_id: req.params.idApartado}, (err, response) => {
