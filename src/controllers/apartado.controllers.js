@@ -81,7 +81,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 
 	const htmlContent = `
 	<div>
-		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Parece que tienes una nueva solicitud de apartado</h3>
+		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tienes una nueva solicitud de apartado</h3>
 		<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
 			<img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${datosProducto[0].imagen}" />
 			<div class="" style="margin-top: 20px; padding: 5px;">
@@ -110,7 +110,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 	</div>
 	`;
 
-	const info = email.sendEmail(admin[0].email,htmlContent);
+	const info = email.sendEmail(admin[0].email,"Solicitud de apartado",htmlContent);
 
 	console.log(info);
 

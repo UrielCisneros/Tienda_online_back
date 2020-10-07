@@ -2,14 +2,14 @@ const nodemailer = require('nodemailer');
 
 const sendEmail = {};
 
-sendEmail.sendEmail = (emailAdmin,htmlContent) => {
+sendEmail.sendEmail = (emailAdmin,action,htmlContent) => {
 	const transporter = nodemailer.createTransport({
-		host: 'smtp.hostinger.mx',
-		port: 587,
+		host: process.env.HOST_EMAIL,
+		port: process.env.PORT_EMAIL,
 		secure: false,
 		auth: {
-			user: 'correo_cafi@cursosuniline.com',
-			pass: 'erk&I/H[*L5'
+			user: process.env.USER_EMAIL,
+			pass: process.env.PASS_EMAIL
 		},
 		tls: {
 			rejectUnauthorize: false
@@ -17,9 +17,9 @@ sendEmail.sendEmail = (emailAdmin,htmlContent) => {
 	})
 
 	const info = transporter.sendMail({
-		from:` 'Cafi service' <correo_cafi@cursosuniline.com>`,
+		from:` 'Cafi service' <${process.env.USER_EMAIL}>`,
 		to: emailAdmin,
-		subject: "Solicitud de un producto a apartar",
+		subject: action,
 		html: htmlContent,
     })
     
