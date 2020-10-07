@@ -60,6 +60,8 @@ pagoCtrl.createPago = async (req, res) => {
                 `;
             }
 
+            console.log(pedidos);
+
             const htmlContentUser = `
             <div>
                 <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu pedido esta en proceso</h3>
