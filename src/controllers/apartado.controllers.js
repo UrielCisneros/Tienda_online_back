@@ -75,7 +75,6 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 	const contentHTML = `
 			<div>
 				<h1 style="text-align: center;  font-family: sans-serif;">Parece que tienes una nueva solicitud de apartado</h1>
-
 				<div style="">
 					<img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/1597080905136" />
 					<p style="text-align: center; font-family: sans-serif;" >Solicitud de: Uriel Cisneros Torres</p>
