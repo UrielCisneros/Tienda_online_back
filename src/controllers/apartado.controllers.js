@@ -90,7 +90,8 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 
 				<p style="text-align: center; font-family: sans-serif;">Info del cliente:</p>
 				<div  style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 200px; display:block; margin:auto;">
-				${clienteBase.tipoSesion!== "FireBase" ? `<img style="max-width: 70px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${clienteBase.imagen}"/>`: `<img style="max-width: 70px; display:block; margin:auto;" class="" src="${clienteBase.imagen}"/>`}
+
+				${clienteBase.tipoSesion !== "FireBase" ? `<img style="max-width: 70px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${clienteBase.imagen}"/>` : `<img style="max-width: 70px; display:block; margin:auto;" class="" src="${clienteBase.imagen}"/>`}
 
 					<p style="text-align: center; font-family: sans-serif;font-size: 13px;" ><span style="font-weight: bold;">Correo:</span> ${clienteBase.email}</p>
 					<p style="text-align: center; font-family: sans-serif;font-size: 13px;" ><span style="font-weight: bold;">Telefono:</span> ${clienteBase.telefono}</p>
