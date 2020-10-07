@@ -108,7 +108,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 
 	`;
 
-/* 	const transporter = nodemailer.createTransport({
+	const transporter = nodemailer.createTransport({
 		host: 'smtp.hostinger.mx',
 		port: 587,
 		secure: false,
@@ -122,13 +122,13 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 	})
 
 	const info = transporter.sendMail({
-		from:` 'Cafi server' <correo_cafi@cursosuniline.com>`,
-		to: 'urielcisne96@gmail.com',
+		from:` 'Cafi service' <correo_cafi@cursosuniline.com>`,
+		to: admin[0].email,
 		subject: "Solicitud de un producto a apartar",
 		html: contentHTML,
 	})
 
-	console.log(info); */
+	console.log(info);
 
 };
 
