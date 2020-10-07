@@ -375,9 +375,8 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 
 			${apatadoActualizado.estado === "ENVIADO" ? 
 			`
-			<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Paqueteria:</span> ${apartadoBase.paqueteria}</p>
-			<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Numero de seguimiento:</span> ${apartadoBase.codigo_seguimiento}</p>
-			
+			<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Paqueteria:</span> ${apatadoActualizado.paqueteria}</p>
+			<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Numero de seguimiento:</span> ${apatadoActualizado.codigo_seguimiento}</p>
 			`
 			:""}
 		</div>

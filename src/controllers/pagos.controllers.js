@@ -4,6 +4,7 @@ const Stripe = require('stripe');
 const productoModel = require('../models/Producto');
 const pedidoModel = require('../models/Pedido');
 const Carrito = require('../models/Carrito');
+const email = require('../middleware/sendEmail');
 
 pagoCtrl.createPago = async (req, res) => {
     try {
@@ -35,7 +36,11 @@ pagoCtrl.createPago = async (req, res) => {
                 pedido: pedidoCompleto._id,
                 cliente: pedidoCompleto.cliente._id
             });
-            await newPago.save(async (err, postStored) => {
+            const pedidoBase = await pedidoModel.findById(pedidoCompleto._id)
+
+            console.log(pedidoBase);
+
+            /* await newPago.save(async (err, postStored) => {
                 if (err) {
                     res.status(500).json({ message: "Error en el servidor" })
                 } else {
@@ -173,9 +178,30 @@ pagoCtrl.createPago = async (req, res) => {
                                 }
                             }
                         });
+
+                        const htmlContentUser = `
+                        <div>
+                            <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu pedido esta en proceso</h3>
+                            <h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">El pedido esta siendo procesado,</h4>
+                    
+                            <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
+                            <div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
+                                <img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${datosProducto[0].imagen}" />
+                                <p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${datosProducto[0].nombre}</p>
+                                <p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> ${cantidad}</p>
+                                ${req.body.medida ? req.body.medida[0].numero ? 
+                                    `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${req.body.medida[0].numero}</p>` : 
+                                    `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${req.body.medida[0].talla}</p>`:
+                                ""}
+                            </div>
+                        </div>
+                        `;
+                        
+
+
                     }
                 }
-            });
+            }); */
         }else{
             res.status(404).json({ message: "No se a podido crear el Pago" });
         }
