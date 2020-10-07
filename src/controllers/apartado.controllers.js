@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
 const { response } = require('express');
 const clienteModel = require('../models/Cliente');
+const adminModel = require('../models/Administrador');
 
 apartadoCtrl.agregarApartado = async (req, res) => {
 	console.log(req.body);
@@ -12,7 +13,8 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 	const datosProducto = await Producto.find({_id: producto})
 	const newApartado = new Apartado({ producto, cliente, cantidad, estado, medida, tipoEntrega });
 	const clienteBase = await clienteModel.findById(cliente);
-	console.log(clienteBase);
+	const admin = await adminModel.find({});
+	console.log(admin);
 
 	if(req.body.medida){
 		if(medida[0].numero){
@@ -81,7 +83,17 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 		<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
 			<img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${datosProducto.imagen}" />
 			<div class="" style="margin-top: 20px; padding: 5px;">
-				<p style="text-align: center; font-family: sans-serif;" > <span style="font-weight: bold;">Solicitud de:</span>  Uriel Cisneros Torres</p>
+				<p style="text-align: center; font-family: sans-serif;" > <span style="font-weight: bold;">Solicitud de:</span>${clienteBase.nombre} ${clienteBase.apellido}</p>
+
+				<p style="text-align: center; font-family: sans-serif;">Info del cliente:</p>
+				<div  style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 200px; display:block; margin:auto;">
+				${clienteBase.imagen ? `<img style="max-width: 70px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${clienteBase.imagen}"/>`:""}
+
+					<p style="text-align: center; font-family: sans-serif;font-size: 13px;" ><span style="font-weight: bold;">Correo:</span>${clienteBase.email}</p>
+					<p style="text-align: center; font-family: sans-serif;font-size: 13px;" ><span style="font-weight: bold;">Telefono:</span>${clienteBase.telefono}</p>
+					<p style="text-align: center; font-family: sans-serif;font-size: 13px;" ><span style="font-weight: bold;">Direccion:</span>${clienteBase.direccion[0].calle_numero} Colonia ${clienteBase.direccion[0].colonia} ${clienteBase.direccion[0].ciudad} ${clienteBase.direccion[0].estado} ${clienteBase.direccion[0].pais}.</p>
+				</div>
+
 				<p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${datosProducto.nombre}</p>
 				<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> 10</p>
 				${req.body.medida ? req.body.medida[0].numero ? 
