@@ -6,6 +6,7 @@ const email = require('../middleware/sendEmail');
 const { response } = require('express');
 const clienteModel = require('../models/Cliente');
 const adminModel = require('../models/Administrador');
+const Tienda = require('../models/Tienda');
 
 apartadoCtrl.agregarApartado = async (req, res) => {
 	console.log(req.body);
@@ -14,7 +15,8 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 	const newApartado = new Apartado({ producto, cliente, cantidad, estado, medida, tipoEntrega });
 	const clienteBase = await clienteModel.findById(cliente);
 	const admin = await adminModel.find({});
-	console.log(datosProducto);
+	const tienda = await Tienda.find();
+	console.log(tienda);
 
 
 	if(req.body.medida){
@@ -108,9 +110,27 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 	</div>
 	`;
 
-	const info = email.sendEmail(admin[0].email,"Solicitud de apartado",htmlContent,"Cafi service");
+	const htmlContentUer = `
+	<div>
+		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu apartado esta siendo <span style="color: #09ABF6;">procesado</span></h3>
+		<h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Te pedimos que tengas paciencia, en breve se contactaran contigo para mas detalle.</h4>
 
-	console.log(info);
+		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
+		<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
+			<img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${datosProducto[0].imagen}" />
+			<p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${datosProducto[0].nombre}</p>
+			<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> ${cantidad}</p>
+			${req.body.medida ? req.body.medida[0].numero ? 
+				`<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${req.body.medida[0].numero}</p>` : 
+				`<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${req.body.medida[0].talla}</p>`:
+			""}
+		</div>
+	</div>
+	`;
+
+/* 	email.sendEmail(admin[0].email,"Solicitud de apartado",htmlContent,"Cafi service");
+
+	email.sendEmail(clienteBase.email,"Apartado en proceso",htmlContentUer,"Cafi service"); */
 
 };
 
@@ -310,6 +330,19 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 			}
 		}
 	});
+
+	switch(apatadoActualizado.estado){
+		case "ACEPTADO": 
+			break;
+		case "RECHAZADO":
+			break;
+		case "ENVIADO":
+			break;
+		case "CANCELADO":
+			break;
+		default:
+			break;
+	}
 };
 
 apartadoCtrl.eliminarApartado = async (req, res) => {
