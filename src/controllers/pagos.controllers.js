@@ -46,13 +46,13 @@ pagoCtrl.createPago = async (req, res) => {
             for(let i = 0; i < pedidoBase.pedido.length; i++){
                 pedidos += `
                 <tr>
-                    <td><img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${pedidoBase.imagen}" /></td>
-                    <td><p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${pedidoBase.nombre}</p></td>
+                    <td><img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${pedidoBase.pedido[i].producto.imagen}" /></td>
+                    <td><p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${pedidoBase.pedido[i].producto.nombre}</p></td>
                     <td><p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> ${pedidoBase.cantidad}</p></td>
                     <td>
-                        ${pedidoBase.pedido ? pedidoBase.pedido.numero ? 
-                            `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${pedidoBase.pedido.numero}</p>` : 
-                            `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${pedidoBase.pedido.talla}</p>`:
+                        ${pedidoBase.pedido ? pedidoBase.pedido[i].numero ? 
+                            `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${pedidoBase.pedido[i].numero}</p>` : 
+                            `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${pedidoBase.pedido[i].talla}</p>`:
                             `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">No aplica</span></p>`
                         }
                     </td>
