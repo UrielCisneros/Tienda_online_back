@@ -319,7 +319,7 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 	const apatadoActualizado = req.body;
 	console.log(apatadoActualizado);
 	apatadoActualizado.fecha_envio = new Date();
-	const apartadoBase = await Apartado.findById(req.params.idApartado);
+	const apartadoBase = await Apartado.findById(req.params.idApartado).populate("producto cliente");
 	await Apartado.findOneAndUpdate({_id: req.params.idApartado}, apatadoActualizado, (err, response) => {
 		if(err){
 			res.status(500).json({message: 'Hubo un error al actualizar el apartado', err})
