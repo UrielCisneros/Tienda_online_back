@@ -36,13 +36,40 @@ pagoCtrl.createPago = async (req, res) => {
                 pedido: pedidoCompleto._id,
                 cliente: pedidoCompleto.cliente._id
             });
-            const pedidoBase = await pedidoModel.findById(pedidoCompleto._id)
+            const pedidoBase = await pedidoModel.findById(pedidoCompleto._id).populate("cliente").populate({
+                path: 'pedido.producto',
+                model: 'producto'
+            })
 
             console.log(pedidoBase);
-
+            let pedidos = ``;
             for(let i = 0; i < pedidoBase.pedido.length; i++){
-                console.log(i);
+                pedidos += `
+                <tr>
+                    <td><img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${pedidoBase.imagen}" /></td>
+                    <td><p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${pedidoBase.nombre}</p></td>
+                    <td><p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> ${pedidoBase.cantidad}</p></td>
+                    <td>
+                        ${pedidoBase.pedido ? pedidoBase.pedido.numero ? 
+                            `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${pedidoBase.pedido.numero}</p>` : 
+                            `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${pedidoBase.pedido.talla}</p>`:
+                            `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">No aplica</span></p>`
+                        }
+                    </td>
+                </tr>
+                `;
             }
+
+            const htmlContentUser = `
+            <div>
+                <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu pedido esta en proceso</h3>
+                <h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">El pedido esta siendo procesado, si tienes alguna duda no dudes en contactarnos.</h4>
+        
+                <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
+
+            </div>
+            `;
+            
 
             /* await newPago.save(async (err, postStored) => {
                 if (err) {
