@@ -6,7 +6,7 @@ const nodemailer = require('nodemailer');
 const { response } = require('express');
 
 apartadoCtrl.agregarApartado = async (req, res) => {
-
+	console.log(req.body);
 	const { producto, cliente, cantidad, estado, medida,tipoEntrega } = req.body;
 	const datosProducto = await Producto.find({_id: producto})
 	const newApartado = new Apartado({ producto, cliente, cantidad, estado, medida, tipoEntrega });
@@ -73,18 +73,24 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 	}
 
 	const contentHTML = `
-			<div>
-				<h1 style="text-align: center;  font-family: sans-serif;">Parece que tienes una nueva solicitud de apartado</h1>
-				<div style="">
-					<img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/1597080905136" />
-					<p style="text-align: center; font-family: sans-serif;" >Solicitud de: Uriel Cisneros Torres</p>
-					<p style="text-align: center; font-family: sans-serif;" >Producto: NIKE AIRMAG Back To The Future Edition</p>
-				</div>
+	<div>
+		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Parece que tienes una nueva solicitud de apartado</h3>
+		<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
+			<img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${datosProducto.imagen}" />
+			<div class="" style="margin-top: 20px; padding: 5px;">
+				<p style="text-align: center; font-family: sans-serif;" > <span style="font-weight: bold;">Solicitud de:</span>  Uriel Cisneros Torres</p>
+				<p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${datosProducto.nombre}</p>
+				<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> 10</p>
+				<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> XL</p>
+				<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Tipo de entrega:</span> A sucursaol</p>
 			</div>
+		</div>
+		<p style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">El cliente espera a que te coontactes con el, Hazlo ya!!!</p>
+	</div>
 
 	`;
 
-	const transporter = nodemailer.createTransport({
+/* 	const transporter = nodemailer.createTransport({
 		host: 'smtp.hostinger.mx',
 		port: 587,
 		secure: false,
@@ -104,7 +110,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 		html: contentHTML,
 	})
 
-	console.log(info);
+	console.log(info); */
 
 };
 
