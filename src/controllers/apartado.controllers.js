@@ -2,7 +2,7 @@ const apartadoCtrl = {};
 const Apartado = require('../models/Apartado');
 const Producto = require('../models/Producto')
 const mongoose = require('mongoose');
-const nodemailer = require('nodemailer');
+const email = require('../middleware/sendEmail');
 const { response } = require('express');
 const clienteModel = require('../models/Cliente');
 const adminModel = require('../models/Administrador');
@@ -78,9 +78,8 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 		}
 	}
 
-	console.log(datosProducto.imagen);
 
-	const contentHTML = `
+	const htmlContent = `
 	<div>
 		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Parece que tienes una nueva solicitud de apartado</h3>
 		<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
@@ -109,28 +108,9 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 		</div>
 		<p style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">El cliente espera a que te coontactes con el, Hazlo ya!!!</p>
 	</div>
-
 	`;
 
-	const transporter = nodemailer.createTransport({
-		host: 'smtp.hostinger.mx',
-		port: 587,
-		secure: false,
-		auth: {
-			user: 'correo_cafi@cursosuniline.com',
-			pass: 'erk&I/H[*L5'
-		},
-		tls: {
-			rejectUnauthorize: false
-		}
-	})
-
-	const info = transporter.sendMail({
-		from:` 'Cafi service' <correo_cafi@cursosuniline.com>`,
-		to: admin[0].email,
-		subject: "Solicitud de un producto a apartar",
-		html: contentHTML,
-	})
+	const info = email.sendEmail(admin[0].email,htmlContent);
 
 	console.log(info);
 
