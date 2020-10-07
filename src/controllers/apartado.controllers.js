@@ -14,7 +14,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 	const newApartado = new Apartado({ producto, cliente, cantidad, estado, medida, tipoEntrega });
 	const clienteBase = await clienteModel.findById(cliente);
 	const admin = await adminModel.find({});
-	console.log(admin);
+	console.log(datosProducto);
 
 	if(req.body.medida){
 		if(medida[0].numero){
@@ -77,6 +77,8 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 		}
 	}
 
+
+
 	const contentHTML = `
 	<div>
 		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Parece que tienes una nueva solicitud de apartado</h3>
@@ -108,7 +110,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 
 	`;
 
-	const transporter = nodemailer.createTransport({
+/* 	const transporter = nodemailer.createTransport({
 		host: 'smtp.hostinger.mx',
 		port: 587,
 		secure: false,
@@ -126,7 +128,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 		to: admin[0].email,
 		subject: "Solicitud de un producto a apartar",
 		html: contentHTML,
-	})
+	}) */
 
 	console.log(info);
 
