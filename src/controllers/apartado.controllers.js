@@ -4,12 +4,15 @@ const Producto = require('../models/Producto')
 const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
 const { response } = require('express');
+const clienteModel = require('../models/Cliente');
 
 apartadoCtrl.agregarApartado = async (req, res) => {
 	console.log(req.body);
 	const { producto, cliente, cantidad, estado, medida,tipoEntrega } = req.body;
 	const datosProducto = await Producto.find({_id: producto})
 	const newApartado = new Apartado({ producto, cliente, cantidad, estado, medida, tipoEntrega });
+	const clienteBase = await clienteModel.findById(cliente);
+	console.log(clienteBase);
 
 	if(req.body.medida){
 		if(medida[0].numero){
@@ -81,8 +84,11 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 				<p style="text-align: center; font-family: sans-serif;" > <span style="font-weight: bold;">Solicitud de:</span>  Uriel Cisneros Torres</p>
 				<p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${datosProducto.nombre}</p>
 				<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> 10</p>
-				<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> XL</p>
-				<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Tipo de entrega:</span> A sucursaol</p>
+				${req.body.medida ? req.body.medida[0].numero ? 
+					`<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${req.body.medida[0].numero}</p>` : 
+					`<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${req.body.medida[0].talla}</p>`:
+				""}
+				<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Tipo de entrega:</span>${tipoEntrega === 'ENVIO' ? "Envio a domicilio" : "Recoger a sucursal"}</p>
 			</div>
 		</div>
 		<p style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">El cliente espera a que te coontactes con el, Hazlo ya!!!</p>
