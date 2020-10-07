@@ -73,17 +73,16 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 	}
 
 	const contentHTML = `
-			<h1 style="text-align: center;  font-family: sans-serif;">Parece que tienes una nueva solicitud de apartado</h1>
-	
-			<div class="" style="display: flex;">
-				<div class="" style="position: relative; background-color: #0C9B00;  width: 100%; height: 200px;"></div>
-				<div style="position: absolute;  margin:auto; margin-top: 10%; margin-left: 33%;">
+			<div>
+				<h1 style="text-align: center;  font-family: sans-serif;">Parece que tienes una nueva solicitud de apartado</h1>
+
+				<div style="">
 					<img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/1597080905136" />
 					<p style="text-align: center; font-family: sans-serif;" >Solicitud de: Uriel Cisneros Torres</p>
 					<p style="text-align: center; font-family: sans-serif;" >Producto: NIKE AIRMAG Back To The Future Edition</p>
 				</div>
-				<div class="" style="position: relative;"></div>
 			</div>
+
 	`;
 
 	const transporter = nodemailer.createTransport({
