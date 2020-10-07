@@ -10,7 +10,7 @@ pagoCtrl.createPago = async (req, res) => {
     try {
         const {sesionStripe,pedidoCompleto,amount} = req.body;
         const stripe = new Stripe(process.env.LLAVE_SECRETA_STRIPE);
-        console.log(req.body);
+     
         let sesion = "";
         if(sesionStripe.id){
             sesion = sesionStripe.id;
@@ -27,7 +27,7 @@ pagoCtrl.createPago = async (req, res) => {
             confirm:true
         })
 
-        console.log(payment);
+        
 
         if(payment){
             const newPago = new pagoModel({
@@ -39,6 +39,10 @@ pagoCtrl.createPago = async (req, res) => {
             const pedidoBase = await pedidoModel.findById(pedidoCompleto._id)
 
             console.log(pedidoBase);
+
+            for(let i = 0; i < pedidoBase.pedido.length; i++){
+                console.log(i);
+            }
 
             /* await newPago.save(async (err, postStored) => {
                 if (err) {
