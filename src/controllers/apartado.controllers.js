@@ -78,12 +78,17 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 		}
 	}
 
-
 	const htmlContent = `
 	<div>
 		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tienes una nueva solicitud de apartado</h3>
 		<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
 			<img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${datosProducto[0].imagen}" />
+			<p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${datosProducto[0].nombre}</p>
+			<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> ${cantidad}</p>
+			${req.body.medida ? req.body.medida[0].numero ? 
+				`<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${req.body.medida[0].numero}</p>` : 
+				`<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${req.body.medida[0].talla}</p>`:
+			""}
 			<div class="" style="margin-top: 20px; padding: 5px;">
 				<p style="text-align: center; font-family: sans-serif;" > <span style="font-weight: bold;">Solicitud de:</span> ${clienteBase.nombre} ${clienteBase.apellido}</p>
 
@@ -96,21 +101,14 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 					<p style="text-align: center; font-family: sans-serif;font-size: 13px;" ><span style="font-weight: bold;">Telefono:</span> ${clienteBase.telefono}</p>
 					<p style="text-align: center; font-family: sans-serif;font-size: 13px;" ><span style="font-weight: bold;">Direccion:</span> ${clienteBase.direccion[0].calle_numero} Colonia ${clienteBase.direccion[0].colonia} ${clienteBase.direccion[0].ciudad} ${clienteBase.direccion[0].estado} ${clienteBase.direccion[0].pais}.</p>
 				</div>
-
-				<p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${datosProducto[0].nombre}</p>
-				<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> 10</p>
-				${req.body.medida ? req.body.medida[0].numero ? 
-					`<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${req.body.medida[0].numero}</p>` : 
-					`<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${req.body.medida[0].talla}</p>`:
-				""}
-				<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Tipo de entrega:</span>${tipoEntrega === 'ENVIO' ? "Envio a domicilio" : "Recoger a sucursal"}</p>
+				<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Tipo de entrega:</span> ${tipoEntrega === 'ENVIO' ? "Envio a domicilio" : "Recoger a sucursal"}</p>
 			</div>
 		</div>
-		<p style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">El cliente espera a que te coontactes con el, Hazlo ya!!!</p>
+		<p style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">El cliente espera que te contactes con el, Hazlo ya!!!</p>
 	</div>
 	`;
 
-	const info = email.sendEmail(admin[0].email,"Solicitud de apartado",htmlContent);
+	const info = email.sendEmail(admin[0].email,"Solicitud de apartado",htmlContent,"Cafi service");
 
 	console.log(info);
 
@@ -299,6 +297,7 @@ apartadoCtrl.filtroApartadosCliente = async (req,res) => {
 
 apartadoCtrl.actualizarApartado = async (req, res) => {
 	const apatadoActualizado = req.body;
+	console.log(apatadoActualizado);
 	apatadoActualizado.fecha_envio = new Date();
 	await Apartado.findOneAndUpdate({_id: req.params.idApartado}, apatadoActualizado, (err, response) => {
 		if(err){

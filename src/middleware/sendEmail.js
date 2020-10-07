@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 
 const sendEmail = {};
 
-sendEmail.sendEmail = (emailAdmin,action,htmlContent) => {
+sendEmail.sendEmail = (emailAdmin,action,htmlContent,service) => {
 	const transporter = nodemailer.createTransport({
 		host: process.env.HOST_EMAIL,
 		port: process.env.PORT_EMAIL,
@@ -17,7 +17,7 @@ sendEmail.sendEmail = (emailAdmin,action,htmlContent) => {
 	})
 
 	const info = transporter.sendMail({
-		from:` 'Cafi service' <${process.env.USER_EMAIL}>`,
+		from:` '${service}' <${process.env.USER_EMAIL}>`,
 		to: emailAdmin,
 		subject: action,
 		html: htmlContent,
