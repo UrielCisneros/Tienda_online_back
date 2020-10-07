@@ -333,19 +333,56 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 	});
 
 	console.log(apartadoBase);
-
+	let color = "";
+	let mensaje = ""
 	switch(apatadoActualizado.estado){
-		case "ACEPTADO": 
+		case "ACEPTADO":
+			color = "#10B42B";
+			mensaje= "Tu apartado fue aceptado, puedes pasar por el a la sucursal."
 			break;
 		case "RECHAZADO":
+			color = "#F7401B";
+			mensaje= "Tu apartado fue rechazado, puedes ponete en contacto para mas detalle."
 			break;
 		case "ENVIADO":
+			color = "#10B42B";
+			mensaje= "Tu apartado fue aceptado, tu apartado ya esta en camino, esperalo pronto."
 			break;
 		case "CANCELADO":
+			color = "#F7401B";
+			mensaje= "Tu apartado fue rechazado, puedes ponete en contacto para mas detalle."
 			break;
 		default:
 			break;
 	}
+
+	const htmlContentUer = `
+	<div>
+		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu apartado a sido: <span style="color: ${color};">${apatadoActualizado.estado}</span></h3>
+		<h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Te pedimos que tengas paciencia, en breve se contactaran contigo para mas detalle.</h4>
+
+		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
+		<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
+			<img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${apartadoBase.producto.imagen}" />
+			<p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${apartadoBase.producto.nombre}</p>
+			<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> ${apartadoBase.cantidad}</p>
+			${apartadoBase.medida ? apartadoBase.medida[0].numero ? 
+				`<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${apartadoBase.medida[0].numero}</p>` : 
+				`<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${apartadoBase.medida[0].talla}</p>`:
+			""}
+
+			${apatadoActualizado.estado === "ENVIADO" ? 
+			`
+			<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Paqueteria:</span> ${apartadoBase.paqueteria}</p>
+			<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Numero de seguimiento:</span> ${apartadoBase.codigo_seguimiento}</p>
+			
+			`
+			:""}
+		</div>
+	</div>
+	`;
+
+	email.sendEmail(clienteBase.email,"Apartado en proceso",htmlContentUer,tienda[0].nombre);
 };
 
 apartadoCtrl.eliminarApartado = async (req, res) => {
