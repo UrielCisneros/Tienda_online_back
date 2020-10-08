@@ -187,6 +187,7 @@ pagoCtrl.createPago = async (req, res) => {
                         })
                         const politicas = await politicasModel.find().populate("idTienda").populate("idAdministrador");
                         
+                        console.log(tienda);
                         
                         let pedidos = ``;
                         let subTotal = 0;
@@ -239,7 +240,7 @@ pagoCtrl.createPago = async (req, res) => {
                         </div>
                         `;
                         
-                        email.sendEmail(pedidoPopulate.cliente.email,"Pedido realizado",htmlContentUser,tienda[0].nombre);
+                        //email.sendEmail(pedidoPopulate.cliente.email,"Pedido realizado",htmlContentUser,tienda[0].nombre);
 
 
                     }
