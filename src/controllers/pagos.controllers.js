@@ -6,6 +6,7 @@ const pedidoModel = require('../models/Pedido');
 const Carrito = require('../models/Carrito');
 const email = require('../middleware/sendEmail');
 const Tienda = require('../models/Tienda');
+const politicasModel = require('../models/PoliticasEnvio');
 
 pagoCtrl.createPago = async (req, res) => {
     try {
