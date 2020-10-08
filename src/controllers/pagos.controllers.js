@@ -190,17 +190,17 @@ pagoCtrl.createPago = async (req, res) => {
                         for(let i = 0; i < pedidoPopulate.pedido.length; i++){
                             pedidos += `
                             <tr>
-                                <td><img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${pedidoPopulate.pedido[i].producto.imagen}" /></td>
-                                <td><p style="text-align: center; font-family: sans-serif;" > ${pedidoPopulate.pedido[i].producto.nombre}</p></td>
-                                <td><p style="text-align: center; font-family: sans-serif;"> ${pedidoPopulate.pedido[i].cantidad}</p></td>
-                                <td>
+                                <td style="  padding: 15px; text-align: left;"><img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${pedidoPopulate.pedido[i].producto.imagen}" /></td>
+                                <td style="  padding: 15px; text-align: left;"><p style="text-align: center; font-family: sans-serif;" > ${pedidoPopulate.pedido[i].producto.nombre}</p></td>
+                                <td style="  padding: 15px; text-align: left;"><p style="text-align: center; font-family: sans-serif;"> ${pedidoPopulate.pedido[i].cantidad}</p></td>
+                                <td style="  padding: 15px; text-align: left;">
                                     ${pedidoPopulate.pedido ? pedidoPopulate.pedido[i].numero ? 
                                         `<p style="text-align: center; font-family: sans-serif;"> ${pedidoPopulate.pedido[i].numero}</p>` : 
                                         `<p style="text-align: center; font-family: sans-serif;"> ${pedidoPopulate.pedido[i].talla}</p>`:
                                         `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">No aplica</span></p>`
                                     }
                                 </td>
-                                <td><p style="text-align: center; font-family: sans-serif;"> $ ${pedidoPopulate.pedido[i].precio}</p></td>
+                                <td style="  padding: 15px; text-align: left;"><p style="text-align: center; font-family: sans-serif;"> $ ${pedidoPopulate.pedido[i].precio}</p></td>
                             </tr>
                             `;
                         }
@@ -213,11 +213,11 @@ pagoCtrl.createPago = async (req, res) => {
                             <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
                             <table style="margin:auto;">
                                 <tr>
-                                    <td><strong>imagen</strong></td>
-                                    <td><strong>Nombre</strong></td>
-                                    <td><strong>Cantidad</strong></td>
-                                    <td><strong>Medida</strong></td>
-                                    <td><strong>Precio</strong></td>
+                                    <td style="  padding: 15px; text-align: left;"><strong>imagen</strong></td>
+                                    <td style="  padding: 15px; text-align: left;"><strong>Nombre</strong></td>
+                                    <td style="  padding: 15px; text-align: left;"><strong>Cantidad</strong></td>
+                                    <td style="  padding: 15px; text-align: left;"><strong>Medida</strong></td>
+                                    <td style="  padding: 15px; text-align: left;"><strong>Precio</strong></td>
                                 </tr>
                                 ${pedidos}
                             </table>
