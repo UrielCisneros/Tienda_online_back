@@ -186,7 +186,7 @@ pagoCtrl.createPago = async (req, res) => {
                             model: 'producto'
                         })
                         const politicas = await politicasModel.find().populate("idTienda").populate("idAdministrador");
-                        console.log(politicas);
+                        
                         
                         let pedidos = ``;
                         let subTotal = 0;
@@ -227,12 +227,16 @@ pagoCtrl.createPago = async (req, res) => {
                                 </tr>
                                 ${pedidos}
                             </table>
-                            <h5><strong>Sub total: </strong>$ ${subTotal}</h5>
-                            <h5><strong>Total: </strong>$ ${pedidoPopulate.total}</h5>
+                            <h3><strong>Sub total: </strong>$ ${subTotal}</h3>
+                            <h3><strong>Costo de envio: </strong>$ ${politicas[0].costoEnvio}</h3>
+                            ${subTotal >= politicas[0].promocionEnvio ? 
+                            `<h3 style="color: #CC2300"><strong>Descuento: </strong>- $${politicas[0].descuento}</h3>`    
+                            :"" }
+                            <h3><strong>Total: </strong>$ ${pedidoPopulate.total}</h3>
                         </div>
                         `;
                         
-                        //email.sendEmail(pedidoPopulate.cliente.email,"Pedido realizado",htmlContentUser,tienda[0].nombre + " uno");
+                        email.sendEmail(pedidoPopulate.cliente.email,"Pedido realizado",htmlContentUser,tienda[0].nombre + " uno");
 
 
                     }
