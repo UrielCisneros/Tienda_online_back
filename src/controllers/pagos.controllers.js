@@ -179,28 +179,28 @@ pagoCtrl.createPago = async (req, res) => {
                             }
                         });
 
-                        /* const tienda = await Tienda.find();
-                        const pedidoBase = await pedidoModel.findById(pedidoCompleto._id).populate("cliente").populate({
+                        const tienda = await Tienda.find();
+                        const pedidoPopulate = await pedidoModel.findById(pedidoCompleto._id).populate("cliente").populate({
                             path: 'pedido.producto',
                             model: 'producto'
                         })
 
                         
                         let pedidos = ``;
-                        for(let i = 0; i < pedidoBase.pedido.length; i++){
+                        for(let i = 0; i < pedidoPopulate.pedido.length; i++){
                             pedidos += `
                             <tr>
-                                <td><img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${pedidoBase.pedido[i].producto.imagen}" /></td>
-                                <td><p style="text-align: center; font-family: sans-serif;" > ${pedidoBase.pedido[i].producto.nombre}</p></td>
-                                <td><p style="text-align: center; font-family: sans-serif;"> ${pedidoBase.pedido[i].cantidad}</p></td>
+                                <td><img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${pedidoPopulate.pedido[i].producto.imagen}" /></td>
+                                <td><p style="text-align: center; font-family: sans-serif;" > ${pedidoPopulate.pedido[i].producto.nombre}</p></td>
+                                <td><p style="text-align: center; font-family: sans-serif;"> ${pedidoPopulate.pedido[i].cantidad}</p></td>
                                 <td>
-                                    ${pedidoBase.pedido ? pedidoBase.pedido[i].numero ? 
-                                        `<p style="text-align: center; font-family: sans-serif;"> ${pedidoBase.pedido[i].numero}</p>` : 
-                                        `<p style="text-align: center; font-family: sans-serif;"> ${pedidoBase.pedido[i].talla}</p>`:
+                                    ${pedidoPopulate.pedido ? pedidoPopulate.pedido[i].numero ? 
+                                        `<p style="text-align: center; font-family: sans-serif;"> ${pedidoPopulate.pedido[i].numero}</p>` : 
+                                        `<p style="text-align: center; font-family: sans-serif;"> ${pedidoPopulate.pedido[i].talla}</p>`:
                                         `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">No aplica</span></p>`
                                     }
                                 </td>
-                                <td><p style="text-align: center; font-family: sans-serif;"> $ ${pedidoBase.pedido[i].precio}</p></td>
+                                <td><p style="text-align: center; font-family: sans-serif;"> $ ${pedidoPopulate.pedido[i].precio}</p></td>
                             </tr>
                             `;
                         }
@@ -221,11 +221,11 @@ pagoCtrl.createPago = async (req, res) => {
                                 </tr>
                                 ${pedidos}
                             </table>
-                            <h5><strong>Total: </strong>${pedidoBase.total}</h5>
+                            <h5><strong>Total: </strong>${pedidoPopulate.total}</h5>
                         </div>
                         `;
             
-                        email.sendEmail(pedidoBase.cliente.email,"Pedido realizado",htmlContentUser,tienda[0].nombre); */
+                        email.sendEmail(pedidoPopulate.cliente.email,"Pedido realizado",htmlContentUser,tienda[0].nombre);
 
 
                     }
