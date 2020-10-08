@@ -51,7 +51,7 @@ pagoCtrl.createPago = async (req, res) => {
                     <td><img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${pedidoBase.pedido[i].producto.imagen}" /></td>
                     <td><p style="text-align: center; font-family: sans-serif;" > ${pedidoBase.pedido[i].producto.nombre}</p></td>
                     <td><p style="text-align: center; font-family: sans-serif;"> ${pedidoBase.pedido[i].cantidad}</p></td>
-                    <td>+
+                    <td>
                         ${pedidoBase.pedido ? pedidoBase.pedido[i].numero ? 
                             `<p style="text-align: center; font-family: sans-serif;"> ${pedidoBase.pedido[i].numero}</p>` : 
                             `<p style="text-align: center; font-family: sans-serif;"> ${pedidoBase.pedido[i].talla}</p>`:
@@ -63,15 +63,13 @@ pagoCtrl.createPago = async (req, res) => {
                 `;
             }
 
-            console.log(pedidos);
-
             const htmlContentUser = `
             <div>
                 <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu pedido esta en proceso</h3>
                 <h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">El pedido esta siendo procesado, si tienes alguna duda no dudes en contactarnos.</h4>
         
                 <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
-                <table>
+                <table style="display:block; margin:auto;">
                     <tr>
                         <td><strong>imagen</strong></td>
                         <td><strong>Nombre</strong></td>
