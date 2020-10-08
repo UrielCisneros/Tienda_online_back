@@ -164,7 +164,7 @@ pagoCtrl.createPago = async (req, res) => {
                         if(pedidoCompleto.carrito === true){
                             await Carrito.findOneAndDelete({ cliente: pedidoCompleto.cliente._id });
                         }
-                        
+
                         const pedidoPagado = await pedidoModel.findById(pedidoCompleto._id);
                         pedidoPagado.pagado = true;  
                          await pedidoModel.findByIdAndUpdate({ _id: pedidoPagado._id },pedidoPagado, { new: true },(err, userStored) => {
@@ -179,7 +179,7 @@ pagoCtrl.createPago = async (req, res) => {
                             }
                         });
 
-                        const tienda = await Tienda.find();
+                        /* const tienda = await Tienda.find();
                         const pedidoBase = await pedidoModel.findById(pedidoCompleto._id).populate("cliente").populate({
                             path: 'pedido.producto',
                             model: 'producto'
@@ -225,7 +225,7 @@ pagoCtrl.createPago = async (req, res) => {
                         </div>
                         `;
             
-                        email.sendEmail(pedidoBase.cliente.email,"Pedido realizado",htmlContentUser,tienda[0].nombre);
+                        email.sendEmail(pedidoBase.cliente.email,"Pedido realizado",htmlContentUser,tienda[0].nombre); */
 
 
                     }
