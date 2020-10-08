@@ -213,8 +213,8 @@ pagoCtrl.createPago = async (req, res) => {
                             <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
                             <table style="margin:auto;">
                                 <tr>
-                                    <td style="  padding: 15px; text-align: left;"><strong>imagen</strong></td>
-                                    <td style="  padding: 15px; text-align: left;"><strong>Nombre</strong></td>
+                                    
+                                    <td style="  padding: 15px; text-align: left;"><strong>Producto</strong></td>
                                     <td style="  padding: 15px; text-align: left;"><strong>Cantidad</strong></td>
                                     <td style="  padding: 15px; text-align: left;"><strong>Medida</strong></td>
                                     <td style="  padding: 15px; text-align: left;"><strong>Precio</strong></td>
