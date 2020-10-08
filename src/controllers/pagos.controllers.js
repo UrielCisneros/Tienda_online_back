@@ -37,56 +37,9 @@ pagoCtrl.createPago = async (req, res) => {
                 pedido: pedidoCompleto._id,
                 cliente: pedidoCompleto.cliente._id
             });
-            const pedidoBase = await pedidoModel.findById(pedidoCompleto._id).populate("cliente").populate({
-                path: 'pedido.producto',
-                model: 'producto'
-            })
-            const tienda = await Tienda.find();
-
-            console.log(pedidoBase);
-            let pedidos = ``;
-            for(let i = 0; i < pedidoBase.pedido.length; i++){
-                pedidos += `
-                <tr>
-                    <td><img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${pedidoBase.pedido[i].producto.imagen}" /></td>
-                    <td><p style="text-align: center; font-family: sans-serif;" > ${pedidoBase.pedido[i].producto.nombre}</p></td>
-                    <td><p style="text-align: center; font-family: sans-serif;"> ${pedidoBase.pedido[i].cantidad}</p></td>
-                    <td>
-                        ${pedidoBase.pedido ? pedidoBase.pedido[i].numero ? 
-                            `<p style="text-align: center; font-family: sans-serif;"> ${pedidoBase.pedido[i].numero}</p>` : 
-                            `<p style="text-align: center; font-family: sans-serif;"> ${pedidoBase.pedido[i].talla}</p>`:
-                            `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">No aplica</span></p>`
-                        }
-                    </td>
-                    <td><p style="text-align: center; font-family: sans-serif;"> $ ${pedidoBase.pedido[i].precio}</p></td>
-                </tr>
-                `;
-            }
-
-            const htmlContentUser = `
-            <div>
-                <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu pedido esta en proceso</h3>
-                <h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">El pedido esta siendo procesado, si tienes alguna duda no dudes en contactarnos.</h4>
-        
-                <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
-                <table style="display:block; margin:auto;">
-                    <tr>
-                        <td><strong>imagen</strong></td>
-                        <td><strong>Nombre</strong></td>
-                        <td><strong>Cantidad</strong></td>
-                        <td><strong>Medida</strong></td>
-                        <td><strong>Precio</strong></td>
-                    </tr>
-                    ${pedidos}
-                </table>
-                <h5><strong>Total: </strong>${pedidoBase.total}</h5>
-            </div>
-            `;
-
-            email.sendEmail(pedidoBase.cliente.email,"Pedido realizado",htmlContentUser,tienda[0].nombre);
             
 
-            /* await newPago.save(async (err, postStored) => {
+            await newPago.save(async (err, postStored) => {
                 if (err) {
                     res.status(500).json({ message: "Error en el servidor" })
                 } else {
@@ -211,6 +164,7 @@ pagoCtrl.createPago = async (req, res) => {
                         if(pedidoCompleto.carrito === true){
                             await Carrito.findOneAndDelete({ cliente: pedidoCompleto.cliente._id });
                         }
+                        
                         const pedidoPagado = await pedidoModel.findById(pedidoCompleto._id);
                         pedidoPagado.pagado = true;  
                          await pedidoModel.findByIdAndUpdate({ _id: pedidoPagado._id },pedidoPagado, { new: true },(err, userStored) => {
@@ -225,29 +179,58 @@ pagoCtrl.createPago = async (req, res) => {
                             }
                         });
 
+                        const tienda = await Tienda.find();
+                        const pedidoBase = await pedidoModel.findById(pedidoCompleto._id).populate("cliente").populate({
+                            path: 'pedido.producto',
+                            model: 'producto'
+                        })
+
+                        
+                        let pedidos = ``;
+                        for(let i = 0; i < pedidoBase.pedido.length; i++){
+                            pedidos += `
+                            <tr>
+                                <td><img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${pedidoBase.pedido[i].producto.imagen}" /></td>
+                                <td><p style="text-align: center; font-family: sans-serif;" > ${pedidoBase.pedido[i].producto.nombre}</p></td>
+                                <td><p style="text-align: center; font-family: sans-serif;"> ${pedidoBase.pedido[i].cantidad}</p></td>
+                                <td>
+                                    ${pedidoBase.pedido ? pedidoBase.pedido[i].numero ? 
+                                        `<p style="text-align: center; font-family: sans-serif;"> ${pedidoBase.pedido[i].numero}</p>` : 
+                                        `<p style="text-align: center; font-family: sans-serif;"> ${pedidoBase.pedido[i].talla}</p>`:
+                                        `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">No aplica</span></p>`
+                                    }
+                                </td>
+                                <td><p style="text-align: center; font-family: sans-serif;"> $ ${pedidoBase.pedido[i].precio}</p></td>
+                            </tr>
+                            `;
+                        }
+            
                         const htmlContentUser = `
                         <div>
                             <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu pedido esta en proceso</h3>
-                            <h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">El pedido esta siendo procesado,</h4>
+                            <h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">El pedido esta siendo procesado, si tienes alguna duda no dudes en contactarnos.</h4>
                     
                             <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
-                            <div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
-                                <img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${datosProducto[0].imagen}" />
-                                <p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${datosProducto[0].nombre}</p>
-                                <p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> ${cantidad}</p>
-                                ${req.body.medida ? req.body.medida[0].numero ? 
-                                    `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${req.body.medida[0].numero}</p>` : 
-                                    `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${req.body.medida[0].talla}</p>`:
-                                ""}
-                            </div>
+                            <table style="display:block; margin:auto;">
+                                <tr>
+                                    <td><strong>imagen</strong></td>
+                                    <td><strong>Nombre</strong></td>
+                                    <td><strong>Cantidad</strong></td>
+                                    <td><strong>Medida</strong></td>
+                                    <td><strong>Precio</strong></td>
+                                </tr>
+                                ${pedidos}
+                            </table>
+                            <h5><strong>Total: </strong>${pedidoBase.total}</h5>
                         </div>
                         `;
-                        
+            
+                        email.sendEmail(pedidoBase.cliente.email,"Pedido realizado",htmlContentUser,tienda[0].nombre);
 
 
                     }
                 }
-            }); */
+            });
         }else{
             res.status(404).json({ message: "No se a podido crear el Pago" });
         }
