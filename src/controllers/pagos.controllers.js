@@ -234,7 +234,7 @@ pagoCtrl.createPago = async (req, res) => {
                                 `<h3 style=" color: #CC2300; margin:auto; margin-left: 360px;"><strong>Descuento: </strong>- $${politicas[0].descuento}</h3>`    
                                 :"" }
                                 <h3 style=" color: #2DD703; margin:auto; margin-left: 360px;"><strong>Total: </strong>$ ${pedidoPopulate.total}</h3>
-                                <p>Ya estamos trabajando para mamndar tu pediso, si tienes alguna duda no dudes en contactarnos.</p>
+                                <p>Ya estamos trabajando para mandar tu pedido, si tienes alguna duda no dudes en contactarnos.</p>
                             </div>
                         </div>
                         `;
