@@ -226,17 +226,19 @@ pagoCtrl.createPago = async (req, res) => {
                                     <td style="  padding: 15px; text-align: left;"><strong>Precio</strong></td>
                                 </tr>
                                 ${pedidos}
+
+                                <h3 style="text-align: right; margin: 0"><strong>Sub total: </strong>$ ${subTotal}</h3>
+                                <h3 style="text-align: right; margin: 0"><strong>Costo de envio: </strong>$ ${politicas[0].costoEnvio}</h3>
+                                ${subTotal >= politicas[0].promocionEnvio ? 
+                                `<h3 style="text-align: right; color: #CC2300;"><strong>Descuento: </strong>- $${politicas[0].descuento}</h3>`    
+                                :"" }
+                                <h3 style="text-align: right; color: #CC2300;"><strong>Total: </strong>$ ${pedidoPopulate.total}</h3>
                             </table>
-                            <h3><strong>Sub total: </strong>$ ${subTotal}</h3>
-                            <h3><strong>Costo de envio: </strong>$ ${politicas[0].costoEnvio}</h3>
-                            ${subTotal >= politicas[0].promocionEnvio ? 
-                            `<h3 style="color: #CC2300"><strong>Descuento: </strong>- $${politicas[0].descuento}</h3>`    
-                            :"" }
-                            <h3><strong>Total: </strong>$ ${pedidoPopulate.total}</h3>
+
                         </div>
                         `;
                         
-                        email.sendEmail(pedidoPopulate.cliente.email,"Pedido realizado",htmlContentUser,tienda[0].nombre + " uno");
+                        email.sendEmail(pedidoPopulate.cliente.email,"Pedido realizado",htmlContentUser,tienda[0].nombre);
 
 
                     }
