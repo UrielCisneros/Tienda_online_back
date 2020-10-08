@@ -211,7 +211,7 @@ pagoCtrl.createPago = async (req, res) => {
                             <h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">El pedido esta siendo procesado, si tienes alguna duda no dudes en contactarnos.</h4>
                     
                             <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
-                            <table style="display:block; margin:auto;">
+                            <table style="margin:auto;">
                                 <tr>
                                     <td><strong>imagen</strong></td>
                                     <td><strong>Nombre</strong></td>
