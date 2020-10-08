@@ -184,13 +184,17 @@ pagoCtrl.createPago = async (req, res) => {
                             path: 'pedido.producto',
                             model: 'producto'
                         })
-
+                        const politicas = await politicasModel.find().populate("idTienda").populate("idAdministrador");
+                        console.log(politicas);
                         
                         let pedidos = ``;
+                        let subTotal = 0;
+                        
                         for(let i = 0; i < pedidoPopulate.pedido.length; i++){
+                            subTotal += parseFloat(pedidoPopulate.pedido[i].precio);
                             pedidos += `
                             <tr>
-                                <td style="  padding: 15px; text-align: left;"><img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${pedidoPopulate.pedido[i].producto.imagen}" /></td>
+                                <td style="  padding: 15px; text-align: left;"><img style="max-width: 150px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${pedidoPopulate.pedido[i].producto.imagen}" /></td>
                                 <td style="  padding: 15px; text-align: left;"><p style="text-align: center; font-family: sans-serif;" > ${pedidoPopulate.pedido[i].producto.nombre}</p></td>
                                 <td style="  padding: 15px; text-align: left;"><p style="text-align: center; font-family: sans-serif;"> ${pedidoPopulate.pedido[i].cantidad}</p></td>
                                 <td style="  padding: 15px; text-align: left;">
@@ -215,17 +219,19 @@ pagoCtrl.createPago = async (req, res) => {
                                 <tr>
                                     
                                     <td style="  padding: 15px; text-align: left;"><strong>Producto</strong></td>
+                                    <td style="  padding: 15px; text-align: left;"><strong></strong></td>
                                     <td style="  padding: 15px; text-align: left;"><strong>Cantidad</strong></td>
                                     <td style="  padding: 15px; text-align: left;"><strong>Medida</strong></td>
                                     <td style="  padding: 15px; text-align: left;"><strong>Precio</strong></td>
                                 </tr>
                                 ${pedidos}
                             </table>
-                            <h5><strong>Total: </strong>${pedidoPopulate.total}</h5>
+                            <h5><strong>Sub total: </strong>$ ${subTotal}</h5>
+                            <h5><strong>Total: </strong>$ ${pedidoPopulate.total}</h5>
                         </div>
                         `;
-            
-                        email.sendEmail(pedidoPopulate.cliente.email,"Pedido realizado",htmlContentUser,tienda[0].nombre + " uno");
+                        
+                        //email.sendEmail(pedidoPopulate.cliente.email,"Pedido realizado",htmlContentUser,tienda[0].nombre + " uno");
 
 
                     }
