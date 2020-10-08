@@ -228,17 +228,14 @@ pagoCtrl.createPago = async (req, res) => {
                                     </tr>
                                     ${pedidos}
                                 </table>
-                                <h3 style=" margin:auto; margin-left: 400px;"><strong>Sub total: </strong>$ ${subTotal}</h3>
-                                <h3 style=" margin:auto; margin-left: 400px;"><strong>Costo de envio: </strong>$ ${politicas[0].costoEnvio}</h3>
+                                <h3 style=" margin:auto; margin-left: 360px;"><strong>Sub total: </strong>$ ${subTotal}</h3>
+                                <h3 style=" margin:auto; margin-left: 360px;"><strong>Costo de envio: </strong>$ ${politicas[0].costoEnvio}</h3>
                                 ${subTotal >= politicas[0].promocionEnvio ? 
-                                `<h3 style=" color: #CC2300; margin:auto; margin-left: 400px;"><strong>Descuento: </strong>- $${politicas[0].descuento}</h3>`    
+                                `<h3 style=" color: #CC2300; margin:auto; margin-left: 360px;"><strong>Descuento: </strong>- $${politicas[0].descuento}</h3>`    
                                 :"" }
-                                <h3 style=" color: #2DD703; margin:auto; margin-left: 400px;"><strong>Total: </strong>$ ${pedidoPopulate.total}</h3>
+                                <h3 style=" color: #2DD703; margin:auto; margin-left: 360px;"><strong>Total: </strong>$ ${pedidoPopulate.total}</h3>
+                                <p>Ya estamos trabajando para mamndar tu pediso, si tienes alguna duda no dudes en contactarnos.</p>
                             </div>
-
-
-                            <p>Ya estamos trabajando para mamndar tu pediso, si tienes alguna duda no dudes en contactarnos.</p>
-
                         </div>
                         `;
                         
