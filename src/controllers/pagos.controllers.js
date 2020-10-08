@@ -216,7 +216,7 @@ pagoCtrl.createPago = async (req, res) => {
                             <h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">El pedido esta siendo procesado, si tienes alguna duda no dudes en contactarnos.</h4>
                     
                             <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
-                            <div style="margin:auto; max-width: 350px;">
+                            <div style="margin:auto; max-width: 500px;">
                                 <table >
                                     <tr>
                                         
@@ -228,12 +228,12 @@ pagoCtrl.createPago = async (req, res) => {
                                     </tr>
                                     ${pedidos}
                                 </table>
-                                <h3 style="text-align: right; margin: 0 0 0 auto;"><strong>Sub total: </strong>$ ${subTotal}</h3>
-                                <h3 style="text-align: right; margin: 0 0 0 auto;"><strong>Costo de envio: </strong>$ ${politicas[0].costoEnvio}</h3>
+                                <h3 style=" margin: 0 0 0 auto;"><strong>Sub total: </strong>$ ${subTotal}</h3>
+                                <h3 style=" margin: 0 0 0 auto;"><strong>Costo de envio: </strong>$ ${politicas[0].costoEnvio}</h3>
                                 ${subTotal >= politicas[0].promocionEnvio ? 
-                                `<h3 style="text-align: right; color: #CC2300; margin: 0 0 0 auto;"><strong>Descuento: </strong>- $${politicas[0].descuento}</h3>`    
+                                `<h3 style=" color: #CC2300; margin: 0 0 0 auto;"><strong>Descuento: </strong>- $${politicas[0].descuento}</h3>`    
                                 :"" }
-                                <h3 style="text-align: right; color: #2DD703; margin: 0 0 0 auto;"><strong>Total: </strong>$ ${pedidoPopulate.total}</h3>
+                                <h3 style=" color: #2DD703; margin: 0 0 0 auto;"><strong>Total: </strong>$ ${pedidoPopulate.total}</h3>
                             </div>
 
 
