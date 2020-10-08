@@ -228,12 +228,12 @@ pagoCtrl.createPago = async (req, res) => {
                                     </tr>
                                     ${pedidos}
                                 </table>
-                                <h3 style=" margin: 0 0 0 auto;"><strong>Sub total: </strong>$ ${subTotal}</h3>
-                                <h3 style=" margin: 0 0 0 auto;"><strong>Costo de envio: </strong>$ ${politicas[0].costoEnvio}</h3>
+                                <h3 style=" margin:auto; margin-left: 50px;"><strong>Sub total: </strong>$ ${subTotal}</h3>
+                                <h3 style=" margin:auto; "><strong>Costo de envio: </strong>$ ${politicas[0].costoEnvio}</h3>
                                 ${subTotal >= politicas[0].promocionEnvio ? 
-                                `<h3 style=" color: #CC2300; margin: 0 0 0 auto;"><strong>Descuento: </strong>- $${politicas[0].descuento}</h3>`    
+                                `<h3 style=" color: #CC2300; margin:auto; "><strong>Descuento: </strong>- $${politicas[0].descuento}</h3>`    
                                 :"" }
-                                <h3 style=" color: #2DD703; margin: 0 0 0 auto;"><strong>Total: </strong>$ ${pedidoPopulate.total}</h3>
+                                <h3 style=" color: #2DD703; margin:auto; "><strong>Total: </strong>$ ${pedidoPopulate.total}</h3>
                             </div>
 
 
