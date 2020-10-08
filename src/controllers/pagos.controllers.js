@@ -5,6 +5,7 @@ const productoModel = require('../models/Producto');
 const pedidoModel = require('../models/Pedido');
 const Carrito = require('../models/Carrito');
 const email = require('../middleware/sendEmail');
+const Tienda = require('../models/Tienda');
 
 pagoCtrl.createPago = async (req, res) => {
     try {
@@ -40,6 +41,7 @@ pagoCtrl.createPago = async (req, res) => {
                 path: 'pedido.producto',
                 model: 'producto'
             })
+            const tienda = await Tienda.find();
 
             console.log(pedidoBase);
             let pedidos = ``;
@@ -47,15 +49,16 @@ pagoCtrl.createPago = async (req, res) => {
                 pedidos += `
                 <tr>
                     <td><img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${pedidoBase.pedido[i].producto.imagen}" /></td>
-                    <td><p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${pedidoBase.pedido[i].producto.nombre}</p></td>
-                    <td><p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> ${pedidoBase.cantidad}</p></td>
-                    <td>
+                    <td><p style="text-align: center; font-family: sans-serif;" > ${pedidoBase.pedido[i].producto.nombre}</p></td>
+                    <td><p style="text-align: center; font-family: sans-serif;"> ${pedidoBase.pedido[i].cantidad}</p></td>
+                    <td>+
                         ${pedidoBase.pedido ? pedidoBase.pedido[i].numero ? 
-                            `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${pedidoBase.pedido[i].numero}</p>` : 
-                            `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${pedidoBase.pedido[i].talla}</p>`:
+                            `<p style="text-align: center; font-family: sans-serif;"> ${pedidoBase.pedido[i].numero}</p>` : 
+                            `<p style="text-align: center; font-family: sans-serif;"> ${pedidoBase.pedido[i].talla}</p>`:
                             `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">No aplica</span></p>`
                         }
                     </td>
+                    <td><p style="text-align: center; font-family: sans-serif;"> $ ${pedidoBase.pedido[i].precio}</p></td>
                 </tr>
                 `;
             }
@@ -68,9 +71,21 @@ pagoCtrl.createPago = async (req, res) => {
                 <h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">El pedido esta siendo procesado, si tienes alguna duda no dudes en contactarnos.</h4>
         
                 <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
-
+                <table>
+                    <tr>
+                        <td><strong>imagen</strong></td>
+                        <td><strong>Nombre</strong></td>
+                        <td><strong>Cantidad</strong></td>
+                        <td><strong>Medida</strong></td>
+                        <td><strong>Precio</strong></td>
+                    </tr>
+                    ${pedidos}
+                </table>
+                <h5><strong>Total: </strong>${pedidoBase.total}</h5>
             </div>
             `;
+
+            email.sendEmail(pedidoBase.cliente.email,"Pedido realizado",htmlContentUser,tienda[0].nombre);
             
 
             /* await newPago.save(async (err, postStored) => {
