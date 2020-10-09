@@ -213,7 +213,7 @@ pagoCtrl.createPago = async (req, res) => {
             
                         const htmlContentUser = `
                         <div>
-                            <div style="margin:auto; max-width: 550px; height: 30px; background-color: #F2F90A;">
+                            <div style="margin:auto; max-width: 550px; height: 100px; background-color: #F2F90A;">
                                 ${tienda[0].imagenLogo ? `<img style="max-width: 200px; display:block; margin:auto; padding: 10px 0px;" src="${process.env.URL_IMAGEN_AWS}${tienda[0].imagenLogo}" />`:""} 
                             </div>
                             
