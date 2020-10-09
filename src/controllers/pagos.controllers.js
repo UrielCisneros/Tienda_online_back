@@ -241,7 +241,7 @@ pagoCtrl.createPago = async (req, res) => {
                         </div>
                         `;
                         
-                        //email.sendEmail(pedidoPopulate.cliente.email,"Pedido realizado",htmlContentUser,tienda[0].nombre);
+                        email.sendEmail(pedidoPopulate.cliente.email,"Pedido realizado",htmlContentUser,tienda[0].nombre);
 
 
                     }
