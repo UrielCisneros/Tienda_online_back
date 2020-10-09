@@ -213,7 +213,7 @@ pagoCtrl.createPago = async (req, res) => {
             
                         const htmlContentUser = `
                         <div>
-                            ${tienda[0].imagenLogo ? `<img style="max-width: 200px; margin:auto; margin-right: 360px;" src="${process.env.URL_IMAGEN_AWS}${tienda[0].imagenLogo}" />`:""} 
+                            ${tienda[0].imagenLogo ? `<img style="max-width: 200px; display:block; margin:auto;" src="${process.env.URL_IMAGEN_AWS}${tienda[0].imagenLogo}" />`:""} 
                             <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu pedido esta en proceso</h3>
                             <h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">El pedido esta siendo procesado, si tienes alguna duda no dudes en contactarnos.</h4>
                     
