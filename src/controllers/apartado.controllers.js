@@ -82,6 +82,9 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 
 	const htmlContent = `
 	<div>
+		<div style="margin:auto; max-width: 550px; height: 100px; background-color: ${process.env.COLOR_CORP};">
+			${tienda[0].imagenLogo ? `<img style="max-width: 200px; display:block; margin:auto; padding: 10px 0px;" src="${process.env.URL_IMAGEN_AWS}${tienda[0].imagenLogo}" />`:""} 
+		</div>
 		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tienes una nueva solicitud de apartado</h3>
 		<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
 			<img style="max-width: 200px; display:block; margin:auto;" class="" src="${process.env.URL_IMAGEN_AWS}${datosProducto[0].imagen}" />
@@ -112,6 +115,9 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 
 	const htmlContentUser = `
 	<div>
+		<div style="margin:auto; max-width: 550px; height: 100px; background-color: ${process.env.COLOR_CORP};">
+			${tienda[0].imagenLogo ? `<img style="max-width: 200px; display:block; margin:auto; padding: 10px 0px;" src="${process.env.URL_IMAGEN_AWS}${tienda[0].imagenLogo}" />`:""} 
+		</div>
 		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu apartado esta siendo <span style="color: #09ABF6;">procesado</span></h3>
 		<h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Te pedimos que tengas paciencia, en breve se contactaran contigo para mas detalle.</h4>
 
