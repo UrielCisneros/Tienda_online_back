@@ -26,7 +26,7 @@ const fileFilter = (req, file, cb) => {
     fileFilter,
     storage: multerS3({
       s3: s3,
-      bucket: 'prueba-imagenes-uploads',
+      bucket: process.env.NAME_BUCKET_AMS,
       acl: 'public-read',
       metadata: function (req, file, cb) {
         cb(null, {fieldName: 'Testing_metadata'});
@@ -38,10 +38,10 @@ const fileFilter = (req, file, cb) => {
   };
 
 
-//Funcion que elimina la imagen den Bucked
+//Funcion que elimina la imagen deL Bucket
 subir.eliminarImagen = (keyDeleted) => {
     s3.deleteObject({
-      Bucket: 'prueba-imagenes-uploads',
+      Bucket: process.env.NAME_BUCKET_AMS,
       Key: keyDeleted
     },function(err, data) {
       if(err){

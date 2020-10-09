@@ -196,7 +196,7 @@ pagoCtrl.createPago = async (req, res) => {
                             subTotal += parseFloat(pedidoPopulate.pedido[i].precio);
                             pedidos += `
                             <tr>
-                                <td style="  padding: 15px; text-align: left;"><img style="max-width: 150px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${pedidoPopulate.pedido[i].producto.imagen}" /></td>
+                                <td style="  padding: 15px; text-align: left;"><img style="max-width: 150px; display:block; margin:auto;" class="" src="${process.env.URL_IMAGEN_AWS}${pedidoPopulate.pedido[i].producto.imagen}" /></td>
                                 <td style="  padding: 15px; text-align: left;"><p style="text-align: center; font-family: sans-serif;" > ${pedidoPopulate.pedido[i].producto.nombre}</p></td>
                                 <td style="  padding: 15px; text-align: left;"><p style="text-align: center; font-family: sans-serif;"> ${pedidoPopulate.pedido[i].cantidad}</p></td>
                                 <td style="  padding: 15px; text-align: left;">
@@ -213,6 +213,7 @@ pagoCtrl.createPago = async (req, res) => {
             
                         const htmlContentUser = `
                         <div>
+                            ${tienda[0].imagenLogo ? `<img style="max-width: 200px;" src="${process.env.URL_IMAGEN_AWS}${tienda[0].imagenLogo}" />`:""} 
                             <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu pedido esta en proceso</h3>
                             <h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">El pedido esta siendo procesado, si tienes alguna duda no dudes en contactarnos.</h4>
                     

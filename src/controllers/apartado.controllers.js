@@ -84,7 +84,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 	<div>
 		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tienes una nueva solicitud de apartado</h3>
 		<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
-			<img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${datosProducto[0].imagen}" />
+			<img style="max-width: 200px; display:block; margin:auto;" class="" src="${process.env.URL_IMAGEN_AWS}${datosProducto[0].imagen}" />
 			<p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${datosProducto[0].nombre}</p>
 			<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> ${cantidad}</p>
 			${req.body.medida ? req.body.medida[0].numero ? 
@@ -97,7 +97,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 				<p style="text-align: center; font-family: sans-serif;">Info del cliente:</p>
 				<div  style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 200px; display:block; margin:auto;">
 
-				${clienteBase.tipoSesion !== "FireBase" ? `<img style="max-width: 70px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${clienteBase.imagen}"/>` : `<img style="max-width: 70px; display:block; margin:auto;" class="" src="${clienteBase.imagen}"/>`}
+				${clienteBase.tipoSesion !== "FireBase" ? `<img style="max-width: 70px; display:block; margin:auto;" class="" src="${process.env.URL_IMAGEN_AWS}${clienteBase.imagen}"/>` : `<img style="max-width: 70px; display:block; margin:auto;" class="" src="${clienteBase.imagen}"/>`}
 
 					<p style="text-align: center; font-family: sans-serif;font-size: 13px;" ><span style="font-weight: bold;">Correo:</span> ${clienteBase.email}</p>
 					<p style="text-align: center; font-family: sans-serif;font-size: 13px;" ><span style="font-weight: bold;">Telefono:</span> ${clienteBase.telefono}</p>
@@ -117,7 +117,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 
 		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
 		<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
-			<img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${datosProducto[0].imagen}" />
+			<img style="max-width: 200px; display:block; margin:auto;" class="" src="${process.env.URL_IMAGEN_AWS}${datosProducto[0].imagen}" />
 			<p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${datosProducto[0].nombre}</p>
 			<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> ${cantidad}</p>
 			${req.body.medida ? req.body.medida[0].numero ? 
