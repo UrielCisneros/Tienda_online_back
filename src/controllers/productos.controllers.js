@@ -669,7 +669,10 @@ productosCtrl.updateProducto = async (req, res, next) => {
 		const producto = await Producto.findByIdAndUpdate(req.params.id, nuevoProducto);
 
 		const productoNuevo = await Producto.findById(req.params.id);
-		console.log(productoNuevo.cantidad);
+		console.log(productoNuevo);
+
+		
+
 		if(productoNuevo.cantidad > 0){
 			productoNuevo.activo  = true;
 			await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
