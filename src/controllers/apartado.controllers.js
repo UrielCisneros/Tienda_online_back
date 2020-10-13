@@ -18,8 +18,6 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 	const admin = await adminModel.find({});
 	const tienda = await Tienda.find();
 
-
-
 	if(req.body.medida){
 		if(medida[0].numero){
 			datosProducto[0].numeros.map(async (numero) => {
