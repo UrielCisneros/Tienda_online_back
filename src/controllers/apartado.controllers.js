@@ -241,8 +241,8 @@ apartadoCtrl.obtenerApartadosCliente = async (req, res) => {
             {
                 $match: {
 					$or: [
-						{ cliente: mongoose.Types.ObjectId(req.params.idCliente) },
-						{ eliminado: false },
+						{ cliente: { $regex: '.*' +  mongoose.Types.ObjectId(req.params.idCliente) + '.*', $options: 'i' } },
+						{ eliminado: { $regex: '.*' + false + '.*', $options: 'i' }  },
 					]
                 }
             }
@@ -297,7 +297,7 @@ apartadoCtrl.filtroApartadosCliente = async (req,res) => {
 						{ paqueteria: { $regex: '.*' + req.params.filter + '.*', $options: 'i' } },
 						{ fecha_envio: { $regex: '.*' + req.params.filter + '.*', $options: 'i' } },
 						{ 'producto.nombre': { $regex: '.*' + req.params.filter + '.*', $options: 'i' } },
-						{ eliminado: false }
+						{ eliminado: { $regex: '.*' + false + '.*', $options: 'i' }  }
 					]
 				}
 			}
