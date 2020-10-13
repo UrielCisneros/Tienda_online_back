@@ -240,10 +240,12 @@ apartadoCtrl.obtenerApartadosCliente = async (req, res) => {
             },
             {
                 $match: {
-					$or: [
-						{ cliente: { $regex: '.*' +  mongoose.Types.ObjectId(req.params.idCliente) + '.*', $options: 'i' } },
-						{ eliminado: { $regex: '.*' + false + '.*', $options: 'i' }  },
-					]
+					cliente: mongoose.Types.ObjectId(req.params.idCliente)
+                }
+			},
+			{
+                $match: {
+					eliminado: false
                 }
             }
 		]).sort({ "createdAt" : -1}).exec(async function(err, transactions) {
