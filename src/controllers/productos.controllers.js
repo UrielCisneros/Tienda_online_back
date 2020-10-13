@@ -669,7 +669,6 @@ productosCtrl.updateProducto = async (req, res, next) => {
 		const producto = await Producto.findByIdAndUpdate(req.params.id, nuevoProducto);
 
 		const productoNuevo = await Producto.findById(req.params.id);
-		console.log(productoNuevo);
 
 		if(productoNuevo.tallas.lenght > 0){
 			let contador = 0;
@@ -684,6 +683,7 @@ productosCtrl.updateProducto = async (req, res, next) => {
 				await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
 			}
 		}else if(productoNuevo.numeros.lenght > 0){
+			console.log("entro a numero");
 			let contador = 0;
 			for(let i = 0; i < productoNuevo.numeros.length; i++){
 				contador += productoNuevo.numeros[i].cantidad;
