@@ -299,10 +299,14 @@ apartadoCtrl.filtroApartadosCliente = async (req,res) => {
 						{ paqueteria: { $regex: '.*' + req.params.filter + '.*', $options: 'i' } },
 						{ fecha_envio: { $regex: '.*' + req.params.filter + '.*', $options: 'i' } },
 						{ 'producto.nombre': { $regex: '.*' + req.params.filter + '.*', $options: 'i' } },
-						{ eliminado: { $regex: '.*' + false + '.*', $options: 'i' }  }
 					]
 				}
-			}
+			},
+			{
+                $match: {
+					eliminado: false
+                }
+            }
 		],
 		(err, postStored) => {
 			if (err) {
