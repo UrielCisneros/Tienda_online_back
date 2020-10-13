@@ -651,7 +651,6 @@ productosCtrl.createProducto = async (req, res) => {
 
 productosCtrl.updateProducto = async (req, res, next) => {
 	try {
-		console.log(req.body);
 		const productoDeBase = await Producto.findById(req.params.id);
 		//Construir nuevo producto
 		const nuevoProducto = req.body;
@@ -669,6 +668,7 @@ productosCtrl.updateProducto = async (req, res, next) => {
 		const producto = await Producto.findByIdAndUpdate(req.params.id, nuevoProducto);
 
 		const productoNuevo = await Producto.findById(req.params.id);
+		console.log("entro");
 
 		if(productoNuevo.tallas.lenght > 0){
 			let contador = 0;
@@ -682,12 +682,15 @@ productosCtrl.updateProducto = async (req, res, next) => {
 				productoNuevo.activo = false;
 				await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
 			}
+
+
 		}else if(productoNuevo.numeros.lenght > 0){
 			console.log("entro a numero");
 			let contador = 0;
 			for(let i = 0; i < productoNuevo.numeros.length; i++){
 				contador += productoNuevo.numeros[i].cantidad;
 			}
+			console.log(contador);
 			if(contador > 0){
 				productoNuevo.activo  = true;
 				await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
@@ -695,6 +698,8 @@ productosCtrl.updateProducto = async (req, res, next) => {
 				productoNuevo.activo  = false;
 				await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
 			}
+
+
 		}else{
 			if(productoNuevo.cantidad > 0){
 				productoNuevo.activo  = true;
