@@ -671,14 +671,38 @@ productosCtrl.updateProducto = async (req, res, next) => {
 		const productoNuevo = await Producto.findById(req.params.id);
 		console.log(productoNuevo);
 
-		
-
-		if(productoNuevo.cantidad > 0){
-			productoNuevo.activo  = true;
-			await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+		if(productoNuevo.tallas.lenght > 0){
+			let contador = 0;
+			for(let i = 0; i < productoNuevo.tallas.length; i++){
+				contador += productoNuevo.tallas[i].cantidad;
+			}
+			if(contador > 0){
+				productoNuevo.activo = true;
+				await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+			}else{
+				productoNuevo.activo = false;
+				await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+			}
+		}else if(productoNuevo.numeros.lenght > 0){
+			let contador = 0;
+			for(let i = 0; i < productoNuevo.numeros.length; i++){
+				contador += productoNuevo.numeros[i].cantidad;
+			}
+			if(contador > 0){
+				productoNuevo.activo  = true;
+				await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+			}else{
+				productoNuevo.activo  = false;
+				await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+			}
 		}else{
-			productoNuevo.activo  = false;
-			await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+			if(productoNuevo.cantidad > 0){
+				productoNuevo.activo  = true;
+				await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+			}else{
+				productoNuevo.activo  = false;
+				await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
+			}
 		}
 		res.status(200).json({ message: 'Producto actualizado', producto });
 	} catch (err) {
