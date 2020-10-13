@@ -669,7 +669,8 @@ productosCtrl.updateProducto = async (req, res, next) => {
 
 		const productoNuevo = await Producto.findById(req.params.id);
 		console.log(productoNuevo);
-
+		console.log(productoNuevo.tallas.lenght);
+		console.log(productoNuevo.numeros.lenght);
 		if(productoNuevo.tallas.lenght > 0){
 			let contador = 0;
 			for(let i = 0; i < productoNuevo.tallas.length; i++){
