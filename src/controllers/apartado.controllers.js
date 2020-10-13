@@ -13,6 +13,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 	const { producto, cliente, cantidad, estado, medida,tipoEntrega } = req.body;
 	const datosProducto = await Producto.find({_id: producto})
 	const newApartado = new Apartado({ producto, cliente, cantidad, estado, medida, tipoEntrega });
+	newApartado.eliminado = false;
 	const clienteBase = await clienteModel.findById(cliente);
 	const admin = await adminModel.find({});
 	const tienda = await Tienda.find();
@@ -165,6 +166,11 @@ apartadoCtrl.obtenerApartados = async (req, res) => {
 					as: 'cliente'
 				}
 			},
+			{
+                $match: {
+                    eliminado: false
+                }
+            }
 		]);
 
 		await Apartado.aggregatePaginate(aggregate,options, (err, postStored) => {
@@ -236,7 +242,10 @@ apartadoCtrl.obtenerApartadosCliente = async (req, res) => {
             },
             {
                 $match: {
-                    cliente: mongoose.Types.ObjectId(req.params.idCliente)
+					$or: [
+						{ cliente: mongoose.Types.ObjectId(req.params.idCliente) },
+						{ eliminado: false },
+					]
                 }
             }
 		]).sort({ "createdAt" : -1}).exec(async function(err, transactions) {
@@ -289,7 +298,8 @@ apartadoCtrl.filtroApartadosCliente = async (req,res) => {
 						{ estado: { $regex: '.*' + req.params.filter + '.*', $options: 'i' } },
 						{ paqueteria: { $regex: '.*' + req.params.filter + '.*', $options: 'i' } },
 						{ fecha_envio: { $regex: '.*' + req.params.filter + '.*', $options: 'i' } },
-						{ 'producto.nombre': { $regex: '.*' + req.params.filter + '.*', $options: 'i' } }
+						{ 'producto.nombre': { $regex: '.*' + req.params.filter + '.*', $options: 'i' } },
+						{ eliminado: false }
 					]
 				}
 			}
@@ -307,19 +317,6 @@ apartadoCtrl.filtroApartadosCliente = async (req,res) => {
 		}
 	);
 }
-
-/* apartadoCtrl.obtenerApartado = async (req, res) => {
-	try {
-		const apartado = await Apartado.find({cliente: req.params.idCliente}).populate('cliente').populate('producto');
-		if(!apartado){
-			res.status(404).json({ message: 'Apartado no encontrado' });
-		}
-		res.status(200).json(apartado);
-	} catch (error) {
-		res.status(500).json({ message: 'Hubo un error al obtener apartado', error });
-	}
-	
-}; */
 
 apartadoCtrl.actualizarApartado = async (req, res) => {
 	const apatadoActualizado = req.body;
@@ -342,7 +339,7 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 
 	console.log(apartadoBase);
 	let color = "";
-	let mensaje = ""
+	let mensaje = "";
 	switch(apatadoActualizado.estado){
 		case "ACEPTADO":
 			color = "#10B42B";
@@ -390,8 +387,8 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 	`;
 
 	email.sendEmail(apartadoBase.cliente.email,`Apartado ${apatadoActualizado.estado}`,htmlContentUser,tienda[0].nombre);
-};
 
+};
 
 apartadoCtrl.eliminarApartado = async (req, res) => {
 	await Apartado.findOneAndDelete({_id: req.params.idApartado}, (err, response) => {
@@ -416,6 +413,21 @@ apartadoCtrl.obtenerUnApartado = async (req, res) => {
 	}
 	
 
+}
+
+apartadoCtrl.eliminarApartadoCambiarEstado = async (req,res) => {
+	const estadoApartado = req.body;
+	await Apartado.findOneAndUpdate({_id: req.params.idApartado}, estadoApartado, (err, response) => {
+		if(err){
+			res.status(500).json({message: 'Hubo un error al actualizar el apartado', err})
+		}else{
+			if(!response){
+				res.status(404).json({message: 'Apartado no encontrado'})
+			}else{
+				res.status(200).json({message: 'Apartado Actualizado', response})
+			}
+		}
+	});
 }
 
 module.exports = apartadoCtrl;

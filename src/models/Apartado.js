@@ -38,7 +38,8 @@ const ApartadoSchema = new Schema({
     mensajeUser: String,
     fecha_envio: {
         type: Date
-    }
+    },
+    eliminado: Boolean,
 },
 {
     timestamps: true
