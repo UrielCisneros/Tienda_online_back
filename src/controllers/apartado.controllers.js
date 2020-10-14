@@ -434,4 +434,5 @@ apartadoCtrl.eliminarApartadoCambiarEstado = async (req,res) => {
 	});
 }
 
+
 module.exports = apartadoCtrl;
