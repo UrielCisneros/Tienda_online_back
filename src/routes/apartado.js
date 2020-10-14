@@ -33,6 +33,6 @@ router.route('/:idApartado')
 
 router.route('/traer/:id').get(auth,obtenerUnApartado)
 
-router.route('/estado/eliminado/:idApartado').put(auth,eliminarApartadoCambiarEstado)
+router.route('/estado/eliminado/:idApartado').put(eliminarApartadoCambiarEstado)
 
 module.exports = router;
