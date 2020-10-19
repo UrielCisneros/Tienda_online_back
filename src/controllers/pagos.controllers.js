@@ -282,7 +282,7 @@ pagoCtrl.createPagoMovil = async (req,res) => {
             amount: amount,
             currency: 'mxn',
             description: pedidoCompleto._id,
-            source: sesionStripe.tokenId,
+            source: sesionStripe.id,
           });
 
           if(payment){
