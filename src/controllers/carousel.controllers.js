@@ -69,7 +69,6 @@ carouselCtrl.actualizarCarousel = async (req, res) => {
 			res.status(404).json({message: 'Carousel no encontrado'})
 		}else{
 			//Construir nuevo producto
-			console.log(req.body);
 			const nuevoCarousel = req.body;
 			//Verificar si mandaron imagen
 			if (req.file) {
