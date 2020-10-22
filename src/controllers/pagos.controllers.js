@@ -426,7 +426,7 @@ pagoCtrl.createPagoMovil = async (req,res) => {
                                 if (!userStored) {
                                     res.status(404).send({ message: 'Error al actualizar pedido' });
                                 } else {
-                                    res.status(200).json({ message: "Pago realzado con exito" });
+                                    res.status(200).json({ message: "Pago realizado con éxito" });
                                 }
                             }
                         });
