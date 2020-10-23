@@ -366,6 +366,7 @@ clienteCtrl.authCliente = async (req, res, next) => {
 
 clienteCtrl.authFirebase = async (req, res) => {
 	const { email, nombre, apellido, imagen, uid } = req.body;
+	console.log(req.body);
 	const cliente = await clienteModel.findOne({ email });
 	if (cliente) {
 		if (!bcrypt.compareSync(uid, cliente.contrasena)) {
