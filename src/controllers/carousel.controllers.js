@@ -12,6 +12,7 @@ carouselCtrl.subirImagen = (req, res, next) => {
 };
 
 carouselCtrl.crearCarousel = async (req, res) => {
+	console.log(req.body);
     const newCarousel = new Carousel(req.body);
     if (req.file) {
 		newCarousel.imagen = req.file.key;
