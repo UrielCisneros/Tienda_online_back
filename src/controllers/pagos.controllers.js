@@ -11,6 +11,7 @@ const politicasModel = require('../models/PoliticasEnvio');
 pagoCtrl.createPago = async (req, res) => {
     try {
         const {sesionStripe,pedidoCompleto,amount} = req.body;
+        console.log(req.body);
         const stripe = new Stripe(process.env.LLAVE_SECRETA_STRIPE);
      
         let sesion = "";
