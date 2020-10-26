@@ -3,6 +3,9 @@ const nodemailer = require('nodemailer');
 const sendEmail = {};
 
 sendEmail.sendEmail = (emailAdmin,action,htmlContent,service) => {
+	console.log(emailAdmin);
+	console.log(action);
+	console.log(service);
 	const transporter = nodemailer.createTransport({
 		host: process.env.HOST_EMAIL,
 		port: process.env.PORT_EMAIL,
