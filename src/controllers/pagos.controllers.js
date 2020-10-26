@@ -20,6 +20,7 @@ pagoCtrl.createPago = async (req, res) => {
         }else{
             sesion = sesionStripe.tokenId;
         }
+        
 
        const payment = await stripe.paymentIntents.create({
             amount,
