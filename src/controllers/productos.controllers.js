@@ -806,9 +806,9 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 
 productosCtrl.importacionExcel = async (req,res) => {
 	try {
-		console.log(req.body);
 		const {data} = req.body;
 		data.map(async (producto) => {
+			console.log(producto);
 			await Producto.updateOne(
 				{
 					'codigo': producto.codigo
