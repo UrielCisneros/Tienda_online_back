@@ -819,6 +819,7 @@ productosCtrl.importacionExcel = async (req,res) => {
 		data.map((producto) => {
 			console.log(producto);
 		})
+		res.status(200).json({message: "simon"});
 	} catch (error) {
 		res.status(500).json({ message: 'Error en el servidor', err });
 	}
