@@ -807,8 +807,17 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 productosCtrl.importacionExcel = async (req,res) => {
 	try {
 		console.log(req.body);
-		const {} = req.body;
-
+		const {data} = req.body;
+		data.map(async (producto) => {
+			await Producto.updateOne(
+				{
+					'codigo': producto.codigo
+				},
+				{
+					$set: { 'cantidad': producto.cantidad }
+				}
+			)
+		})
 		res.status(200).json({message: "simon"});
 	} catch (error) {
 		res.status(500).json({ message: 'Error en el servidor', err });
