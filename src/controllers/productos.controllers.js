@@ -808,17 +808,7 @@ productosCtrl.importacionExcel = async (req,res) => {
 	try {
 		console.log(req.body);
 		const {} = req.body;
-		const data = [
-			{"codigo":"4749304358723","cantidad": "10"},
-			{"codigo":"4728204397392","cantidad": "10"},
-			{"codigo":"738204793132","cantidad": "10"},
-			{"codigo":"3743849304343","cantidad": "10"},
-			{"codigo":"4493093434345","cantidad": "10"},
-		];
 
-		data.map((producto) => {
-			console.log(producto);
-		})
 		res.status(200).json({message: "simon"});
 	} catch (error) {
 		res.status(500).json({ message: 'Error en el servidor', err });
