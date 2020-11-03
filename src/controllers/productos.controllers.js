@@ -808,15 +808,17 @@ productosCtrl.importacionExcel = async (req,res) => {
 	try {
 		const {data} = req.body;
 		data.map(async (producto) => {
-			console.log(producto);
-			await Producto.updateOne(
-				{
-					'codigo': producto.codigo
-				},
-				{
-					$set: { 'cantidad': producto.cantidad }
-				}
-			)
+			const existProduto = await Producto.find({codigo: producto.codigo});
+			if(existProduto){
+				await Producto.updateOne(
+					{
+						'codigo': producto.codigo
+					},
+					{
+						$set: { 'cantidad': producto.cantidad }
+					}
+				)
+			}
 		})
 		res.status(200).json({message: "simon"});
 	} catch (error) {
