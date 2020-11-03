@@ -9,7 +9,7 @@ app.set('host',process.env.HOST || '0.0.0.0');
 
 //Config CORS (Rutas de acceso) << Ver como dar seguriad con apps moviles >>
 
-const whitelist = ['https://tienda-online-ab.netlify.app'];
+/* const whitelist = ['https://tienda-online-ab.netlify.app'];
 
 const corsOptions = {
     origin: (origin,callback) => {
@@ -20,11 +20,14 @@ const corsOptions = {
             callback(new Error('Este server no tiene acceso'));
         }
     }
-}
+} */
 
-//middlewares
+//Middlewares cors con opcions
+//app.use(cors(corsOptions));
 
-app.use(cors(corsOptions));
+app.use(cors());
+
+
 app.use(express.json());
 
 //rutes
