@@ -808,19 +808,19 @@ productosCtrl.importacionExcel = async (req,res) => {
 	try {
 		const {data} = req.body;
 		data.map(async (producto) => {
-			const existProduto = await Producto.find({codigo: producto.codigo});
+			const existProduto = await Producto.find({codigo: producto.Codigo_de_barras});
 			if(existProduto){
 				await Producto.updateOne(
 					{
-						'codigo': producto.codigo
+						'codigo': producto.Codigo_de_barras
 					},
 					{
-						$set: { 'cantidad': producto.cantidad }
+						$set: { 'cantidad': producto.Cantidad }
 					}
 				)
 			}
 		})
-		res.status(200).json({message: "simon"});
+		res.status(200).json({message: "Productos actualizados."});
 	} catch (error) {
 		res.status(500).json({ message: 'Error en el servidor', err });
 	}
