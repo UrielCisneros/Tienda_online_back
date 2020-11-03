@@ -8,7 +8,8 @@ app.set('port', process.env.PORT || '0.0.0.0');
 app.set('host',process.env.HOST || '0.0.0.0');
 
 //Config CORS (Rutas de acceso) << Ver como dar seguriad con apps moviles >>
-/* const whitelist = ['http://localhost:3000'];
+
+const whitelist = ['http://localhost:3000'];
 
 const corsOptions = {
     origin: (origin,callback) => {
@@ -19,11 +20,11 @@ const corsOptions = {
             callback(new Error('Este server no tiene acceso'));
         }
     }
-} */
+}
 
 //middlewares
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 //rutes
