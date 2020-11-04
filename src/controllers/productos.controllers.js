@@ -807,20 +807,25 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 productosCtrl.importacionExcel = async (req,res) => {
 	try {
 		const {data} = req.body;
-		data.map(async (producto) => {
-			const existProduto = await Producto.find({codigo: producto.Codigo_de_barras});
-			if(existProduto){
-				await Producto.updateOne(
-					{
-						'codigo': producto.Codigo_de_barras
-					},
-					{
-						$set: { 'cantidad': producto.Cantidad }
-					}
-				)
-			}
-		})
-		res.status(200).json({message: "Productos actualizados."});
+		if(data.length){
+			data.map(async (producto) => {
+				const existProduto = await Producto.find({codigo: producto.Codigo_de_barras});
+				if(existProduto){
+					await Producto.updateOne(
+						{
+							'codigo': producto.Codigo_de_barras
+						},
+						{
+							$set: { 'cantidad': producto.Cantidad }
+						}
+					)
+				}
+			})
+			res.status(200).json({message: "Productos actualizados."});
+		}else{
+			res.status(500).json({ message: 'Archivo no valido.', err });
+		}
+		
 	} catch (error) {
 		res.status(500).json({ message: 'Error en el servidor', err });
 	}

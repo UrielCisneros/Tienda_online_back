@@ -25,6 +25,7 @@ const corsOptions = {
 //Middlewares cors con opcions
 //app.use(cors(corsOptions));
 
+//Middlewares cors sin opcions
 app.use(cors());
 
 
