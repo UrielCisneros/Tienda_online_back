@@ -11,6 +11,7 @@ app.set('host',process.env.HOST || '0.0.0.0');
 
 const whitelist = ['https://brave-yonath-783630.netlify.app'];
 
+
 const corsOptions = {
     origin: (origin,callback) => {
         const existe = whitelist.some(dominio => dominio === origin);
