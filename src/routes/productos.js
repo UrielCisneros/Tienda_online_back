@@ -27,7 +27,8 @@ const {
 	categoriasAgrupadas,
 	subCategorias,
 	getPromocionesPaginadas,
-	importacionExcel
+	importacionExcel,
+	getProductosFiltrosDividos
 } = require('../controllers/productos.controllers');
 const auth = require('../middleware/auth');
 
@@ -49,7 +50,9 @@ router.route('/promociones/').get(getPromocionesPaginadas)
 
 router.route('/').get(getProductos).post(auth,subirImagen, createProducto);
 
-router.route('/search').get(getProductosFiltrados)
+router.route('/search').get(getProductosFiltrados);
+
+router.route('/filter').get(getProductosFiltrosDividos);
 
 router.route('/:id').get(getProducto).put(auth,subirImagen, updateProducto).delete(auth,deleteProducto);
 

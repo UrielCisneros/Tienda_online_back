@@ -507,6 +507,91 @@ productosCtrl.subirImagen = (req, res, next) => {
 	}
 }; */
 
+productosCtrl.getProductosFiltrosDividos = async (req, res) => {
+	const { categoria, subcategoria, genero } = req.query
+
+	var match = {};
+	if(categoria && !subcategoria && !genero){
+		match = {
+			$and: [
+				{ categoria: { $regex: '.*' + categoria + '.*', $options: 'i' } },
+			]
+		}
+	}else if( categoria && subcategoria && !genero){
+		match = {
+			$and: [
+				{ categoria: { $regex: '.*' + categoria + '.*', $options: 'i' } },
+				{ subCategoria: { $regex: '.*' + subcategoria + '.*', $options: 'i' } }
+			]
+		}
+	}else if (categoria && subcategoria && genero){
+		match = {
+			'$and': [
+				{ categoria: { $regex: '.*' + categoria + '.*', $options: 'i' } },
+				{ subCategoria: { $regex: '.*' + subcategoria + '.*', $options: 'i' } },
+				{ genero: { $regex: '.*' + genero + '.*', $options: 'i' } }
+			]
+		}
+	}else if(subcategoria && !categoria && !genero){
+		match = {
+			'$and': [
+				{ subCategoria: { '$regex': '.*' + subcategoria + '.*', '$options': 'i' } }
+			]
+		}
+	}else if(subcategoria && genero && !categoria){
+		match = {
+			'$and': [
+				{ subCategoria: { '$regex': '.*' + subcategoria + '.*', '$options': 'i' } },
+				{ genero: { '$regex': '.*' + genero + '.*', '$options': 'i' } }
+			]
+		}
+	}else if(categoria && genero && !subcategoria){
+		match = {
+			'$and': [
+				{ categoria: { '$regex': '.*' + categoria + '.*', '$options': 'i' } },
+				{ genero: { '$regex': '.*' + genero + '.*', '$options': 'i' } }
+			]
+		}
+	}else if(genero && !categoria && !subcategoria){
+		match = {
+			'$and': [
+				{ genero: { '$regex': '.*' + genero + '.*', '$options': 'i' } }
+			]
+		}
+	}
+	
+	try {
+		await Producto.aggregate(
+			[
+				{
+					$lookup: {
+						from: 'promocions',
+						localField: '_id',
+						foreignField: 'productoPromocion',
+						as: 'todos'
+					}
+				},
+				{
+					$match: match
+				}
+			],
+			(err, postStored) => {
+				if (err) {
+					res.status(500).json({ message: 'Error en el servidor', err });
+				} else {
+					if (!postStored) {
+						res.status(404).json({ message: 'Error al mostrar Productos' });
+					} else {
+						res.status(200).json({ posts: postStored });
+					}
+				}
+			}
+		);
+	} catch (err) {
+		res.status(500).json({ message: 'Error en el servidor', err });
+	}
+};
+
 productosCtrl.getProductosFiltrados = async (req, res) => {
 	const { nombre, categoria, subcategoria, genero, color } = req.query
 	try {
