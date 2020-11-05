@@ -882,7 +882,10 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 				}
 			});
 			await sleep(3000)
-			res.status(200).json(arrayCategorias);
+			if(arrayCategorias.length !== 0){
+				res.status(200).json(arrayCategorias);
+			}
+			
 		});
 	} catch (err) {
 		res.status(500).json({ message: 'Error en el servidor', err });
