@@ -884,6 +884,8 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 			await sleep(3000)
 			if(arrayCategorias.length !== 0){
 				res.status(200).json(arrayCategorias);
+			} else {
+				res.status(200).json([]);
 			}
 			
 		});
