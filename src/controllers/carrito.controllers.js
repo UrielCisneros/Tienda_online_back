@@ -4,8 +4,10 @@ const Producto = require('../models/Producto');
 const mongoose = require('mongoose');
 
 carritoCtrl.crearCarrito = async (req, res, next) => {
-	console.log(req)
+	console.log("llego a crear carrito")
+	console.log(req.body)
 	const carrito = await Carrito.findOne({ cliente: req.params.idCliente });
+	console.log(carrito)
 	if (!carrito) {
 		const { cliente, articulos: [ { idarticulo, cantidad, medida: [ { talla, numero } ] } ] } = req.body;
 		const articulos = await Producto.aggregate([
@@ -197,7 +199,8 @@ carritoCtrl.obtenerCarrito = async (req, res) => {
 }; */
 
 carritoCtrl.agregarArticulo = async (req, res) => {
-	console.log(req)
+	console.log("llego a agregar articulo")
+	console.log(req.body)
 	const carrito = await Carrito.findOne({ cliente: req.params.idCliente });
 	const { articulos: [ { idarticulo, cantidad, medida: [ { talla, numero } ] } ] } = req.body;
 	const articulos = await Producto.aggregate([
