@@ -221,6 +221,7 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 	console.log(articulos)
 	articulos.map(async (productos) => {
 		if (!talla && !numero) {
+			console.log('es "otros"')
 			if (cantidad > productos.cantidad) {
 				res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
 			} else {
@@ -261,6 +262,7 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 			}
 		} else {
 			if (!productos.numeros.length) {
+				console.log('es "tallas"')
 				productos.tallas.map(async (tallas) => {
 					if (talla === tallas.talla && cantidad > tallas.cantidad) {
 						res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
@@ -289,6 +291,8 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 								}
 							},
 							(err, response) => {
+								console.log(err)
+								console.log(response)
 								if (err) {
 									res.status(500).json({ messege: 'Hubo un error al agregar articulo', err });
 								} else {
@@ -303,6 +307,7 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 					}
 				});
 			} else if (!productos.tallas.length) {
+				console.log('es "numeros"')
 				productos.numeros.map(async (numeros) => {
 					if (numero === numeros.numero && cantidad > numeros.cantidad) {
 						res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
@@ -331,6 +336,8 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 								}
 							},
 							(err, response) => {
+								console.log(err)
+								console.log(response)
 								if (err) {
 									res.status(500).json({ messege: 'Hubo un error al agregar articulo', err });
 								} else {
