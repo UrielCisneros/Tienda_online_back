@@ -4,6 +4,7 @@ const Producto = require('../models/Producto');
 const mongoose = require('mongoose');
 
 carritoCtrl.crearCarrito = async (req, res, next) => {
+	console.log(req)
 	const carrito = await Carrito.findOne({ cliente: req.params.idCliente });
 	if (!carrito) {
 		const { cliente, articulos: [ { idarticulo, cantidad, medida: [ { talla, numero } ] } ] } = req.body;
@@ -22,6 +23,7 @@ carritoCtrl.crearCarrito = async (req, res, next) => {
 				}
 			}
 		]);
+		console.log(articulos)
 		articulos.map(async (productos) => {
 			if (!talla && !numero) {
 				if (cantidad > productos.cantidad) {
@@ -195,6 +197,7 @@ carritoCtrl.obtenerCarrito = async (req, res) => {
 }; */
 
 carritoCtrl.agregarArticulo = async (req, res) => {
+	console.log(req)
 	const carrito = await Carrito.findOne({ cliente: req.params.idCliente });
 	const { articulos: [ { idarticulo, cantidad, medida: [ { talla, numero } ] } ] } = req.body;
 	const articulos = await Producto.aggregate([
@@ -212,6 +215,7 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 			}
 		}
 	]);
+	console.log(articulos)
 	articulos.map(async (productos) => {
 		if (!talla && !numero) {
 			if (cantidad > productos.cantidad) {
