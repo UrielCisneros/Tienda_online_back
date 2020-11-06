@@ -4,10 +4,10 @@ const Producto = require('../models/Producto');
 const mongoose = require('mongoose');
 
 carritoCtrl.crearCarrito = async (req, res, next) => {
-	console.log("llego a crear carrito")
-	console.log(req.body)
+	/* console.log("llego a crear carrito")
+	console.log(req.body) */
 	const carrito = await Carrito.findOne({ cliente: req.params.idCliente });
-	console.log(carrito)
+	/* console.log(carrito) */
 	if (!carrito) {
 		const { cliente, articulos: [ { idarticulo, cantidad, medida: [ { talla, numero } ] } ] } = req.body;
 		const articulos = await Producto.aggregate([
@@ -25,7 +25,7 @@ carritoCtrl.crearCarrito = async (req, res, next) => {
 				}
 			}
 		]);
-		console.log(articulos)
+		/* console.log(articulos) */
 		articulos.map(async (productos) => {
 			if (!talla && !numero) {
 				if (cantidad > productos.cantidad) {
@@ -87,10 +87,10 @@ carritoCtrl.crearCarrito = async (req, res, next) => {
 							res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock ' });
 						} else if (numero === numeros.numero && cantidad <= numeros.cantidad) {
 							if (productos.promocion.length) {
-								console.log('hay promocion');
+								/* console.log('hay promocion'); */
 								var precio = productos.promocion[0].precioPromocion;
 							} else {
-								console.log('no hay promocion');
+								/* console.log('no hay promocion'); */
 								var precio = productos.precio;
 							}
 							console.log(precio);
@@ -199,7 +199,7 @@ carritoCtrl.obtenerCarrito = async (req, res) => {
 }; */
 
 carritoCtrl.agregarArticulo = async (req, res) => {
-	console.log("llego a agregar articulo")
+	/* console.log("llego a agregar articulo") */
 	console.log(req.body)
 	const carrito = await Carrito.findOne({ cliente: req.params.idCliente });
 	const { articulos: [ { idarticulo, cantidad, medida: [ { talla, numero } ] } ] } = req.body;
@@ -218,10 +218,10 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 			}
 		}
 	]);
-	console.log(articulos)
+/* 	console.log(articulos) */
 	articulos.map(async (productos) => {
 		if (!talla && !numero) {
-			console.log('es "otros"')
+			/* console.log('es "otros"') */
 			if (cantidad > productos.cantidad) {
 				res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
 			} else {
@@ -262,7 +262,7 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 			}
 		} else {
 			if (!productos.numeros.length) {
-				console.log('es "tallas"')
+				/* console.log('es "tallas"') */
 				productos.tallas.map(async (tallas) => {
 					if (talla === tallas.talla && cantidad > tallas.cantidad) {
 						res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
@@ -291,8 +291,8 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 								}
 							},
 							(err, response) => {
-								console.log(err)
-								console.log(response)
+								/* console.log(err)
+								console.log(response) */
 								if (err) {
 									res.status(500).json({ messege: 'Hubo un error al agregar articulo', err });
 								} else {
@@ -307,7 +307,7 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 					}
 				});
 			} else if (!productos.tallas.length) {
-				console.log('es "numeros"')
+				/* console.log('es "numeros"') */
 				productos.numeros.map(async (numeros) => {
 					if (numero === numeros.numero && cantidad > numeros.cantidad) {
 						res.status(404).json({ messege: 'Cantidad de articulos es mayor al stock' });
@@ -336,8 +336,8 @@ carritoCtrl.agregarArticulo = async (req, res) => {
 								}
 							},
 							(err, response) => {
-								console.log(err)
-								console.log(response)
+								/* console.log(err)
+								console.log(response) */
 								if (err) {
 									res.status(500).json({ messege: 'Hubo un error al agregar articulo', err });
 								} else {
