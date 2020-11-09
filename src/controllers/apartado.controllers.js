@@ -192,7 +192,7 @@ apartadoCtrl.obtenerApartados = async (req, res) => {
 					eliminado: false
 				}
 			}
-		]);
+		]).sort({ createdAt: -1 });
 
 		await Apartado.aggregatePaginate(aggregate, options, (err, postStored) => {
 			if (err) {
@@ -499,6 +499,115 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 		case 'RECHAZADO':
 			color = '#F7401B';
 			mensaje = 'Tu apartado fue rechazado, puedes ponete en contacto para mas detalle.';
+			if (apartadoBase.estado === 'ACEPTADO' || apartadoBase.estado === 'ENVIADO') {
+				if (apartadoBase.medida.length === 0) {
+					/* console.log('no hay medida'); */
+					newProducto.cantidad = parseInt(producto.cantidad) + parseInt(apartadoBase.cantidad);
+					await Producto.findByIdAndUpdate(apartadoBase.producto, newProducto, async (err, userStored) => {
+						if (err) {
+							throw userStored;
+						} else {
+							if (!userStored) {
+								throw userStored;
+							} else {
+								const productoNuevo = await Producto.findById(apartadoBase.producto);
+								console.log(productoNuevo.cantidad);
+								if (productoNuevo.cantidad === 0) {
+									productoNuevo.activo = false;
+									await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+								}
+							}
+						}
+					});
+				} else {
+					/* console.log('hay medida'); */
+					if (apartadoBase.medida[0].numero) {
+						/* console.log('y es numero'); */
+						producto.numeros.map(async (numero) => {
+							if (numero.numero == apartadoBase.medida[0].numero) {
+								let cantidad = numero.cantidad + apartadoBase.cantidad;
+								await Producto.updateOne(
+									{
+										'numeros._id': numero._id
+									},
+									{
+										$set: {
+											'numeros.$': {
+												numero: numero.numero,
+												cantidad: cantidad
+											}
+										}
+									},
+									async (err, response) => {
+										if (err) {
+											res.status(500).send({ message: 'Ups algo paso al restar la talla' });
+											throw err;
+										} else {
+											if (!response) {
+												res.status(500).send({ message: 'Ups algo paso al restar la talla' });
+												throw err;
+											} else {
+												const productoNuevo = await Producto.findById(apartadoBase.producto);
+												let contador = 0;
+												for (let i = 0; i < productoNuevo.numeros.length; i++) {
+													contador += productoNuevo.numeros[i].cantidad;
+												}
+												console.log(contador);
+												if (contador === 0) {
+													productoNuevo.activo = false;
+													await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+												}
+											}
+										}
+									}
+								);
+							}
+						});
+					} else {
+						/* console.log('y es talla'); */
+						producto.tallas.map(async (talla) => {
+							if (talla.talla == apartadoBase.medida[0].talla) {
+								let cantidad = talla.cantidad + apartadoBase.cantidad;
+								await Producto.updateOne(
+									{
+										'tallas._id': talla._id
+									},
+									{
+										$set: {
+											'tallas.$': {
+												talla: talla.talla,
+												cantidad: cantidad
+											}
+										}
+									},
+									async (err, response) => {
+										if (err) {
+											res.status(500).send({ message: 'Ups algo paso al restar la talla' });
+											throw err;
+										} else {
+											if (!response) {
+												res.status(500).send({ message: 'Ups algo paso al restar la talla' });
+												throw err;
+											} else {
+												const productoNuevo = await Producto.findById(apartadoBase.producto);
+												let contador = 0;
+												for (let i = 0; i < productoNuevo.tallas.length; i++) {
+													contador += productoNuevo.tallas[i].cantidad;
+												}
+												console.log(contador);
+												if (contador === 0) {
+													productoNuevo.activo = false;
+													await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+												}
+											}
+										}
+									}
+								);
+							}
+						});
+					}
+				}
+			}
 			break;
 		case 'ENVIADO':
 			color = '#10B42B';
