@@ -10,7 +10,7 @@ pedidoCtrl.getPedidos = async (req, res, next) => {
         const pedidos = await pedidoModel.find().populate('cliente').populate({
             path: 'pedido.producto',
             model: 'producto'
-        }).sort({ createdAt: -1 });
+        });
         res.status(200).json(pedidos);
     } catch (err) {
         res.status(500).json({ message: 'Ups, algo paso al obtener los pedidos', err });
@@ -23,7 +23,8 @@ pedidoCtrl.getPedidosAdmin = async (req, res, next) => {
 		const options = {
 			page,
             limit: parseInt(limit),
-            populate: ['cliente', { path: 'pedido.producto', model: 'producto'}]
+            populate: ['cliente', { path: 'pedido.producto', model: 'producto'}],
+            sort: { createdAt: -1 }
 		}
         const pedidos = await pedidoModel.paginate({pagado: true}, options);
         res.status(200).json(pedidos);
