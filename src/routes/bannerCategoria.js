@@ -5,11 +5,11 @@ const {subirImagen,createBanner,getBanners,editBanner,deleteBanner} = require('.
 
 router.route('/')
     .get(getBanners)
-    .post(subirImagen,createBanner)
+    .post(auth,subirImagen,createBanner)
 
 router.route('/:idBanner')
-    .put(subirImagen,editBanner)
-    .delete(deleteBanner)
+    .put(auth,subirImagen,editBanner)
+    .delete(auth,deleteBanner)
 
 
 module.exports = router;
