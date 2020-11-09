@@ -369,7 +369,7 @@ clienteCtrl.authFirebase = async (req, res) => {
 	console.log(req.body);
 	const cliente = await clienteModel.findOne({ email });
 	if (cliente) {
-		if (!bcrypt.compareSync(uid, cliente.contrasena)) {
+		if (!bcrypt.compareSync(email, cliente.contrasena)) {
 			res.status(500).json({ message: 'Contraseña incorrecta' });
 		} else {
 			const token = jwt.sign(
@@ -396,7 +396,7 @@ clienteCtrl.authFirebase = async (req, res) => {
 			newcliente.imagen = imagen;
 			newcliente.tipoSesion = "FireBase";
 
-			bcrypt.hash(uid, null, null, function(err, hash) {
+			bcrypt.hash(email, null, null, function(err, hash) {
 				if (err) {
 					res.status(500).json({ message: 'Error al encriptar la contrasena', err });
 				} else {
