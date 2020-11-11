@@ -8,10 +8,10 @@ const app = express();
 app.set('port', process.env.PORT || '0.0.0.0');
 app.set('host',process.env.HOST || '0.0.0.0');
 
-const whitelist = ['https://brave-yonath-783630.netlify.app'];
+//const whitelist = ['https://brave-yonath-783630.netlify.app'];
 
 
-const corsOptions = {
+/* const corsOptions = {
     origin: (origin,callback) => {
         const existe = whitelist.some(dominio => dominio === origin);
         if(existe){
@@ -21,12 +21,12 @@ const corsOptions = {
         }
     }
 }
-
+ */
 //Middlewares cors con opcions
-app.use(cors(corsOptions));
+//app.use(cors(corsOptions));
 
 //Middlewares cors sin opcions
-//app.use(cors());
+app.use(cors());
 
 
 app.use(express.json());
