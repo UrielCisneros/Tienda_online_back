@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-
 const app = express();
 
 
@@ -47,6 +46,7 @@ app.use('/api/sugerencia', require('./routes/sugerencia'));
 app.use('/api/carousel', require('./routes/carousel'));
 app.use('/api/politicasEnvio', require('./routes/politicasEnvio'));
 app.use('/api/banner', require('./routes/bannerCategoria'));
+app.use('/api/promocion', require('./routes/promocionesProducto'));
 
 //carpeta publica
 app.use(express.static('uploads'));
