@@ -95,7 +95,7 @@ bannerCtrl.eliminarImagen = async (req,res) => {
             if(bannerBase.mostrarTitulo){
                 newBanner.mostrarTitulo = bannerBase.mostrarTitulo;
             }
-            await modelBanner.findByIdAndUpdate(req.params.idBanner,newbanner);
+            await modelBanner.findByIdAndUpdate(req.params.idBanner,newBanner);
         }
         res.status(200).json({message: "Imagen eliminada."})
     } catch (error) {
