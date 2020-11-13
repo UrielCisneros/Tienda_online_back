@@ -82,9 +82,11 @@ bannerCtrl.eliminarImagen = async (req,res) => {
         const bannerBase = await modelBanner.findById(req.params.idBanner);
         const newBanner = bannerBase;
         if(bannerBase.imagenBanner){
-            await imagen.eliminarImagen(bannerBase.imagenBanner);
-            newBanner.imagenBanner = "";
-            await modelBanner.findByIdAndUpdate(req.params.idBanner,newbanner);
+            //await imagen.eliminarImagen(bannerBase.imagenBanner);
+            arreglo = newBanner.filter((banner) => banner.imagenBanner !== "");
+            console.log(arreglo);
+            //newBanner.imagenBanner = "";
+            //await modelBanner.findByIdAndUpdate(req.params.idBanner,newbanner);
         }
         res.status(200).json({message: "Imagen eliminada."})
     } catch (error) {
