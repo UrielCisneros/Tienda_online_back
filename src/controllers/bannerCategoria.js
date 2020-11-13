@@ -80,13 +80,22 @@ bannerCtrl.deleteBanner = async (req,res) => {
 bannerCtrl.eliminarImagen = async (req,res) => {
     try {
         const bannerBase = await modelBanner.findById(req.params.idBanner);
-        const newBanner = bannerBase;
+        const newBanner = {};
         if(bannerBase.imagenBanner){
             //await imagen.eliminarImagen(bannerBase.imagenBanner);
-            arreglo = newBanner.filter((banner) => banner.imagenBanner !== "");
-            console.log(arreglo);
-            //newBanner.imagenBanner = "";
-            //await modelBanner.findByIdAndUpdate(req.params.idBanner,newbanner);
+            if(bannerBase.categoria){
+                newBanner.categoria = bannerBase.categoria;
+            }
+            if(bannerBase.vincularCategoria){
+                newBanner.vincularCategoria = bannerBase.vincularCategoria;
+            }
+            if(bannerBase.mostrarProductos){
+                newBanner.mostrarProductos = bannerBase.mostrarProductos;
+            }
+            if(bannerBase.mostrarTitulo){
+                newBanner.mostrarTitulo = bannerBase.mostrarTitulo;
+            }
+            await modelBanner.findByIdAndUpdate(req.params.idBanner,newbanner);
         }
         res.status(200).json({message: "Imagen eliminada."})
     } catch (error) {
