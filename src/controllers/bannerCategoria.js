@@ -82,20 +82,8 @@ bannerCtrl.eliminarImagen = async (req,res) => {
         const bannerBase = await modelBanner.findById(req.params.idBanner);
         const newBanner = {};
         if(bannerBase.imagenBanner){
-            //await imagen.eliminarImagen(bannerBase.imagenBanner);
-            if(bannerBase.categoria){
-                newBanner.categoria = bannerBase.categoria;
-            }
-            if(bannerBase.vincularCategoria){
-                newBanner.vincularCategoria = bannerBase.vincularCategoria;
-            }
-            if(bannerBase.mostrarProductos){
-                newBanner.mostrarProductos = bannerBase.mostrarProductos;
-            }
-            if(bannerBase.mostrarTitulo){
-                newBanner.mostrarTitulo = bannerBase.mostrarTitulo;
-            }
-            console.log(newBanner);
+            await imagen.eliminarImagen(bannerBase.imagenBanner);
+            newBanner.imagenBanner = '';
             await modelBanner.findByIdAndUpdate(req.params.idBanner,newBanner);
         }
         res.status(200).json({message: "Imagen eliminada."})
