@@ -14,7 +14,7 @@ bannerCtrl.subirImagen = async (req,res,next) => {
 
 bannerCtrl.getBanners = async (req,res) => {
     try {
-        const banners = await modelBanner.find({}).sort({ "createdAt" : -1});
+        const banners = await modelBanner.find({});
         res.status(200).json(banners);
     } catch (error) {
         console.log(error);
@@ -74,6 +74,22 @@ bannerCtrl.deleteBanner = async (req,res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Error en el servidor",error });
+    }
+}
+
+bannerCtrl.eliminarImagen = async (req,res) => {
+    try {
+        const bannerBase = await modelBanner.findById(req.params.idBanner);
+        const newBanner = bannerBase;
+        if(bannerBase.imagenBanner){
+            await imagen.eliminarImagen(bannerBase.imagenBanner);
+            newBanner.imagenBanner = "";
+            await modelBanner.findByIdAndUpdate(req.params.idBanner,newbanner);
+        }
+        res.status(200).json({message: "Imagen eliminada."})
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error en el servidor",error }); 
     }
 }
 
