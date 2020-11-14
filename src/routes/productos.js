@@ -68,6 +68,6 @@ router.route('/promocion/:id').put(auth,subirImagen,actualizarPromocion).delete(
 
 router.route('/promocion/EliminarImagen/:id').delete(auth,deleteImagen);
 
-router.route('/inventario/excel/').put(importacionExcel);
+router.route('/inventario/excel/').put(auth,importacionExcel);
 
 module.exports = router;
