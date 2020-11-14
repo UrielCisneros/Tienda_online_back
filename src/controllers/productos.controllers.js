@@ -897,6 +897,7 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 productosCtrl.importacionExcel = async (req,res) => {
 	try {
 		const {data} = req.body;
+		console.log(data);
 		if(data.length){
 			data.map(async (producto) => {
 				const existProduto = await Producto.find({codigo: producto.Codigo_de_barras});
