@@ -9,27 +9,28 @@ const sleep = util.promisify(setTimeout);
 promocionCtrl.getPromocionMasiva = async (req,res) => {
     try {
         await promocionModel.aggregate([ {"$group" : {_id:"$idProcionMasiva"}}],async function (err, promociones){
-			await promociones.forEach(async (item,index) => {
+			const resutado = await promociones.forEach(async (item,index) => {
+                console.log(index);
+                
                 arraypromociones = []
-                console.log(item);
+                console.log(promociones.lenght);
 				if(promociones.lenght === (index + 1) ){
 					return arraypromociones
 				}else{
 					if(item._id !== null){
                         const productosPromo = await promocionModel.find({idProcionMasiva: item._id });
-                        console.log(productosPromo);
                         arraypromociones.push({
                             productosPromoMasiva: productosPromo
                         });
 					   }
 				}
 			});
-			await sleep(3000)
+			/* await sleep(3000)
 			if(arraypromociones.length !== 0){
 				res.status(200).json(arraypromociones);
 			} else {
 				res.status(200).json([]);
-			}
+			} */
 		});
     } catch (error) {
         res.status(500).json({ message: 'Error en el servidor', error });
@@ -52,7 +53,6 @@ promocionCtrl.createPromocionMasiva = (req,res) => {
             productos.map( async (producto) => {
                 const productoBase = await productoModel.findById(producto.idProducto);
                 if(productoBase){
-                    
                     const cantidadDescuento = parseFloat(productoBase.precio) * parseFloat(`.${descuento <= 9 ? `0${descuento}` : descuento}`);
                     const precioConDescuento = parseFloat(productoBase.precio) - parseFloat(cantidadDescuento);
 
