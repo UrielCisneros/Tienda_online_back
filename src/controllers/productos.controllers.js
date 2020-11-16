@@ -858,7 +858,31 @@ productosCtrl.subCategorias = async (req,res) => {
 productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 	try {
 		 await Producto.aggregate([ {"$group" : {_id:"$categoria"}}],async function (err, categorias){
-			await categorias.forEach(async (item,index) => {
+			arrayCategorias = []
+			for(i = 0; i < categorias.length; i++){
+                if(categorias[i]._id !== null){
+					await Producto.aggregate([
+					   {$match:
+						   {
+						   $or: [{categoria: categorias[i]._id}],
+						   }
+					   },
+					   {
+						   $group: { _id: '$subCategoria'}
+					   }
+					   ],async function(err,subCategoriasBase){
+						   arrayCategorias.push({
+							   categoria: categorias[i]._id,
+							   subcCategoria: subCategoriasBase
+						   });
+					   });
+				   }
+                if(categorias.length === i + 1){
+                    res.status(200).json(arrayCategorias);
+                    console.log(arrayCategorias);
+                }
+            }
+			/* await categorias.forEach(async (item,index) => {
 				arrayCategorias = []
 				if(categorias.lenght === (index + 1) ){
 					return arrayCategorias
@@ -887,7 +911,7 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 				res.status(200).json(arrayCategorias);
 			} else {
 				res.status(200).json([]);
-			}
+			} */
 			
 		});
 	} catch (err) {
