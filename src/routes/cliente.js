@@ -12,7 +12,8 @@ const {
 	subirImagen,
 	authCliente,
 	authFirebase,
-	getClientesFiltrados
+	getClientesFiltrados,
+	getClienteSinPaginacion
 } = require('../controllers/cliente.controllers');
 
 router.route('/todos').get(auth,getClienteSinPaginacion)
