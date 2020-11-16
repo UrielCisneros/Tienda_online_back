@@ -11,7 +11,6 @@ promocionCtrl.getPromocionMasiva = async (req,res) => {
         await promocionModel.aggregate([ {"$group" : {_id:"$idProcionMasiva"}}],async function (err, promociones){
 			const resutado = await promociones.forEach(async (item,index) => {
                 console.log(index);
-                
                 arraypromociones = []
                 console.log(promociones.lenght);
 				if(promociones.lenght === (index + 1) ){

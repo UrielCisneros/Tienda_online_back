@@ -747,9 +747,10 @@ productosCtrl.updateProducto = async (req, res, next) => {
 			nuevoProducto.imagen = productoDeBase.imagen;
 		}
 
-		if(productoDeBase.subCategoria !== nuevoProducto.subCategoria){
+		/* if(productoDeBase.subCategoria !== nuevoProducto.subCategoria){
 			await Producto.updateMany({subCategoria: productoDeBase.subCategoria},{$set:{subCategoria: nuevoProducto.subCategoria}},{multi:true});
-		}
+		} */
+
 		const producto = await Producto.findByIdAndUpdate(req.params.id, nuevoProducto);
 
 		const productoNuevo = await Producto.findById(req.params.id);
