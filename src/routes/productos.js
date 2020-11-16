@@ -28,7 +28,8 @@ const {
 	subCategorias,
 	getPromocionesPaginadas,
 	importacionExcel,
-	getProductosFiltrosDividos
+	getProductosFiltrosDividos,
+	getProductoSinPaginacion
 } = require('../controllers/productos.controllers');
 const auth = require('../middleware/auth');
 
@@ -40,8 +41,8 @@ router.route('/Subcategorias/:idCategoria').get(auth,subCategorias);
 
 router.route('/filtrosNavbar/').get(crecarFiltrosNavbar);
 
+router.route('/sinPaginacion/').get(getProductoSinPaginacion);
 
-/* router.route('/similares/').get(getProductosSimilares) */
 router.route('/promocion/carousel/').get(getPromocionCarousel)
 
 router.route('/promocion/').post(auth,subirImagen,crearPromocion).get(getPromociones)

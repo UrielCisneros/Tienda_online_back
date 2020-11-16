@@ -474,30 +474,16 @@ productosCtrl.subirImagen = (req, res, next) => {
 		res.status(500).json({ message: "Error en el servidor",err })
 	}
 }; */
-/* productosCtrl.getProductosSimilares = async (req, res) => {
-	console.log(req.query)
-	const { nombre, categoria, subcategoria } = req.query
+productosCtrl.getProductoSinPaginacion = async (req, res) => {
 	try {
-		await Producto.aggregate([
-			{
-				$match:{
-					$or: [
-						{nombre: { $regex: '.*' + nombre + '.*', $options: 'i' }},
-						{categoria: { $regex: '.*' + categoria + '.*', $options: 'i' }},
-						{subCategoria: { $regex: '.*' + subcategoria + '.*', $options: 'i' }},
-
-					],
-				}
-			}
-		],
-			(err, postStored) => {
+		await Producto.find((err, response) => {
 				if (err) {
 					res.status(500).json({ message: 'Error en el servidor', err });
 				} else {
-					if (!postStored) {
+					if (!response) {
 						res.status(404).json({ message: 'Error al mostrar Productos' });
 					} else {
-						res.status(200).json({ posts: postStored });
+						res.status(200).json(response);
 					}
 				}
 			}
@@ -505,7 +491,7 @@ productosCtrl.subirImagen = (req, res, next) => {
 	} catch (err) {
 		res.status(500).json({ message: 'Error en el servidor', err });
 	}
-}; */
+};
 
 productosCtrl.getProductosFiltrosDividos = async (req, res) => {
 	const { categoria = "", subcategoria = "", genero = "" } = req.query
