@@ -17,6 +17,7 @@ const {
 
 router.route('/todos').get(auth,getClienteSinPaginacion)
 
+
 router.route('/auth').post(authCliente);
 
 router.route('/auth/firebase').post(authFirebase);
