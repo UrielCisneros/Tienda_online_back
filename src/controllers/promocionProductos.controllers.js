@@ -95,7 +95,7 @@ promocionCtrl.editPromocionMasiva = async (req,res) => {
 
 promocionCtrl.deletePromocionMasiva = async (req,res) => {
     try {
-        const productosPromo = await promocionModel.find({idProcionMasiva: req.params.idPromocionMasiva });
+        const productosPromo = await promocionModel.find({idPromocionMasiva: req.params.idPromocionMasiva });
         console.log(productosPromo);
         if(productosPromo.length){
             productosPromo.map(async (producto) => {
@@ -105,7 +105,6 @@ promocionCtrl.deletePromocionMasiva = async (req,res) => {
         }else{
             res.status(200).json({message: "Promocion masiva inexistete"});
         }
-        
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Error en el servidor', error });
