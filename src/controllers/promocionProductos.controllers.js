@@ -1,9 +1,7 @@
 const promocionCtrl = {};
-const { exists } = require('../models/PromocionProducto');
 const promocionModel = require('../models/PromocionProducto');
 const productoModel = require('../models/Producto');
-const util = require('util')
-const sleep = util.promisify(setTimeout);
+
 
 
 promocionCtrl.getPromocionMasiva = async (req,res) => {
@@ -55,7 +53,7 @@ promocionCtrl.createPromocionMasiva = (req,res) => {
                         {
                             productoPromocion: producto.idProducto,
                             precioPromocion: precioConDescuento,
-                            idProcionMasiva: aleatorio,
+                            idPromocionMasiva: aleatorio,
                             porsentajePromocionMasiva: descuento
                         })
                     await nuevaPromocion.save();
@@ -75,7 +73,7 @@ promocionCtrl.editPromocionMasiva = async (req,res) => {
     try {
         console.log(req.body);
         const {idPromocionMasiva, descuento} = req.body;
-        const productosPromo = await promocionModel.find({idProcionMasiva:idPromocionMasiva });
+        const productosPromo = await promocionModel.find({idPromocionMasiva:idPromocionMasiva });
         if(productosPromo.length){
             productosPromo.map(async (producto) => {
                 const productoBase = await productoModel.findById(producto.productoPromocion);
