@@ -41,8 +41,10 @@ function numerosAleatorios(){
 promocionCtrl.createPromocionMasiva = (req,res) => {
     try {
         const { productos,descuento } = req.body;
+        console.log(req.body);
         const aleatorio = numerosAleatorios();
         if(productos.length !== 0){
+            console.log("entro a la condicion");
             productos.map( async (producto) => {
                 const productoBase = await productoModel.findById(producto.idProducto);
                 if(productoBase){
