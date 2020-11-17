@@ -6,13 +6,13 @@ const productoModel = require('../models/Producto');
 
 promocionCtrl.getPromocionMasiva = async (req,res) => {
     try {
-        await promocionModel.aggregate([ {"$group" : {_id:"$idProcionMasiva"}}],async function (err, promociones){
+        await promocionModel.aggregate([ {"$group" : {_id:"$idPromocionMasiva"}}],async function (err, promociones){
             arraypromociones = [];
             console.log(promociones.length);
             for(i = 0; i < promociones.length; i++){
                 if(promociones[i]._id !== null){
                     console.log(i);
-                    const productosPromo = await promocionModel.find({idProcionMasiva: promociones[i]._id }).populate('productoPromocion');
+                    const productosPromo = await promocionModel.find({idPromocionMasiva: promociones[i]._id }).populate('productoPromocion');
                     arraypromociones.push({
                         productosPromoMasiva: productosPromo
                     });
