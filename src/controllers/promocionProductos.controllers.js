@@ -14,7 +14,7 @@ promocionCtrl.getPromocionMasiva = async (req,res) => {
             for(i = 0; i < promociones.length; i++){
                 if(promociones[i]._id !== null){
                     console.log(i);
-                    const productosPromo = await promocionModel.find({idProcionMasiva: promociones[i]._id });
+                    const productosPromo = await promocionModel.find({idProcionMasiva: promociones[i]._id }).populate('productoPromocion');
                     arraypromociones.push({
                         productosPromoMasiva: productosPromo
                     });
@@ -85,6 +85,18 @@ promocionCtrl.editPromocionMasiva = async (req,res) => {
         console.log(productosPromo);
         res.status(200).json({message: "Promocion masiva editada"});
     } catch (error) {
+        res.status(500).json({ message: 'Error en el servidor', error });
+    }
+}
+
+promocionCtrl.deletePromocionMasiva = async (req,res) => {
+    try {
+        const { idPromocionMasiva } = req.body;
+        if(idPromocionMasiva){
+            await promocionModel.deleteMany({idProcionMasiva: idPromocionMasiva})
+        }
+    } catch (error) {
+        console.log(error);
         res.status(500).json({ message: 'Error en el servidor', error });
     }
 }
