@@ -61,8 +61,11 @@ promocionCtrl.createPromocionMasiva = (req,res) => {
                     await nuevaPromocion.save();
                 }
             })
+            res.status(200).json({message: "Promocion masiva agregada"});
+        }else{
+            res.status(200).json({message: "No existen productos"});
         }
-        res.status(200).json({message: "Promocion masiva agregada"});
+        
     } catch (error) {
         res.status(500).json({ message: 'Error en el servidor', error });
     }
