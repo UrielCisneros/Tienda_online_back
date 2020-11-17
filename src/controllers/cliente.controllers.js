@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt-nodejs');
 const jwt = require('jsonwebtoken');
 const clienteModel = require('../models/Cliente');
 const adminModel = require('../models/Administrador');
+const email = require('../middleware/sendEmail');
+const Tienda = require('../models/Tienda');
 
 clienteCtrl.subirImagen = async (req, res, next) => {
 	await imagen.upload(req, res, function(err) {
@@ -18,6 +20,36 @@ clienteCtrl.getClienteSinPaginacion = async (req,res) => {
 	try {
 		const clientes = await clienteModel.find({});
 		res.status(200).json(clientes);
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: 'Error en el servidor', error });
+	}
+}
+
+clienteCtrl.restablecerPassword = async (req,res) => {
+	try {
+		const { emailCliente } = req.body;
+		const tienda = await Tienda.find();
+		const htmlContentUser = `
+                <div>
+					<div style="margin:auto; max-width: 550px; height: 100px;">
+						
+                    </div>
+                    
+                    <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu pedido fue enviado!!</h3>
+                    <h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu pedido esta en camino, esperalo pronto.</h4>
+            
+                    <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
+					<div style="margin:auto; max-width: 550px;">
+					
+                    </div>
+                    <div style="margin:auto; max-width: 550px; height: 100px;">
+                        <p style="padding: 10px 0px;">Ya estamos trabajando para mandar tu pedido, si tienes alguna duda no dudes en contactarnos.</p>
+                    </div>
+				</div>`;
+
+		email.sendEmail(emailCliente,"Recuperacion",htmlContentUser,tienda[0].nombre);
+
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ message: 'Error en el servidor', error });

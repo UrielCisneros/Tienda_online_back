@@ -55,7 +55,8 @@ promocionCtrl.createPromocionMasiva = (req,res) => {
                         {
                             productoPromocion: producto.idProducto,
                             precioPromocion: precioConDescuento,
-                            idProcionMasiva: aleatorio
+                            idProcionMasiva: aleatorio,
+                            porsentajePromocionMasiva: descuento
                         })
                     await nuevaPromocion.save();
                 }
