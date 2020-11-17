@@ -476,7 +476,17 @@ productosCtrl.subirImagen = (req, res, next) => {
 }; */
 productosCtrl.getProductoSinPaginacion = async (req, res) => {
 	try {
-		await Producto.find((err, response) => {
+		await Producto.aggregate(
+			[
+				{
+					$lookup: {
+						from: 'promocions',
+						localField: '_id',
+						foreignField: 'productoPromocion',
+						as: 'promocion'
+					}
+				}
+			],(err, response) => {
 				if (err) {
 					res.status(500).json({ message: 'Error en el servidor', err });
 				} else {
