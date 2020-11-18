@@ -855,6 +855,7 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 	try {
 		 await Producto.aggregate([ {"$group" : {_id:"$categoria"}}],async function (err, categorias){
 			arrayCategorias = []
+			console.log(categorias);
 			for(i = 0; i < categorias.length; i++){
                 if(categorias[i]._id !== null){
 					await Producto.aggregate([
