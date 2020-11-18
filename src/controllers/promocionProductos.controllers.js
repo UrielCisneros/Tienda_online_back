@@ -10,7 +10,7 @@ promocionCtrl.getPromocionMasiva = async (req,res) => {
             arraypromociones = [];
             console.log(promociones.length);
             console.log(promociones);
-            for(i = 0; i < promociones.length; i++){
+            for(i = 0; i < promociones.length - 1; i++){
                 console.log(promociones[i]._id);
                 if(promociones[i]._id !== 'null'){
                     console.log(i);
