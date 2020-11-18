@@ -860,6 +860,7 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 			for(i = 0; i < categorias.length; i++){
 				console.log(i);
                 if(categorias[i]._id !== null){
+					console.log("entro",i);
 					await Producto.aggregate([
 					   {$match:
 						   {
