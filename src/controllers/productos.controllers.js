@@ -856,7 +856,9 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 		 await Producto.aggregate([ {"$group" : {_id:"$categoria"}}],async function (err, categorias){
 			arrayCategorias = []
 			console.log(categorias);
+			console.log(categorias.length);
 			for(i = 0; i < categorias.length; i++){
+				console.log(i);
                 if(categorias[i]._id !== null){
 					await Producto.aggregate([
 					   {$match:
@@ -874,10 +876,12 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 						   });
 					   });
 				   }
+				   console.log((i+1));
                 if(categorias.length === (i + 1)){
                     res.status(200).json(arrayCategorias);
                 }
-            }
+			}
+			console.log(arrayCategorias);
 			/* await categorias.forEach(async (item,index) => {
 				arrayCategorias = []
 				if(categorias.lenght === (index + 1) ){
