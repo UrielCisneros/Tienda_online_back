@@ -878,10 +878,11 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 					   });
 				   }
 				   console.log((i+1));
-                if(categorias.length === (i + 1)){
+                /* if(categorias.length === (i + 1)){
                     res.status(200).json(arrayCategorias);
-                }
+                } */
 			}
+			res.status(200).json(arrayCategorias);
 			console.log(arrayCategorias);
 			/* await categorias.forEach(async (item,index) => {
 				arrayCategorias = []
