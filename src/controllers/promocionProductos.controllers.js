@@ -22,6 +22,7 @@ promocionCtrl.getPromocionMasiva = async (req,res) => {
                     console.log(arraypromociones);
                 }
             }
+            console.log(arraypromociones);
 		});
     } catch (error) {
         res.status(500).json({ message: 'Error en el servidor', error });
