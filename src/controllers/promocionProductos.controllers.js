@@ -11,6 +11,7 @@ promocionCtrl.getPromocionMasiva = async (req,res) => {
             console.log(promociones.length);
             console.log(promociones);
             for(i = 0; i < promociones.length; i++){
+                console.log(promociones[i]._id);
                 if(promociones[i]._id !== null || promociones[i]._id !== undefined){
                     console.log(i);
                     const productosPromo = await promocionModel.find({idPromocionMasiva: promociones[i]._id }).populate('productoPromocion');
