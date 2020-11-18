@@ -8,9 +8,6 @@ promocionCtrl.getPromocionMasiva = async (req,res) => {
     try {
         await promocionModel.aggregate([ {"$group" : {_id:"$idPromocionMasiva"}}],async function (err, promociones){
             arraypromociones = [];
-            console.log(promociones.length);
-            console.log(promociones);
-            let cont = 1;
             for(i = 0; i < promociones.length; i++){
                 console.log(promociones[i]._id);
                 if(promociones[i]._id !== null){

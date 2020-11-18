@@ -873,7 +873,7 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 						   });
 					   });
 				   }
-                if(categorias.length === i + 1){
+                if(categorias.length === (i + 1)){
                     res.status(200).json(arrayCategorias);
                 }
             }
