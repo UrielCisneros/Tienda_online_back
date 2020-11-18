@@ -62,7 +62,7 @@ promocionCtrl.createPromocionMasiva = (req,res) => {
             })
             res.status(200).json({message: "Promocion masiva agregada"});
         }else{
-            res.status(200).json({message: "No existen productos"});
+            res.status(404).json({message: "Promocion masiva no encontrada."});
         }
         
     } catch (error) {
@@ -82,13 +82,15 @@ promocionCtrl.editPromocionMasiva = async (req,res) => {
                 const precioConDescuento = parseFloat(productoBase.precio) - parseFloat(cantidadDescuento);
                 const arrayPromocion = {
                     precioPromocion: precioConDescuento,
+                    porsentajePromocionMasiva: descuento
                 }
                 await promocionModel.findByIdAndUpdate(producto._id,arrayPromocion);
             })
+            res.status(200).json({message: "Promocion masiva editada"});
+        }else{
+            res.status(404).json({message: "Promocion masiva no encontrada."});
         }
         
-        console.log(productosPromo);
-        res.status(200).json({message: "Promocion masiva editada"});
     } catch (error) {
         res.status(500).json({ message: 'Error en el servidor', error });
     }
@@ -104,7 +106,7 @@ promocionCtrl.deletePromocionMasiva = async (req,res) => {
             })
             res.status(200).json({message: "Promocion masiva Eliminada"});
         }else{
-            res.status(200).json({message: "Promocion masiva inexistete"});
+            res.status(404).json({message: "Promocion masiva inexistete"});
         }
     } catch (error) {
         console.log(error);
