@@ -36,19 +36,16 @@ clienteCtrl.restablecerPassword = async (req,res) => {
 						
                     </div>
                     
-                    <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu pedido fue enviado!!</h3>
-                    <h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu pedido esta en camino, esperalo pronto.</h4>
-            
-                    <h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
-					<div style="margin:auto; max-width: 550px;">
-					
-                    </div>
+                    <h3 style="font-family: sans-serif; margin: 15px 15px;">Escuchamos que perdió su contraseña. ¡Lo siento por eso!</h3>
+                    <h4 style="font-family: sans-serif; margin: 15px 15px;">¡Pero no se preocupe! Se puede utilizar el siguiente enlace para restablecer la contraseña:</h4>
+					<a href="www.tutiendacafi.com">Redireccionamiento para la contrasena</a>
                     <div style="margin:auto; max-width: 550px; height: 100px;">
-                        <p style="padding: 10px 0px;">Ya estamos trabajando para mandar tu pedido, si tienes alguna duda no dudes en contactarnos.</p>
+                        <p style="padding: 10px 0px;">Al utilizar este codigo ya no podra volverse a usar.</p>
                     </div>
 				</div>`;
 
 		email.sendEmail(emailCliente,"Recuperacion",htmlContentUser,tienda[0].nombre);
+
 
 	} catch (error) {
 		console.log(error);
