@@ -20,12 +20,10 @@ promocionCtrl.getPromocionMasiva = async (req,res) => {
                         productosPromoMasiva: productosPromo
                     });
                 }
-                console.log("numero mas uno",cont);
-                if(promociones.length === cont){
+                if(promociones.length === (i + 1)){
                     res.status(200).json(arraypromociones);
                     console.log(arraypromociones);
                 }
-                cont++
             }
 		});
     } catch (error) {
