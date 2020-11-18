@@ -854,7 +854,6 @@ productosCtrl.subCategorias = async (req,res) => {
 productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 	try {
 		 await Producto.aggregate([ {"$group" : {_id:"$categoria"}}],async function (err, categorias){
-			 console.log(categorias);
 			arrayCategorias = []
 			for(i = 0; i < categorias.length; i++){
                 if(categorias[i]._id !== null || promociones[i]._id !== undefined){
@@ -876,7 +875,6 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 				   }
                 if(categorias.length === i + 1){
                     res.status(200).json(arrayCategorias);
-                    console.log(arrayCategorias);
                 }
             }
 			/* await categorias.forEach(async (item,index) => {
