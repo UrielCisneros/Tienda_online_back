@@ -6,6 +6,7 @@ const clienteModel = require('../models/Cliente');
 const adminModel = require('../models/Administrador');
 const email = require('../middleware/sendEmail');
 const Tienda = require('../models/Tienda');
+const Recuperacion = require('../models/RecuperacionPass');
 
 clienteCtrl.subirImagen = async (req, res, next) => {
 	await imagen.upload(req, res, function(err) {
@@ -29,22 +30,29 @@ clienteCtrl.getClienteSinPaginacion = async (req,res) => {
 clienteCtrl.restablecerPassword = async (req,res) => {
 	try {
 		const { emailCliente } = req.body;
+		const newRecuperacion = new Recuperacion({
+			correoUsuario: emailCliente,
+			codigoVerificacion: "",
+			activo: false
+		})
+
+		let r = Math.random().toString(36).substring(7);
+		console.log("random", r);
+
+		/* await newRecuperacion.save();
+
 		const tienda = await Tienda.find();
 		const htmlContentUser = `
-                <div>
-					<div style="margin:auto; max-width: 550px; height: 100px;">
-						
-                    </div>
-                    
+                <div>                    
                     <h3 style="font-family: sans-serif; margin: 15px 15px;">Escuchamos que perdió su contraseña. ¡Lo siento por eso!</h3>
                     <h4 style="font-family: sans-serif; margin: 15px 15px;">¡Pero no se preocupe! Se puede utilizar el siguiente enlace para restablecer la contraseña:</h4>
-					<a href="http://localhost:3000">Redireccionamiento para la contrasena</a>
+					<a href="https://brave-yonath-783630.netlify.app/">https://brave-yonath-783630.netlify.app/</a>
                     <div style="margin:auto; max-width: 550px; height: 100px;">
                         <p style="padding: 10px 0px;">Al utilizar este codigo ya no podra volverse a usar.</p>
                     </div>
 				</div>`;
 
-		email.sendEmail(emailCliente,"Recuperacion",htmlContentUser,tienda[0].nombre);
+		email.sendEmail(emailCliente,"Recuperacion",htmlContentUser,tienda[0].nombre); */
 
 
 	} catch (error) {

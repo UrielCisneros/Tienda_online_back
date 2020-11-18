@@ -10,7 +10,7 @@ promocionCtrl.getPromocionMasiva = async (req,res) => {
             arraypromociones = [];
             console.log(promociones.length);
             for(i = 0; i < promociones.length; i++){
-                if(promociones[i]._id !== null){
+                if(promociones[i]._id !== null || promociones[i]._id !== undefined){
                     console.log(i);
                     const productosPromo = await promocionModel.find({idPromocionMasiva: promociones[i]._id }).populate('productoPromocion');
                     arraypromociones.push({
