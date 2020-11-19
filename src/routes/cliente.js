@@ -21,6 +21,8 @@ router.route('/todos').get(auth,getClienteSinPaginacion)
 
 router.route('/restablecer/pass').post(restablecerPassword);
 
+router.route('/restablecer/pass/:idPassword');
+
 router.route('/auth').post(authCliente);
 
 router.route('/auth/firebase').post(authFirebase);

@@ -6,7 +6,7 @@ const clienteModel = require('../models/Cliente');
 const adminModel = require('../models/Administrador');
 const email = require('../middleware/sendEmail');
 const Tienda = require('../models/Tienda');
-const Recuperacion = require('../models/RecuperacionPass');
+const recuperacionModel = require('../models/RecuperacionPass');
 
 clienteCtrl.subirImagen = async (req, res, next) => {
 	await imagen.upload(req, res, function(err) {
@@ -27,19 +27,26 @@ clienteCtrl.getClienteSinPaginacion = async (req,res) => {
 	}
 }
 
+clienteCtrl.cambioResetPass = async (req,res) => {
+	try {
+		const datos = await recuperacionModel.find({codigoVerificacion: req.params.idPassword});
+		console.log(datos);
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: 'Error en el servidor', error });
+	}
+}
+
 clienteCtrl.restablecerPassword = async (req,res) => {
 	try {
 		const { emailCliente } = req.body;
-		const newRecuperacion = new Recuperacion({
+		const newRecuperacion = new recuperacionModel({
 			correoUsuario: emailCliente,
-			codigoVerificacion: "",
+			codigoVerificacion: makeid(100),
 			activo: false
 		})
 
-		let r = Math.random().toString(36).substring(7);
-		console.log("random", r);
-
-		/* await newRecuperacion.save();
+		await newRecuperacion.save();
 
 		const tienda = await Tienda.find();
 		const htmlContentUser = `
@@ -52,14 +59,24 @@ clienteCtrl.restablecerPassword = async (req,res) => {
                     </div>
 				</div>`;
 
-		email.sendEmail(emailCliente,"Recuperacion",htmlContentUser,tienda[0].nombre); */
-
+		await email.sendEmail(emailCliente,"Recuperacion",htmlContentUser,tienda[0].nombre);
+		res.status(200).json({message: "Correo enviado."});
 
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ message: 'Error en el servidor', error });
 	}
 }
+
+function makeid(length) {
+	var result = '';
+	var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	var charactersLength = characters.length;
+	for ( var i = 0; i < length; i++ ) {
+	   result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	}
+	return result;
+ }
 
 /* clienteCtrl.getClientes = async (req, res, next) => {
 	try {
