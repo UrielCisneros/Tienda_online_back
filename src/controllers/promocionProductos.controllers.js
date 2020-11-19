@@ -72,9 +72,9 @@ promocionCtrl.createPromocionMasiva = (req,res) => {
 
 promocionCtrl.editPromocionMasiva = async (req,res) => {
     try {
-        const { productos,descuento,idPromocionMasiva } = req.body;
+        const { productos, descuento } = req.body;
         console.log(req.body);
-        const productosPromo = await promocionModel.find({idPromocionMasiva:idPromocionMasiva });
+        const productosPromo = await promocionModel.find({idPromocionMasiva:req.params.idPromocionMasiva });
         if(productosPromo.length){
             productosPromo.map(async (producto) => {
                 await promocionModel.findByIdAndDelete(producto._id);
