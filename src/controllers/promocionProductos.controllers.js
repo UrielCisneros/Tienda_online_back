@@ -74,6 +74,7 @@ promocionCtrl.editPromocionMasiva = async (req,res) => {
     try {
         const { productos, descuento } = req.body;
         console.log(req.body);
+        const aleatorio = numerosAleatorios();
         const productosPromo = await promocionModel.find({idPromocionMasiva:req.params.idPromocionMasiva });
         if(productosPromo.length){
             productosPromo.map(async (producto) => {
