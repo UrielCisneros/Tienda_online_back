@@ -72,19 +72,28 @@ promocionCtrl.createPromocionMasiva = (req,res) => {
 
 promocionCtrl.editPromocionMasiva = async (req,res) => {
     try {
+        const { productos,descuento,idPromocionMasiva } = req.body;
         console.log(req.body);
-        const {idPromocionMasiva, descuento} = req.body;
         const productosPromo = await promocionModel.find({idPromocionMasiva:idPromocionMasiva });
         if(productosPromo.length){
             productosPromo.map(async (producto) => {
-                const productoBase = await productoModel.findById(producto.productoPromocion);
-                const cantidadDescuento = parseFloat(productoBase.precio) * parseFloat(`.${descuento <= 9 ? `0${descuento}` : descuento}`);
-                const precioConDescuento = parseFloat(productoBase.precio) - parseFloat(cantidadDescuento);
-                const arrayPromocion = {
-                    precioPromocion: precioConDescuento,
-                    porsentajePromocionMasiva: descuento
+                await promocionModel.findByIdAndDelete(producto._id);
+            })
+            productos.map( async (producto) => {
+                const productoBase = await productoModel.findById(producto.idProducto);
+                if(productoBase){
+                    const cantidadDescuento = parseFloat(productoBase.precio) * parseFloat(`.${descuento <= 9 ? `0${descuento}` : descuento}`);
+                    const precioConDescuento = parseFloat(productoBase.precio) - parseFloat(cantidadDescuento);
+
+                    const nuevaPromocion = new promocionModel(
+                        {
+                            productoPromocion: producto.idProducto,
+                            precioPromocion: precioConDescuento,
+                            idPromocionMasiva: aleatorio,
+                            porsentajePromocionMasiva: descuento
+                        })
+                    await nuevaPromocion.save();
                 }
-                await promocionModel.findByIdAndUpdate(producto._id,arrayPromocion);
             })
             res.status(200).json({message: "Promocion masiva editada"});
         }else{
