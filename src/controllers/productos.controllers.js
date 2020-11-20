@@ -38,7 +38,7 @@ productosCtrl.deleteImagen = async (req, res) => {
 
 productosCtrl.getPromociones = async (req, res,next) => {
 	try {
-		const promociones = await promocionModel.find({idPromocionMasiva:{$exists:true}}).populate('productoPromocion');
+		const promociones = await promocionModel.find({idPromocionMasiva:{$exists:false}}).populate('productoPromocion');
 		res.status(200).json(promociones);
 	} catch (err) {
 		res.status(500).json({ message: 'Error en el servidor', err });
