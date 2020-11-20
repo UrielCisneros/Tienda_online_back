@@ -564,7 +564,7 @@ productosCtrl.getProductosFiltrosDividos = async (req, res) => {
 						from: 'promocions',
 						localField: '_id',
 						foreignField: 'productoPromocion',
-						as: 'todos'
+						as: 'promocion'
 					}
 				},
 				{
@@ -598,7 +598,7 @@ productosCtrl.getProductosFiltrados = async (req, res) => {
 						from: 'promocions',
 						localField: '_id',
 						foreignField: 'productoPromocion',
-						as: 'todos'
+						as: 'promocion'
 					}
 				},
 				{
@@ -644,7 +644,7 @@ productosCtrl.getProductos = async (req, res) => {
 					from: 'promocions',
 					localField: '_id',
 					foreignField: 'productoPromocion',
-					as: 'todos'
+					as: 'promocion'
 				}
 			}
 		]);
@@ -870,6 +870,7 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 						   $group: { _id: '$subCategoria'}
 					   }
 					   ],async function(err,subCategoriasBase){
+						   console.log(subCategoriasBase);
 						   console.log(categorias[i]._id);
 						   arrayCategorias.push({
 							   categoria: categorias[i]._id,
@@ -877,7 +878,7 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 						   });
 					   });
 				   }
-				   console.log((i+1));
+				   
                 /* if(categorias.length === (i + 1)){
                     res.status(200).json(arrayCategorias);
                 } */
