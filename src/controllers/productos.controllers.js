@@ -733,6 +733,7 @@ productosCtrl.createProducto = async (req, res) => {
 productosCtrl.updateProducto = async (req, res, next) => {
 	try {
 		const productoDeBase = await Producto.findById(req.params.id);
+		console.log(req.body);
 		//Construir nuevo producto
 		const nuevoProducto = req.body;
 		//Verificar si mandaron imagen
