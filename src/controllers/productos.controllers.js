@@ -764,8 +764,6 @@ productosCtrl.updateProducto = async (req, res, next) => {
 				productoNuevo.activo = false;
 				await Producto.findByIdAndUpdate(productoNuevo._id,productoNuevo);
 			}
-
-
 		}else if(productoNuevo.numeros.length > 0){
 			console.log("entro a numero");
 			let contador = 0;
@@ -872,6 +870,7 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 						   $group: { _id: '$subCategoria'}
 					   }
 					   ],async function(err,subCategoriasBase){
+						   console.log(categorias[i]._id);
 						   arrayCategorias.push({
 							   categoria: categorias[i]._id,
 							   subcCategoria: subCategoriasBase
