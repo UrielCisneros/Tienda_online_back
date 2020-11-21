@@ -27,10 +27,14 @@ clienteCtrl.getClienteSinPaginacion = async (req,res) => {
 	}
 }
 
-clienteCtrl.cambioResetPass = async (req,res) => {
+clienteCtrl.cambioCodigoVerific = async (req,res) => {
 	try {
 		const datos = await recuperacionModel.find({codigoVerificacion: req.params.idPassword});
 		console.log(datos);
+		const nuevoDatos = datos;
+		nuevoDatos.activo = true;
+		//await clienteModel.findByIdAndUpdate();
+		res.status(200).json(datos);
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ message: 'Error en el servidor', error });
@@ -54,7 +58,7 @@ clienteCtrl.restablecerPassword = async (req,res) => {
                     <h3 style="font-family: sans-serif; margin: 15px 15px;">Escuchamos que perdió su contraseña. ¡Lo siento por eso!</h3>
                     <h4 style="font-family: sans-serif; margin: 15px 15px;">¡Pero no se preocupe! Se puede utilizar el siguiente enlace para restablecer la contraseña:</h4>
 					<a href="https://brave-yonath-783630.netlify.app/">https://brave-yonath-783630.netlify.app/</a>
-                    <div style="margin:auto; max-width: 550px; height: 100px;">
+                    <div style=" max-width: 550px; height: 100px;">
                         <p style="padding: 10px 0px;">Al utilizar este codigo ya no podra volverse a usar.</p>
                     </div>
 				</div>`;
