@@ -41,6 +41,24 @@ clienteCtrl.cambioCodigoVerific = async (req,res) => {
 	}
 }
 
+clienteCtrl.getVerificPass = async (req,res) => {
+	try {
+		const datos = await recuperacionModel.find({codigoVerificacion: req.params.idPassword});
+		if(datos){
+			if(datos.activo){
+				res.status(200).json({ message: 'CodigoReal'});
+			}else{
+				res.status(404).json({ message: 'Codigo usado'});
+			}
+		}else{
+			res.status(404).json({ message: 'No existe'});
+		}
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: 'Error en el servidor', error });
+	}
+}
+
 clienteCtrl.restablecerPassword = async (req,res) => {
 	try {
 		const { emailCliente } = req.body;
@@ -53,11 +71,12 @@ clienteCtrl.restablecerPassword = async (req,res) => {
 		await newRecuperacion.save();
 
 		const tienda = await Tienda.find();
+		const urlReset = `https://brave-yonath-783630.netlify.app/resetPass/${newRecuperacion.activo}`;
 		const htmlContentUser = `
                 <div>                    
                     <h3 style="font-family: sans-serif; margin: 15px 15px;">Escuchamos que perdió su contraseña. ¡Lo siento por eso!</h3>
                     <h4 style="font-family: sans-serif; margin: 15px 15px;">¡Pero no se preocupe! Se puede utilizar el siguiente enlace para restablecer la contraseña:</h4>
-					<a href="https://brave-yonath-783630.netlify.app/">https://brave-yonath-783630.netlify.app/</a>
+					<a href="${urlReset}">${urlReset}</a>
                     <div style=" max-width: 550px; height: 100px;">
                         <p style="padding: 10px 0px;">Al utilizar este codigo ya no podra volverse a usar.</p>
                     </div>
