@@ -53,6 +53,7 @@ clienteCtrl.getClienteSinPaginacion = async (req,res) => {
 clienteCtrl.resetPass = async (req,res) => {
 	try {
 		const {password, confirmPassword,idRecuperacion} = req.body;
+		console.log(req.body);
 		const datos = await recuperacionModel.find({codigoVerificacion: idRecuperacion});
 		const Cliente = await clienteModel.find({email: datos.correoUsuario});
 		const newCliente = Cliente;
