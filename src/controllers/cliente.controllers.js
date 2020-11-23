@@ -35,7 +35,7 @@ clienteCtrl.cambioCodigoVerific = async (req,res) => {
 	}
 }
 
-clienteCtrl.resetPass = (req,res) => {
+clienteCtrl.resetPass = async (req,res) => {
 	try {
 		const {password, confirmPassword,idRecuperacion} = req.body;
 		const datos = await recuperacionModel.find({codigoVerificacion: idRecuperacion});
@@ -75,7 +75,7 @@ clienteCtrl.resetPass = (req,res) => {
 										);
 										console.log('Token: ' + token);
 										res.json({ token });
-										
+
 									}
 								}
 							});
