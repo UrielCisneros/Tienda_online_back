@@ -150,7 +150,7 @@ clienteCtrl.restablecerPassword = async (req,res) => {
                     </div>
 				</div>`;
 
-		await email.sendEmail(emailCliente,"Recuperacion",htmlContentUser,tienda[0].nombre);
+		//await email.sendEmail(emailCliente,"Recuperacion",htmlContentUser,tienda[0].nombre);
 		res.status(200).json({message: "Correo enviado."});
 
 	} catch (error) {
