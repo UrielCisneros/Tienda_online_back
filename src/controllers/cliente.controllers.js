@@ -17,24 +17,72 @@ clienteCtrl.subirImagen = async (req, res, next) => {
 	});
 };
 
-clienteCtrl.getClienteSinPaginacion = async (req,res) => {
+clienteCtrl.cambioCodigoVerific = async (req,res) => {
 	try {
-		const clientes = await clienteModel.find({});
-		res.status(200).json(clientes);
+		const datos = await recuperacionModel.find({codigoVerificacion: req.params.idPassword});
+		console.log(datos);
+		if(datos.activo){
+			res.status(500).json({ message: 'Error en el servidor', error });
+		}else{
+			const nuevoDatos = datos;
+			nuevoDatos.activo = true;
+			await recuperacionModel.findByIdAndUpdate(datos._id,nuevoDatos);
+			res.status(200).json(datos);
+		}
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ message: 'Error en el servidor', error });
 	}
 }
 
-clienteCtrl.cambioCodigoVerific = async (req,res) => {
+clienteCtrl.resetPass = (req,res) => {
 	try {
-		const datos = await recuperacionModel.find({codigoVerificacion: req.params.idPassword});
-		console.log(datos);
-		const nuevoDatos = datos;
-		nuevoDatos.activo = true;
-		//await clienteModel.findByIdAndUpdate();
-		res.status(200).json(datos);
+		const {password, confirmPassword,idRecuperacion} = req.body;
+		const datos = await recuperacionModel.find({codigoVerificacion: idRecuperacion});
+		const Cliente = await clienteModel.find({email: datos.correoUsuario});
+		const newCliente = Cliente;
+		if(Cliente.tipoSesion !== 'APIRestAB'){
+			res.status(500).json({ message: 'Esta cuenta no se puede cambiar la contrasena' });
+		}else{
+			if (!password || !confirmPassword) {
+				res.status(404).json({ message: 'Las contrasenas son obligatorias' });
+			} else {
+				if (password !== confirmPassword) {
+					res.status(404).json({ message: 'Las contrasenas no son iguales' });
+				} else {
+					bcrypt.hash(password, null, null, function(err, hash) {
+						if (err) {
+							res.status(500).json({ message: 'Error al encriptar la contrasena', err });
+						} else {
+							newCliente.contrasena = hash;
+							newCliente.save((err, userStored) => {
+								if (err) {
+									res.status(500).json({ message: 'Ups, algo paso al registrar el usuario', err });
+								} else {
+									if (!userStored) {
+										res.status(404).json({ message: 'Error al crear el usuario' });
+									} else {
+										const token = jwt.sign(
+											{
+												email: newCliente.email,
+												nombre: newCliente.nombre,
+												apellido: newCliente.apellido,
+												_id: newCliente._id,
+												tipoSesion: newCliente.tipoSesion,
+												rol: false
+											},
+											process.env.AUTH_KEY
+										);
+										console.log('Token: ' + token);
+										res.json({ token });
+									}
+								}
+							});
+						}
+					});
+				}
+			}
+		}
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ message: 'Error en el servidor', error });
