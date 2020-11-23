@@ -54,8 +54,8 @@ clienteCtrl.resetPass = async (req,res) => {
 	try {
 		const {password, confirmPassword,idRecuperacion} = req.body;
 		console.log(req.body);
-		const datos = await recuperacionModel.find({codigoVerificacion: idRecuperacion});
-		const Cliente = await clienteModel.find({email: datos.correoUsuario});
+		const datos = await recuperacionModel.findOne({codigoVerificacion: idRecuperacion});
+		const Cliente = await clienteModel.findOne({email: datos.correoUsuario});
 		const newCliente = Cliente;
 		if(Cliente.tipoSesion !== 'APIRestAB'){
 			res.status(500).json({ message: 'Esta cuenta no se puede cambiar la contrasena' });
