@@ -109,8 +109,11 @@ clienteCtrl.getVerificPass = async (req,res) => {
 	try {
 		const datos = await recuperacionModel.find({codigoVerificacion: req.params.idPassword});
 		if(datos){
-			if(datos.activo){
-				res.status(200).json({ message: 'CodigoReal'});
+			if(!datos.activo){
+				const newDate = datos;
+				newDate.activo = true;
+				await recuperacionModel.findByIdAndUpdate(datos._id,newDate);
+				res.status(200).json({ message: 'Codigo real'});
 			}else{
 				res.status(404).json({ message: 'Codigo usado'});
 			}
