@@ -35,6 +35,21 @@ clienteCtrl.cambioCodigoVerific = async (req,res) => {
 	}
 }
 
+clienteCtrl.getClienteSinPaginacion = async (req,res) => {
+	try {
+		try {
+			const clientes = await clienteModel.find();
+			res.status(200).json(clientes);
+		} catch (err) {
+			res.status(500).json({ message: "Error en el servidor",err })	
+			console.log(error);
+		}
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: 'Error en el servidor', error });
+	}
+}
+
 clienteCtrl.resetPass = async (req,res) => {
 	try {
 		const {password, confirmPassword,idRecuperacion} = req.body;
