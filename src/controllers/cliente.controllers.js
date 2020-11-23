@@ -75,6 +75,7 @@ clienteCtrl.resetPass = (req,res) => {
 										);
 										console.log('Token: ' + token);
 										res.json({ token });
+										
 									}
 								}
 							});
