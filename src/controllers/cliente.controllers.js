@@ -53,7 +53,6 @@ clienteCtrl.getClienteSinPaginacion = async (req,res) => {
 clienteCtrl.resetPass = async (req,res) => {
 	try {
 		const {password, confirmPassword,idRecuperacion} = req.body;
-		console.log(req.body);
 		const datos = await recuperacionModel.findOne({codigoVerificacion: idRecuperacion});
 		const Cliente = await clienteModel.findOne({email: datos.correoUsuario});
 		const newCliente = Cliente;
@@ -85,6 +84,7 @@ clienteCtrl.resetPass = async (req,res) => {
 												apellido: newCliente.apellido,
 												_id: newCliente._id,
 												tipoSesion: newCliente.tipoSesion,
+												imagen: cliente.imagen,
 												rol: false
 											},
 											process.env.AUTH_KEY
