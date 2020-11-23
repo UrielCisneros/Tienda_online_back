@@ -135,7 +135,7 @@ clienteCtrl.restablecerPassword = async (req,res) => {
 		await newRecuperacion.save();
 
 		const tienda = await Tienda.find();
-		const urlReset = `https://brave-yonath-783630.netlify.app/resetPass/${newRecuperacion.activo}`;
+		const urlReset = `https://brave-yonath-783630.netlify.app/resetPass/${newRecuperacion.codigoVerificacion}`;
 		const htmlContentUser = `
                 <div>                    
                     <h3 style="font-family: sans-serif; margin: 15px 15px;">Escuchamos que perdió su contraseña. ¡Lo siento por eso!</h3>
