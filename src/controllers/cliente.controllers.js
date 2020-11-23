@@ -54,11 +54,9 @@ clienteCtrl.resetPass = async (req,res) => {
 	try {
 		const {password, confirmPassword,idRecuperacion} = req.body;
 		const datos = await recuperacionModel.findOne({codigoVerificacion: idRecuperacion});
-		const Cliente = await clienteModel.findOne({email: datos.correoUsuario});
-		const newCliente = Cliente;
-		if(Cliente.tipoSesion !== 'APIRestAB'){
-			res.status(500).json({ message: 'Esta cuenta no se puede cambiar la contrasena' });
-		}else{
+		const admin = await adminModel.findOne({email: datos.correoUsuario});
+		if(admin){
+			const newAdmin = admin;
 			if (!password || !confirmPassword) {
 				res.status(404).json({ message: 'Las contrasenas son obligatorias' });
 			} else {
@@ -69,8 +67,8 @@ clienteCtrl.resetPass = async (req,res) => {
 						if (err) {
 							res.status(500).json({ message: 'Error al encriptar la contrasena', err });
 						} else {
-							newCliente.contrasena = hash;
-							newCliente.save((err, userStored) => {
+							newAdmin.contrasena = hash;
+							newAdmin.save((err, userStored) => {
 								if (err) {
 									res.status(500).json({ message: 'Ups, algo paso al registrar el usuario', err });
 								} else {
@@ -79,13 +77,10 @@ clienteCtrl.resetPass = async (req,res) => {
 									} else {
 										const token = jwt.sign(
 											{
-												email: newCliente.email,
-												nombre: newCliente.nombre,
-												apellido: newCliente.apellido,
-												_id: newCliente._id,
-												tipoSesion: newCliente.tipoSesion,
-												imagen: newCliente.imagen,
-												rol: false
+												email: newAdmin.email,
+												nombre: newAdmin.nombre,
+												_id: newAdmin._id,
+												rol: true
 											},
 											process.env.AUTH_KEY
 										);
@@ -97,6 +92,53 @@ clienteCtrl.resetPass = async (req,res) => {
 							});
 						}
 					});
+				}
+			}
+		}else{
+			const Cliente = await clienteModel.findOne({email: datos.correoUsuario});
+			const newCliente = Cliente;
+			if(Cliente.tipoSesion !== 'APIRestAB'){
+				res.status(500).json({ message: 'Esta cuenta no se puede cambiar la contrasena' });
+			}else{
+				if (!password || !confirmPassword) {
+					res.status(404).json({ message: 'Las contrasenas son obligatorias' });
+				} else {
+					if (password !== confirmPassword) {
+						res.status(404).json({ message: 'Las contrasenas no son iguales' });
+					} else {
+						bcrypt.hash(password, null, null, function(err, hash) {
+							if (err) {
+								res.status(500).json({ message: 'Error al encriptar la contrasena', err });
+							} else {
+								newCliente.contrasena = hash;
+								newCliente.save((err, userStored) => {
+									if (err) {
+										res.status(500).json({ message: 'Ups, algo paso al registrar el usuario', err });
+									} else {
+										if (!userStored) {
+											res.status(404).json({ message: 'Error al crear el usuario' });
+										} else {
+											const token = jwt.sign(
+												{
+													email: newCliente.email,
+													nombre: newCliente.nombre,
+													apellido: newCliente.apellido,
+													_id: newCliente._id,
+													tipoSesion: newCliente.tipoSesion,
+													imagen: newCliente.imagen,
+													rol: false
+												},
+												process.env.AUTH_KEY
+											);
+											console.log('Token: ' + token);
+											res.json({ token });
+	
+										}
+									}
+								});
+							}
+						});
+					}
 				}
 			}
 		}
