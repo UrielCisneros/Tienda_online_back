@@ -84,7 +84,7 @@ clienteCtrl.resetPass = async (req,res) => {
 												apellido: newCliente.apellido,
 												_id: newCliente._id,
 												tipoSesion: newCliente.tipoSesion,
-												imagen: cliente.imagen,
+												imagen: newCliente.imagen,
 												rol: false
 											},
 											process.env.AUTH_KEY
