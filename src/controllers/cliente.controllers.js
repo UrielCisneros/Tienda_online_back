@@ -108,6 +108,7 @@ clienteCtrl.resetPass = async (req,res) => {
 clienteCtrl.getVerificPass = async (req,res) => {
 	try {
 		const datos = await recuperacionModel.find({codigoVerificacion: req.params.idPassword});
+		console.log(datos);
 		if(datos){
 			if(!datos.activo){
 				const newDate = datos;
