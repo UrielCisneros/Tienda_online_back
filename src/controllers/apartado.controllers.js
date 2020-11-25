@@ -6,6 +6,7 @@ const email = require('../middleware/sendEmail');
 const clienteModel = require('../models/Cliente');
 const adminModel = require('../models/Administrador');
 const Tienda = require('../models/Tienda');
+const Carrito = require('../models/Carrito');
 
 apartadoCtrl.agregarApartado = async (req, res) => {
 	console.log(req.body);
@@ -269,6 +270,8 @@ apartadoCtrl.createApartadoMultiple = async (req,res) => {
 		email.sendEmail(admin[0].email, 'Solicitud de apartado', htmlContent, 'Cafi service');
 	
 		email.sendEmail(clienteBase.email, 'Apartado en proceso', htmlContentUser, tienda[0].nombre);
+
+		await Carrito.findOneAndDelete({ cliente: clienteBase._id });
 
 		res.status(200).json({ message: 'Apartado creado' });
 
