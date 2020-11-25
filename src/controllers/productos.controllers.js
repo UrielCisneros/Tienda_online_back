@@ -877,7 +877,7 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 									categoria: categorias[i]._id,
 									subcCategoria: subCategoriasBase
 								}]
-								arrayCategorias.push();
+								//arrayCategorias.push();
 							});
 					}
 				   }
