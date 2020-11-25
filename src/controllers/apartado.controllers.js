@@ -172,17 +172,7 @@ apartadoCtrl.createApartadoMultiple = async (req,res) => {
 		const admin = await adminModel.find({});
 		const tienda = await Tienda.find();
 
-		await newApartado.save((err, response) => {
-			if (err) {
-				res.status(500).json({ message: 'Hubo un error al crear apartado', err });
-			} else {
-				if (!response) {
-					res.status(404).json({ message: 'Error al Crear apartado' });
-				} else {
-					res.status(200).json({ message: 'Apartado creado', response });
-				}
-			}
-		});
+		await newApartado.save();
 
 		let pedidos = ``;
 		let subTotal = 0;
@@ -279,6 +269,8 @@ apartadoCtrl.createApartadoMultiple = async (req,res) => {
 		email.sendEmail(admin[0].email, 'Solicitud de apartado', htmlContent, 'Cafi service');
 	
 		email.sendEmail(clienteBase.email, 'Apartado en proceso', htmlContentUser, tienda[0].nombre);
+
+		res.status(200).json({ message: 'Apartado creado' });
 
 
 
