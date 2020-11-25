@@ -484,7 +484,7 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 	const apatadoActualizado = req.body;
 	console.log(apatadoActualizado);
 	apatadoActualizado.fecha_envio = new Date();
-	const apartadoBase = await Apartado.findById(req.params.idApartado).populate('producto cliente');
+	const apartadoBase = await Apartado.findById(req.params.idApartado).populate('producto cliente').populate({ path: 'apartadoMultiple.producto',model: 'apartados'});
 	const tienda = await Tienda.find();
 
 	await Apartado.findOneAndUpdate({ _id: req.params.idApartado }, apatadoActualizado, (err, response) => {
@@ -989,6 +989,10 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 			break;
 	}
 
+	if(apartadoBase.apartadoMultiple.length){
+		console.log("entro");
+	}
+
 	const htmlContentUser = `
 	<div>
 		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu apartado a sido: <span style="color: ${color};">${apatadoActualizado.estado}</span></h3>
@@ -1019,12 +1023,12 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 	</div>
 	`;
 
-	email.sendEmail(
+	/* email.sendEmail(
 		apartadoBase.cliente.email,
 		`Apartado ${apatadoActualizado.estado}`,
 		htmlContentUser,
 		tienda[0].nombre
-	);
+	); */
 };
 
 apartadoCtrl.eliminarApartado = async (req, res) => {
