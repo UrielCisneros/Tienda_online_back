@@ -11,8 +11,12 @@ const {
     obtenerUnApartado,
     filtroApartadosCliente,
     obtenerApartadosCliente,
-    eliminarApartadoCambiarEstado
+    eliminarApartadoCambiarEstado,
+    createApartadoMultiple
 } = require('../controllers/apartado.controllers');
+
+
+router.route('/multiple/').post(createApartadoMultiple);
 
 router.route('/')
     .get(auth,obtenerApartados)

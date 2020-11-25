@@ -3,7 +3,6 @@ const Apartado = require('../models/Apartado');
 const Producto = require('../models/Producto');
 const mongoose = require('mongoose');
 const email = require('../middleware/sendEmail');
-const { response } = require('express');
 const clienteModel = require('../models/Cliente');
 const adminModel = require('../models/Administrador');
 const Tienda = require('../models/Tienda');
@@ -161,6 +160,132 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 
 	email.sendEmail(clienteBase.email, 'Apartado en proceso', htmlContentUser, tienda[0].nombre);
 };
+
+apartadoCtrl.createApartadoMultiple = async (req,res) => {
+	try {
+		console.log(req.body);
+		const { producto, cliente, cantidad, estado, medida, tipoEntrega,apartadoMultiple } = req.body;
+		const newApartado = new Apartado(req.body);
+		newApartado.eliminado = false;
+		const clienteBase = await clienteModel.findById(cliente);
+		console.log(clienteBase);
+		const admin = await adminModel.find({});
+		const tienda = await Tienda.find();
+
+		await newApartado.save((err, response) => {
+			if (err) {
+				res.status(500).json({ message: 'Hubo un error al crear apartado', err });
+			} else {
+				if (!response) {
+					res.status(404).json({ message: 'Error al Crear apartado' });
+				} else {
+					res.status(200).json({ message: 'Apartado creado', response });
+				}
+			}
+		});
+
+		let pedidos = ``;
+		let subTotal = 0;
+
+		for(let i = 0; i < apartadoMultiple.length; i++){
+			const product = await Producto.findById(apartadoMultiple[i].producto);
+			subTotal += parseFloat(apartadoMultiple[i].precio);
+			pedidos += `
+			<tr>
+				<td style="  padding: 15px; text-align: left;"><img style="max-width: 150px; display:block; margin:auto;" class="" src="${process.env.URL_IMAGEN_AWS}${product.imagen}" /></td>
+				<td style="  padding: 15px; text-align: left;"><p style="text-align: center; font-family: sans-serif;" > ${product.nombre}</p></td>
+				<td style="  padding: 15px; text-align: left;"><p style="text-align: center; font-family: sans-serif;"> ${apartadoMultiple[i].cantidad}</p></td>
+				<td style="  padding: 15px; text-align: left;">
+					${apartadoMultiple[i].numero ? apartadoMultiple[i].numero ? 
+						`<p style="text-align: center; font-family: sans-serif;"> ${apartadoMultiple[i].numero}</p>` : 
+						`<p style="text-align: center; font-family: sans-serif;"> ${apartadoMultiple[i].talla}</p>`:
+						`<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">No aplica</span></p>`
+					}
+				</td>
+				<td style="  padding: 15px; text-align: left;"><p style="text-align: center; font-family: sans-serif;"> $ ${apartadoMultiple[i].precio}</p></td>
+			</tr>
+			`;
+		}
+
+		const htmlContent = `
+		<div>
+			<div style="margin:auto; max-width: 550px; height: 100px;;">
+				${tienda[0].imagenLogo
+					? `<img style="max-width: 200px; display:block; margin:auto; padding: 10px 0px;" src="${process.env.URL_IMAGEN_AWS}${tienda[0].imagenLogo}" />`
+					: ''} 
+			</div>
+			<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tienes una nueva solicitud de apartado</h3>
+			<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
+				<table >
+					<tr>
+						<td style="  padding: 15px; text-align: left;"><strong>Producto</strong></td>
+						<td style="  padding: 15px; text-align: left;"><strong></strong></td>
+						<td style="  padding: 15px; text-align: left;"><strong>Cantidad</strong></td>
+						<td style="  padding: 15px; text-align: left;"><strong>Medida</strong></td>
+						<td style="  padding: 15px; text-align: left;"><strong>Precio</strong></td>
+					</tr>
+					${pedidos}
+				</table>
+				<h3 style=" margin:auto; margin-left: 360px;"><strong>Total: </strong>$ ${subTotal}</h3>
+				<div class="" style="margin-top: 20px; padding: 5px;">
+					<p style="text-align: center; font-family: sans-serif;" > <span style="font-weight: bold;">Solicitud de:</span> ${clienteBase.nombre} ${clienteBase.apellido}</p>
+	
+					<p style="text-align: center; font-family: sans-serif;">Info del cliente:</p>
+					<div  style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 200px; display:block; margin:auto;">
+	
+					${clienteBase.tipoSesion !== 'FireBase'
+						? `<img style="max-width: 70px; display:block; margin:auto;" class="" src="${process.env.URL_IMAGEN_AWS}${clienteBase.imagen}"/>`
+						: `<img style="max-width: 70px; display:block; margin:auto;" class="" src="${clienteBase.imagen}"/>`}
+	
+						<p style="text-align: center; font-family: sans-serif;font-size: 13px;" ><span style="font-weight: bold;">Correo:</span> ${clienteBase.email}</p>
+						<p style="text-align: center; font-family: sans-serif;font-size: 13px;" ><span style="font-weight: bold;">Telefono:</span> ${clienteBase.telefono}</p>
+						<p style="text-align: center; font-family: sans-serif;font-size: 13px;" ><span style="font-weight: bold;">Direccion:</span> ${clienteBase.direccion[0].calle_numero} Colonia ${clienteBase.direccion[0].colonia} ${clienteBase.direccion[0].ciudad} ${clienteBase.direccion[0].estado} ${clienteBase.direccion[0].pais}.</p>
+					</div>
+					<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Tipo de entrega:</span> ${tipoEntrega === 'ENVIO'
+						? 'Envio a domicilio'
+						: 'Recoger a sucursal'}</p>
+				</div>
+			</div>
+			<p style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">El cliente espera que te contactes con el, Hazlo ya!!!</p>
+		</div>
+		`;
+	
+		const htmlContentUser = `
+		<div>
+			<div style="margin:auto; max-width: 550px; height: 100px;">
+				${tienda[0].imagenLogo
+					? `<img style="max-width: 200px; display:block; margin:auto; padding: 10px 0px;" src="${process.env.URL_IMAGEN_AWS}${tienda[0].imagenLogo}" />`
+					: ''} 
+			</div>
+			<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu apartado esta siendo <span style="color: #09ABF6;">procesado</span></h3>
+			<h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Te pedimos que tengas paciencia, en breve se contactaran contigo para mas detalle.</h4>
+	
+			<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
+			<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
+				<img style="max-width: 200px; display:block; margin:auto;" class="" src="${process.env.URL_IMAGEN_AWS}${datosProducto[0].imagen}" />
+				<p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${datosProducto[0].nombre}</p>
+				<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> ${cantidad}</p>
+				${req.body.medida
+					? req.body.medida[0].numero
+						? `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${req
+								.body.medida[0].numero}</p>`
+						: `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${req
+								.body.medida[0].talla}</p>`
+					: ''}
+			</div>
+		</div>
+		`;
+	
+		email.sendEmail(admin[0].email, 'Solicitud de apartado', htmlContent, 'Cafi service');
+	
+		email.sendEmail(clienteBase.email, 'Apartado en proceso', htmlContentUser, tienda[0].nombre);
+
+
+
+	} catch (error) {
+		res.status(500).json({ message: 'Hubo un error al obtener los apartados', error });
+	}
+}
 
 apartadoCtrl.obtenerApartados = async (req, res) => {
 	try {
