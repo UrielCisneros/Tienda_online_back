@@ -8,6 +8,6 @@ router.route('/masiva/').get(auth,getPromocionMasiva).post(auth,createPromocionM
 
 router.route('/masiva/:idPromocionMasiva').delete(auth,deletePromocionMasiva).put(auth,editPromocionMasiva)
 
-router.route('/limitante/').post(promocionLimitante)
+router.route('/limitante/').post(auth,promocionLimitante)
 
 module.exports = router;
