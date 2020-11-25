@@ -192,6 +192,7 @@ pagoCtrl.createPago = async (req, res) => {
                         let pedidos = ``;
                         let subTotal = 0;
                         
+                        
                         for(let i = 0; i < pedidoPopulate.pedido.length; i++){
                             subTotal += parseFloat(pedidoPopulate.pedido[i].precio);
                             pedidos += `
