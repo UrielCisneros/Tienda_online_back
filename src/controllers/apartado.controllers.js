@@ -187,7 +187,7 @@ apartadoCtrl.createApartadoMultiple = async (req,res) => {
 				<td style="  padding: 15px; text-align: left;"><p style="text-align: center; font-family: sans-serif;" > ${product.nombre}</p></td>
 				<td style="  padding: 15px; text-align: left;"><p style="text-align: center; font-family: sans-serif;"> ${apartadoMultiple[i].cantidad}</p></td>
 				<td style="  padding: 15px; text-align: left;">
-					${apartadoMultiple[i].medida.numero ? apartadoMultiple[i].medida.numero ? 
+					${apartadoMultiple[i].medida? apartadoMultiple[i].medida.numero ? 
 						`<p style="text-align: center; font-family: sans-serif;"> ${apartadoMultiple[i].medida.numero}</p>` : 
 						`<p style="text-align: center; font-family: sans-serif;"> ${apartadoMultiple[i].medida.talla}</p>`:
 						`<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">No aplica</span></p>`
@@ -207,7 +207,7 @@ apartadoCtrl.createApartadoMultiple = async (req,res) => {
 			</div>
 			<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tienes una nueva solicitud de apartado</h3>
 			<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
-				<table >
+				<table style="display:block; margin:auto;">
 					<tr>
 						<td style="  padding: 15px; text-align: left;"><strong>Producto</strong></td>
 						<td style="  padding: 15px; text-align: left;"><strong></strong></td>
@@ -253,7 +253,7 @@ apartadoCtrl.createApartadoMultiple = async (req,res) => {
 	
 			<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del apartado:</h3>
 			<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block;">
-				<table >
+				<table style="display:block; margin:auto;">
 					<tr>
 						<td style="  padding: 15px; text-align: left;"><strong>Producto</strong></td>
 						<td style="  padding: 15px; text-align: left;"><strong></strong></td>
