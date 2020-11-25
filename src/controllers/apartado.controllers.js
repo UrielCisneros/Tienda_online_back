@@ -187,9 +187,9 @@ apartadoCtrl.createApartadoMultiple = async (req,res) => {
 				<td style="  padding: 15px; text-align: left;"><p style="text-align: center; font-family: sans-serif;" > ${product.nombre}</p></td>
 				<td style="  padding: 15px; text-align: left;"><p style="text-align: center; font-family: sans-serif;"> ${apartadoMultiple[i].cantidad}</p></td>
 				<td style="  padding: 15px; text-align: left;">
-					${apartadoMultiple[i].numero ? apartadoMultiple[i].numero ? 
-						`<p style="text-align: center; font-family: sans-serif;"> ${apartadoMultiple[i].numero}</p>` : 
-						`<p style="text-align: center; font-family: sans-serif;"> ${apartadoMultiple[i].talla}</p>`:
+					${apartadoMultiple[i].medida.numero ? apartadoMultiple[i].medida.numero ? 
+						`<p style="text-align: center; font-family: sans-serif;"> ${apartadoMultiple[i].medida.numero}</p>` : 
+						`<p style="text-align: center; font-family: sans-serif;"> ${apartadoMultiple[i].medida.talla}</p>`:
 						`<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">No aplica</span></p>`
 					}
 				</td>
@@ -252,7 +252,7 @@ apartadoCtrl.createApartadoMultiple = async (req,res) => {
 			<h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Te pedimos que tengas paciencia, en breve se contactaran contigo para mas detalle.</h4>
 	
 			<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del apartado:</h3>
-			<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
+			<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block;">
 				<table >
 					<tr>
 						<td style="  padding: 15px; text-align: left;"><strong>Producto</strong></td>
@@ -274,8 +274,6 @@ apartadoCtrl.createApartadoMultiple = async (req,res) => {
 		await Carrito.findOneAndDelete({ cliente: clienteBase._id });
 
 		res.status(200).json({ message: 'Apartado creado' });
-
-
 
 	} catch (error) {
 		res.status(500).json({ message: 'Hubo un error al obtener los apartados', error });
