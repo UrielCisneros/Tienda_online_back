@@ -271,7 +271,7 @@ apartadoCtrl.createApartadoMultiple = async (req,res) => {
 	
 		email.sendEmail(clienteBase.email, 'Apartado en proceso', htmlContentUser, tienda[0].nombre);
 
-		await Carrito.findOneAndDelete({ cliente: clienteBase._id });
+		//await Carrito.findOneAndDelete({ cliente: clienteBase._id });
 
 		res.status(200).json({ message: 'Apartado creado' });
 
