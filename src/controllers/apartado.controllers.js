@@ -263,6 +263,7 @@ apartadoCtrl.createApartadoMultiple = async (req,res) => {
 					</tr>
 					${pedidos}
 				</table>
+				<h3 style=" margin:auto; margin-left: 360px;"><strong>Total: </strong>$ ${subTotal}</h3>
 			</div>
 		</div>
 		`;
