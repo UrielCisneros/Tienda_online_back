@@ -858,7 +858,6 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 			console.log(categorias.length);
 			for(i = 0; i < categorias.length; i++){
 				console.log(i);
-				console.log(categorias[i]._id);
                 if(categorias[i]._id !== null){
 					console.log("entro",i);
 					if(categorias[i]._id){
@@ -874,11 +873,10 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 							],async function(err,subCategoriasBase){
 								console.log(subCategoriasBase);
 								console.log(categorias[i]._id);
-								arrayCategorias = [...arrayCategorias, {
+								arrayCategorias.push({
 									categoria: categorias[i]._id,
 									subcCategoria: subCategoriasBase
-								}]
-								//arrayCategorias.push();
+								});
 							});
 					}
 				   }
