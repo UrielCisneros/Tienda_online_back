@@ -309,7 +309,7 @@ apartadoCtrl.obtenerApartados = async (req, res) => {
 					from: 'productos',
 					localField: 'apartadoMultiple.producto',
 					foreignField: '_id',
-					as: 'apartadoMultiple.producto'
+					as: 'productosMultiple'
 				}
 			},
 			{
@@ -389,7 +389,7 @@ apartadoCtrl.obtenerApartadosCliente = async (req, res) => {
 					from: 'productos',
 					localField: 'apartadoMultiple.producto',
 					foreignField: '_id',
-					as: 'apartadoMultiple.producto'
+					as: 'productosMultiple'
 				}
 			},
 			{
