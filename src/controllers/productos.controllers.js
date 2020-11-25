@@ -871,12 +871,9 @@ productosCtrl.crecarFiltrosNavbar = async (req, res, next) => {
 								$group: { _id: '$subCategoria'}
 							}
 							],async function(err,subCategoriasBase){
-								console.log(subCategoriasBase);
-								console.log(categorias[i]._id);
-								arrayCategorias.push({
-									categoria: categorias[i]._id,
-									subcCategoria: subCategoriasBase
-								});
+								arrayCategorias = [...arrayCategorias, {
+									productosPromoMasiva: productosPromo
+								}]
 							});
 					}
 				   }

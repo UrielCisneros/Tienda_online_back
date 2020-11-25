@@ -13,9 +13,9 @@ promocionCtrl.getPromocionMasiva = async (req,res) => {
                 console.log(i);
                 if(promociones[i]._id !== null){
                     const productosPromo = await promocionModel.find({idPromocionMasiva: promociones[i]._id }).populate('productoPromocion');
-                    arraypromociones.push({
+                    arraypromociones = [...arraypromociones, {
                         productosPromoMasiva: productosPromo
-                    });
+                    }]
                 }
                 if(promociones.length === (i + 1)){
                     res.status(200).json(arraypromociones);
