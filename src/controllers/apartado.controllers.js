@@ -305,6 +305,14 @@ apartadoCtrl.obtenerApartados = async (req, res) => {
 				}
 			},
 			{
+				$lookup: {
+					from: 'productos',
+					localField: 'apartadoMultiple.producto',
+					foreignField: '_id',
+					as: 'apartadoMultiple.producto'
+				}
+			},
+			{
 				$match: {
 					eliminado: false
 				}
@@ -374,6 +382,14 @@ apartadoCtrl.obtenerApartadosCliente = async (req, res) => {
 					localField: 'producto',
 					foreignField: 'productoPromocion',
 					as: 'promocion'
+				}
+			},
+			{
+				$lookup: {
+					from: 'productos',
+					localField: 'apartadoMultiple.producto',
+					foreignField: '_id',
+					as: 'apartadoMultiple.producto'
 				}
 			},
 			{
