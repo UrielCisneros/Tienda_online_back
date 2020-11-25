@@ -252,19 +252,17 @@ apartadoCtrl.createApartadoMultiple = async (req,res) => {
 			<h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Te pedimos que tengas paciencia, en breve se contactaran contigo para mas detalle.</h4>
 	
 			<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del apartado:</h3>
-			<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block;">
-				<div style="margin:auto; max-width: 550px;">
-					<table style="display:block; margin:auto;">
-						<tr>
-							<td style="  padding: 15px; text-align: left;"><strong>Producto</strong></td>
-							<td style="  padding: 15px; text-align: left;"><strong></strong></td>
-							<td style="  padding: 15px; text-align: left;"><strong>Cantidad</strong></td>
-							<td style="  padding: 15px; text-align: left;"><strong>Medida</strong></td>
-							<td style="  padding: 15px; text-align: left;"><strong>Precio</strong></td>
-						</tr>
-						${pedidos}
-					</table>
-				</div>
+			<div style="margin:auto; max-width: 550px;">
+				<table style="display:block; margin:auto;">
+					<tr>
+						<td style="  padding: 15px; text-align: left;"><strong>Producto</strong></td>
+						<td style="  padding: 15px; text-align: left;"><strong></strong></td>
+						<td style="  padding: 15px; text-align: left;"><strong>Cantidad</strong></td>
+						<td style="  padding: 15px; text-align: left;"><strong>Medida</strong></td>
+						<td style="  padding: 15px; text-align: left;"><strong>Precio</strong></td>
+					</tr>
+					${pedidos}
+				</table>
 			</div>
 		</div>
 		`;
