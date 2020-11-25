@@ -250,18 +250,18 @@ apartadoCtrl.createApartadoMultiple = async (req,res) => {
 			<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu apartado esta siendo <span style="color: #09ABF6;">procesado</span></h3>
 			<h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Te pedimos que tengas paciencia, en breve se contactaran contigo para mas detalle.</h4>
 	
-			<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
+			<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del apartado:</h3>
 			<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
-				<img style="max-width: 200px; display:block; margin:auto;" class="" src="${process.env.URL_IMAGEN_AWS}${datosProducto[0].imagen}" />
-				<p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${datosProducto[0].nombre}</p>
-				<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> ${cantidad}</p>
-				${req.body.medida
-					? req.body.medida[0].numero
-						? `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${req
-								.body.medida[0].numero}</p>`
-						: `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${req
-								.body.medida[0].talla}</p>`
-					: ''}
+				<table >
+					<tr>
+						<td style="  padding: 15px; text-align: left;"><strong>Producto</strong></td>
+						<td style="  padding: 15px; text-align: left;"><strong></strong></td>
+						<td style="  padding: 15px; text-align: left;"><strong>Cantidad</strong></td>
+						<td style="  padding: 15px; text-align: left;"><strong>Medida</strong></td>
+						<td style="  padding: 15px; text-align: left;"><strong>Precio</strong></td>
+					</tr>
+					${pedidos}
+				</table>
 			</div>
 		</div>
 		`;
