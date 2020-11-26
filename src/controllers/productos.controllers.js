@@ -632,9 +632,8 @@ productosCtrl.getProductosFiltrados = async (req, res) => {
 };
 
 productosCtrl.getProductosIndividuales = async (req, res) => {
-	console.log(req.params);
 	try {
-		const { page = 1, limit = 20 } = req.query;
+		const { page = 1, limit = 1 } = req.query;
 		const options = {
 			page,
 			limit: parseInt(limit)
@@ -649,7 +648,7 @@ productosCtrl.getProductosIndividuales = async (req, res) => {
 				}
 			},
 			{
-				$match: {'tipoCategoria': req.params.tipoCategoria}
+				$match: {'tipoCategoria': req.query.tipoCategoria}
 			}
 		]);
 

@@ -74,7 +74,7 @@ router.route('/inventario/excel/').put(auth,importacionExcel);
 
 /* filtros indiviudales para otros, tallas y numeros */
 
-router.route('/individuales/:tipoCategoria').get(getProductosIndividuales);
+router.route('/filter/individuales').get(getProductosIndividuales);
 
 
 module.exports = router;
