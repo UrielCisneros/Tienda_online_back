@@ -29,7 +29,8 @@ const {
 	getPromocionesPaginadas,
 	importacionExcel,
 	getProductosFiltrosDividos,
-	getProductoSinPaginacion
+	getProductoSinPaginacion,
+	getProductosIndividuales,
 } = require('../controllers/productos.controllers');
 const auth = require('../middleware/auth');
 
@@ -70,5 +71,10 @@ router.route('/promocion/:id').put(auth,subirImagen,actualizarPromocion).delete(
 router.route('/promocion/EliminarImagen/:id').delete(auth,deleteImagen);
 
 router.route('/inventario/excel/').put(auth,importacionExcel);
+
+/* filtros indiviudales para otros, tallas y numeros */
+
+router.route('/individuales/:tipoCategoria').get(getProductosIndividuales);
+
 
 module.exports = router;
