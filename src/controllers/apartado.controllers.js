@@ -484,7 +484,7 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 	const apatadoActualizado = req.body;
 	console.log(apatadoActualizado);
 	apatadoActualizado.fecha_envio = new Date();
-	const apartadoBase = await Apartado.findById(req.params.idApartado).populate('producto cliente').populate({ path: 'apartadoMultiple.producto',model: 'apartados'});
+	const apartadoBase = await Apartado.findById(req.params.idApartado).populate('producto cliente').populate({ path: 'apartadoMultiple.producto',model: 'apartado'});
 	const tienda = await Tienda.find();
 
 	await Apartado.findOneAndUpdate({ _id: req.params.idApartado }, apatadoActualizado, (err, response) => {

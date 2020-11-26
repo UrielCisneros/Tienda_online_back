@@ -16,7 +16,7 @@ const {
 } = require('../controllers/apartado.controllers');
 
 
-router.route('/multiple/').post(createApartadoMultiple);
+router.route('/multiple/').post(auth,createApartadoMultiple);
 
 router.route('/')
     .get(auth,obtenerApartados)
