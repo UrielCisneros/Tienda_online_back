@@ -990,45 +990,98 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 	}
 
 	if(apartadoBase.apartadoMultiple.length){
-		console.log("entro");
-	}
 
-	const htmlContentUser = `
-	<div>
-		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu apartado a sido: <span style="color: ${color};">${apatadoActualizado.estado}</span></h3>
-		<h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">${mensaje}</h4>
+		let pedidos = ``;
+		let subTotal = 0;
 
-		<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
-		<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
-			<img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${apartadoBase
-				.producto.imagen}" />
-			<p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${apartadoBase
-				.producto.nombre}</p>
-			<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> ${apartadoBase.cantidad}</p>
-			${apartadoBase.medida
-				? apartadoBase.medida[0].numero
-					? `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${apartadoBase
-							.medida[0].numero}</p>`
-					: `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${apartadoBase
-							.medida[0].talla}</p>`
-				: ''}
-
-			${apatadoActualizado.estado === 'ENVIADO'
-				? `
-			<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Paqueteria:</span> ${apatadoActualizado.paqueteria}</p>
-			<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Numero de seguimiento:</span> ${apatadoActualizado.codigo_seguimiento}</p>
-			`
-				: ''}
+		for(let i = 0; i < apartadoMultiple.length; i++){
+			const product = await Producto.findById(apartadoMultiple[i].producto);
+			subTotal += parseFloat(apartadoMultiple[i].precio);
+			pedidos += `
+			<tr>
+				<td style="  padding: 15px; text-align: left;"><img style="max-width: 150px; display:block; margin:auto;" class="" src="${process.env.URL_IMAGEN_AWS}${product.imagen}" /></td>
+				<td style="  padding: 15px; text-align: left;"><p style="text-align: center; font-family: sans-serif;" > ${product.nombre}</p></td>
+				<td style="  padding: 15px; text-align: left;"><p style="text-align: center; font-family: sans-serif;"> ${apartadoMultiple[i].cantidad}</p></td>
+				<td style="  padding: 15px; text-align: left;">
+					${apartadoMultiple[i].medida? apartadoMultiple[i].medida.numero ? 
+						`<p style="text-align: center; font-family: sans-serif;"> ${apartadoMultiple[i].medida.numero}</p>` : 
+						`<p style="text-align: center; font-family: sans-serif;"> ${apartadoMultiple[i].medida.talla}</p>`:
+						`<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">No aplica</span></p>`
+					}
+				</td>
+				<td style="  padding: 15px; text-align: left;"><p style="text-align: center; font-family: sans-serif;"> $ ${apartadoMultiple[i].precio}</p></td>
+			</tr>
+			`;
+		}
+		
+		const htmlContentUser = `
+		<div>
+			<div style="margin:auto; max-width: 550px; height: 100px;">
+				${tienda[0].imagenLogo
+					? `<img style="max-width: 200px; display:block; margin:auto; padding: 10px 0px;" src="${process.env.URL_IMAGEN_AWS}${tienda[0].imagenLogo}" />`
+					: ''} 
+			</div>
+			<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu apartado esta siendo <span style="color: #09ABF6;">procesado</span></h3>
+			<h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Te pedimos que tengas paciencia, en breve se contactaran contigo para mas detalle.</h4>
+	
+			<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del apartado:</h3>
+			<div style="margin:auto; max-width: 550px;">
+				<table style="display:block; margin:auto;">
+					<tr>
+						<td style="  padding: 15px; text-align: left;"><strong>Producto</strong></td>
+						<td style="  padding: 15px; text-align: left;"><strong></strong></td>
+						<td style="  padding: 15px; text-align: left;"><strong>Cantidad</strong></td>
+						<td style="  padding: 15px; text-align: left;"><strong>Medida</strong></td>
+						<td style="  padding: 15px; text-align: left;"><strong>Precio</strong></td>
+					</tr>
+					${pedidos}
+				</table>
+				<h3 style=" margin:auto; margin-left: 360px;"><strong>Total: </strong>$ ${subTotal}</h3>
+			</div>
 		</div>
-	</div>
-	`;
+		`;
 
-	/* email.sendEmail(
-		apartadoBase.cliente.email,
-		`Apartado ${apatadoActualizado.estado}`,
-		htmlContentUser,
-		tienda[0].nombre
-	); */
+		email.sendEmail(
+			apartadoBase.cliente.email,
+			`Apartado ${apatadoActualizado.estado}`,
+			htmlContentUser,
+			tienda[0].nombre
+		);
+
+	}else{
+		const htmlContentUser = `
+		<div>
+			<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">Tu apartado a sido: <span style="color: ${color};">${apatadoActualizado.estado}</span></h3>
+			<h4 style="text-align: center;  font-family: sans-serif; margin: 15px 15px;">${mensaje}</h4>
+	
+			<h3 style="text-align: center;  font-family: sans-serif; margin: 15px 15px; font-weight: bold;">Detalle del pedido:</h3>
+			<div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);transition: 0.3s; width: 350px; display:block; margin:auto;">
+				<img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${apartadoBase.producto.imagen}" />
+				<p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${apartadoBase.producto.nombre}</p>
+				<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> ${apartadoBase.cantidad}</p>
+				${apartadoBase.medida
+					? apartadoBase.medida[0].numero
+						? `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${apartadoBase.medida[0].numero}</p>`
+						: `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${apartadoBase.medida[0].talla}</p>`
+					: ''}
+	
+				${apatadoActualizado.estado === 'ENVIADO'
+					? `
+				<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Paqueteria:</span> ${apatadoActualizado.paqueteria}</p>
+				<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Numero de seguimiento:</span> ${apatadoActualizado.codigo_seguimiento}</p>
+				`
+					: ''}
+			</div>
+		</div>
+		`;
+	
+		email.sendEmail(
+			apartadoBase.cliente.email,
+			`Apartado ${apatadoActualizado.estado}`,
+			htmlContentUser,
+			tienda[0].nombre
+		);
+	}
 };
 
 apartadoCtrl.eliminarApartado = async (req, res) => {
