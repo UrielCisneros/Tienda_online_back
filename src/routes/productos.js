@@ -25,6 +25,7 @@ const {
 	getProductosFiltrados,
 	crecarFiltrosNavbar,
 	categoriasAgrupadas,
+	tipoCategoriasAgrupadas,
 	subCategorias,
 	getPromocionesPaginadas,
 	importacionExcel,
@@ -38,6 +39,8 @@ const auth = require('../middleware/auth');
 router.route('/agrupar/generos').get(generosAgrupados);
 
 router.route('/categorias/').get(auth,categoriasAgrupadas);
+
+router.route('/tipoCategorias/').get(auth,tipoCategoriasAgrupadas);
 
 router.route('/Subcategorias/:idCategoria').get(auth,subCategorias);
 

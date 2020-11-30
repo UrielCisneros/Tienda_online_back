@@ -858,6 +858,15 @@ productosCtrl.generosAgrupados = async (req,res) => {
 	}
 }
 
+productosCtrl.tipoCategoriasAgrupadas = async (req,res) => {
+	try {
+		 const categorias = await Producto.aggregate([ {"$group" : {_id:"$tipoCategoria"}}]);
+		 res.status(200).json(categorias);
+	} catch (err) {
+		res.status(500).json({ message: 'Error en el servidor', err });
+	}
+}
+
 productosCtrl.categoriasAgrupadas = async (req,res) => {
 	try {
 		 const categorias = await Producto.aggregate([ {"$group" : {_id:"$categoria"}}]);
