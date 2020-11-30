@@ -54,6 +54,7 @@ politicasCtrl.getEstados = async (req,res) => {
 politicasCtrl.createEstados = async (req,res) => {
     try {
         
+        
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "Error en el servidor",err })

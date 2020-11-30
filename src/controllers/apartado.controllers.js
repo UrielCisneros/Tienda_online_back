@@ -268,11 +268,11 @@ apartadoCtrl.createApartadoMultiple = async (req,res) => {
 		</div>
 		`;
 	
-		//email.sendEmail(admin[0].email, 'Solicitud de apartado', htmlContent, 'Cafi service');
+		email.sendEmail(admin[0].email, 'Solicitud de apartado', htmlContent, 'Cafi service');
 	
-		//email.sendEmail(clienteBase.email, 'Apartado en proceso', htmlContentUser, tienda[0].nombre);
+		email.sendEmail(clienteBase.email, 'Apartado en proceso', htmlContentUser, tienda[0].nombre);
 
-		//await Carrito.findOneAndDelete({ cliente: clienteBase._id });
+		await Carrito.findOneAndDelete({ cliente: clienteBase._id });
 
 		res.status(200).json({ message: 'Apartado creado' });
 
@@ -1133,7 +1133,7 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 			break;
 	}
 
-	/* if(apartadoBase.apartadoMultiple.length){
+	if(apartadoBase.apartadoMultiple.length){
 		let pedidos = ``;
 		let subTotal = 0;
 		for(let i = 0; i < apartadoMultiple.length; i++){
@@ -1219,7 +1219,7 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 			htmlContentUser,
 			tienda[0].nombre
 		);
-	} */
+	}
 };
 
 apartadoCtrl.eliminarApartado = async (req, res) => {
