@@ -633,7 +633,7 @@ productosCtrl.getProductosFiltrados = async (req, res) => {
 
 productosCtrl.getProductosIndividuales = async (req, res) => {
 	try {
-		const { page = 1, limit = 1 } = req.query;
+		const { page = 1, limit = 20 } = req.query;
 		const options = {
 			page,
 			limit: parseInt(limit)
@@ -988,5 +988,154 @@ productosCtrl.importacionExcel = async (req,res) => {
 		res.status(500).json({ message: 'Error en el servidor', err });
 	}
 }
+
+productosCtrl.actualizarInventario = async (req, res) => {
+	try {
+		const { cantidad, medida, accion } = req.body;
+		const productoBD = await Producto.findById(req.params.id);
+		if (productoBD.tipoCategoria === 'Calzado') {
+			const numeros = productoBD.numeros.filter((numero) => numero._id == medida);
+			if (!numeros.length) {
+				res.status(500).json({ message: 'Esta talla no existe' });
+			} else {
+				numeros.map(async (numero) => {
+					let nuevaCantidad;
+					if (accion === 'sumar') {
+						nuevaCantidad = numero.cantidad + cantidad;
+					} else {
+						nuevaCantidad = numero.cantidad - cantidad;
+					}
+
+					if (nuevaCantidad < 0) {
+						res.status(404).json({ message: 'No puedes restar más de lo que hay actualmente' });
+					} else {
+						await Producto.updateOne(
+							{
+								'numeros._id': medida
+							},
+							{
+								$set: { 'numeros.$': { numero: numero.numero, cantidad: nuevaCantidad } }
+							},
+							async (err, response) => {
+								if (err) {
+									res.status(500).json({ message: 'Ups algo paso al actualizar', err });
+								} else {
+									if (!response) {
+										res.status(404).json({ message: 'Error al actualizar' });
+									} else {
+										res.status(200).json({ message: 'Se actualizo con exito' });
+										const productoNuevo = await Producto.findById(req.params.id);
+										let contador = 0;
+										for (let i = 0; i < productoNuevo.numeros.length; i++) {
+											contador += productoNuevo.numeros[i].cantidad;
+										}
+										if (contador > 0) {
+											productoNuevo.activo = true;
+											await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+										} else {
+											productoNuevo.activo = false;
+											await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+										}
+									}
+								}
+							}
+						);
+					}
+				});
+			}
+		} else if (productoBD.tipoCategoria === 'Ropa') {
+			const tallas = productoBD.tallas.filter((talla) => talla._id == medida);
+			if (!tallas.length) {
+				res.status(500).json({ message: 'Esta talla no existe' });
+			} else {
+				tallas.map(async (talla) => {
+					let nuevaCantidad;
+					if (accion === 'sumar') {
+						nuevaCantidad = talla.cantidad + cantidad;
+					} else {
+						nuevaCantidad = talla.cantidad - cantidad;
+					}
+
+					if (nuevaCantidad < 0) {
+						res.status(404).json({ message: 'No puedes restar más de lo que hay actualmente' });
+					} else {
+						await Producto.updateOne(
+							{
+								'tallas._id': medida
+							},
+							{
+								$set: { 'tallas.$': { talla: talla.talla, cantidad: nuevaCantidad } }
+							},
+							async (err, response) => {
+								if (err) {
+									res.status(500).json({ message: 'Ups algo paso al actualizar', err });
+								} else {
+									if (!response) {
+										res.status(404).json({ message: 'Error al actualizar' });
+									} else {
+										res.status(200).json({ message: 'Se actualizo con exito' });
+										const productoNuevo = await Producto.findById(req.params.id);
+										let contador = 0;
+										for (let i = 0; i < productoNuevo.tallas.length; i++) {
+											contador += productoNuevo.tallas[i].cantidad;
+										}
+										if (contador > 0) {
+											productoNuevo.activo = true;
+											await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+										} else {
+											productoNuevo.activo = false;
+											await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+										}
+									}
+								}
+							}
+						);
+					}
+				});
+			}
+		} else {
+			let nuevaCantidad;
+			if (accion === 'sumar') {
+				nuevaCantidad = productoBD.cantidad + cantidad;
+			} else {
+				nuevaCantidad = productoBD.cantidad - cantidad;
+			}
+
+			if (nuevaCantidad < 0) {
+				res.status(404).json({ message: 'No puedes restar más de lo que hay actualmente' });
+			} else {
+				await Producto.updateOne(
+					{
+						_id: req.params.id
+					},
+					{
+						$set: { cantidad: nuevaCantidad }
+					},
+					async (err, response) => {
+						if (err) {
+							res.status(500).json({ message: 'Ups algo paso al actualizar', err });
+						} else {
+							if (!response) {
+								res.status(404).json({ message: 'Error al actualizar' });
+							} else {
+								res.status(200).json({ message: 'Se actualizo con exito' });
+								const productoNuevo = await Producto.findById(req.params.id);
+								if (productoNuevo.cantidad > 0) {
+									productoNuevo.activo = true;
+									await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+								} else {
+									productoNuevo.activo = false;
+									await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+								}
+							}
+						}
+					}
+				);
+			}
+		}
+	} catch (err) {
+		res.status(500).json({ message: 'Error en el servidor', err });
+	}
+};
 
 module.exports = productosCtrl;

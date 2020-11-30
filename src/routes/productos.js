@@ -31,6 +31,7 @@ const {
 	getProductosFiltrosDividos,
 	getProductoSinPaginacion,
 	getProductosIndividuales,
+	actualizarInventario
 } = require('../controllers/productos.controllers');
 const auth = require('../middleware/auth');
 
@@ -71,6 +72,10 @@ router.route('/promocion/:id').put(auth,subirImagen,actualizarPromocion).delete(
 router.route('/promocion/EliminarImagen/:id').delete(auth,deleteImagen);
 
 router.route('/inventario/excel/').put(auth,importacionExcel);
+
+/* Actualizar inventario */
+
+router.route('/inventario/:id').put(auth,actualizarInventario);
 
 /* filtros indiviudales para otros, tallas y numeros */
 
