@@ -165,7 +165,7 @@ apartadoCtrl.agregarApartado = async (req, res) => {
 apartadoCtrl.createApartadoMultiple = async (req,res) => {
 	try {
 		console.log(req.body);
-		const { producto, cliente, cantidad, estado, medida, tipoEntrega,apartadoMultiple } = req.body;
+		const { cliente, tipoEntrega,apartadoMultiple } = req.body;
 		const newApartado = new Apartado(req.body);
 		newApartado.eliminado = false;
 		const clienteBase = await clienteModel.findById(cliente);
@@ -268,9 +268,9 @@ apartadoCtrl.createApartadoMultiple = async (req,res) => {
 		</div>
 		`;
 	
-		email.sendEmail(admin[0].email, 'Solicitud de apartado', htmlContent, 'Cafi service');
+		//email.sendEmail(admin[0].email, 'Solicitud de apartado', htmlContent, 'Cafi service');
 	
-		email.sendEmail(clienteBase.email, 'Apartado en proceso', htmlContentUser, tienda[0].nombre);
+		//email.sendEmail(clienteBase.email, 'Apartado en proceso', htmlContentUser, tienda[0].nombre);
 
 		//await Carrito.findOneAndDelete({ cliente: clienteBase._id });
 
@@ -480,11 +480,139 @@ apartadoCtrl.filtroApartadosCliente = async (req, res) => {
 	);
 };
 
+async function actualizarApartadoMultiple(apartadoMultiple,action) {
+	apartadoMultiple.map(async (apartado) => {
+		const productoApartado = await Producto.findById(apartado.producto);
+		const newProducto = productoApartado;
+		if(productoApartado.tallas.length > 0){
+			productoApartado.tallas.map(async (talla) => {
+				if(talla.talla === apartado.medida.talla){
+					let cantidadTotal;
+					if(action === 1){
+						cantidadTotal = parseInt(talla.cantidad) + parseInt(apartado.cantidad);
+					}else{
+						cantidadTotal = parseInt(talla.cantidad) - parseInt(apartado.cantidad);
+					}
+					await Producto.updateOne(
+						{
+							'tallas._id': talla._id
+						},
+						{
+							$set: {
+								'tallas.$': {
+									talla: talla.talla,
+									cantidad: cantidadTotal
+								}
+							}
+						},
+						async (err, response) => {
+							if (err) {
+								throw err;
+							} else {
+								if (!response) {
+									throw err;
+								} else {
+									//console.log(apartado.producto);
+									const productoNuevo = await Producto.findById(apartado.producto);
+									let contador = 0;
+									for (let i = 0; i < productoNuevo.tallas.length; i++) {
+										contador += productoNuevo.tallas[i].cantidad;
+									}
+									if (contador === 0) {
+										productoNuevo.activo = false;
+										await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+									}else{
+										productoNuevo.activo = true;
+										await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+									}
+								}
+							}
+						}
+					);
+				}
+			})
+		}else if(productoApartado.numeros.length > 0){
+			productoApartado.numeros.map(async (numero) => {
+				if(numero.numero === apartado.medida.numero){
+					let cantidadTotal;
+					if(action === 1){
+						cantidadTotal = parseInt(numero.cantidad) + parseInt(apartado.cantidad);
+					}else{
+						cantidadTotal = parseInt(numero.cantidad) - parseInt(apartado.cantidad);
+					}
+					await Producto.updateOne(
+						{
+							'numeros._id': numero._id
+						},
+						{
+							$set: {
+								'numeros.$': {
+									numero: numero.numero,
+									cantidad: cantidadTotal
+								}
+							}
+						},
+						async (err, response) => {
+							if (err) {
+								throw err;
+							} else {
+								if (!response) {
+									throw err;
+								} else {
+									const productoNuevo = await Producto.findById(apartado.producto);
+									let contador = 0;
+									for (let i = 0; i < productoNuevo.numeros.length; i++) {
+										contador += productoNuevo.numeros[i].cantidad;
+									}
+									if (contador === 0) {
+										productoNuevo.activo = false;
+										await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+									}else{
+										productoNuevo.activo = true;
+										await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+									}
+								}
+							}
+						}
+					);
+				}
+			})
+		}else{
+			console.log(productoApartado);
+			let cantidadTotal;
+			if(action === 1){
+				cantidadTotal = parseInt(productoApartado.cantidad) + parseInt(apartado.cantidad);
+			}else{
+				cantidadTotal = parseInt(productoApartado.cantidad) - parseInt(apartado.cantidad);
+			}
+			newProducto.cantidad = cantidadTotal;
+			await Producto.findByIdAndUpdate(productoApartado._id, newProducto, async (err, userStored) => {
+				if (err) {
+					throw userStored;
+				} else {
+					if (!userStored) {
+						throw userStored;
+					} else {
+						const productoNuevo = await Producto.findById(productoApartado._id);
+						if (productoNuevo.cantidad === 0) {
+							productoNuevo.activo = false;
+							await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+						}else{
+							productoNuevo.activo = true;
+							await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+						}
+					}
+				}
+			});
+		}
+	})
+}
+
 apartadoCtrl.actualizarApartado = async (req, res) => {
 	const apatadoActualizado = req.body;
-	console.log(apatadoActualizado);
+	
 	apatadoActualizado.fecha_envio = new Date();
-	const apartadoBase = await Apartado.findById(req.params.idApartado).populate('producto cliente').populate({ path: 'apartadoMultiple.producto',model: 'apartado'});
+	const apartadoBase = await Apartado.findById(req.params.idApartado).populate('producto cliente').populate({ path: 'apartadoMultiple.producto',model: 'producto'});
 	const tienda = await Tienda.find();
 
 	await Apartado.findOneAndUpdate({ _id: req.params.idApartado }, apatadoActualizado, (err, response) => {
@@ -498,8 +626,6 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 			}
 		}
 	});
-
-	/* console.log(apartadoBase); */
 	let color = '';
 	let mensaje = '';
 	const producto = await Producto.findById(apartadoBase.producto);
@@ -508,240 +634,250 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 		case 'ACEPTADO':
 			color = '#10B42B';
 			mensaje = 'Tu apartado fue aceptado, puedes pasar por el a la sucursal.';
-			if (apartadoBase.medida.length === 0) {
-				/* console.log('no hay medida'); */
-				if (producto.cantidad == 0 || producto.cantidad < apartadoBase.cantidad) {
-					res.status(500).send({ message: 'No existen suficientes en el inventario' });
-					throw error;
-				} else {
-					newProducto.cantidad = parseInt(producto.cantidad) - parseInt(apartadoBase.cantidad);
-					await Producto.findByIdAndUpdate(apartadoBase.producto, newProducto, async (err, userStored) => {
-						if (err) {
-							throw userStored;
-						} else {
-							if (!userStored) {
-								throw userStored;
-							} else {
-								const productoNuevo = await Producto.findById(apartadoBase.producto);
-								console.log(productoNuevo.cantidad);
-								if (productoNuevo.cantidad === 0) {
-									productoNuevo.activo = false;
-									await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
-								}
-							}
-						}
-					});
-				}
-			} else {
-				/* console.log('hay medida'); */
-				if (apartadoBase.medida[0].numero) {
-					/* console.log('y es numero'); */
-					producto.numeros.map(async (numero) => {
-						if (numero.numero == apartadoBase.medida[0].numero) {
-							if (numero.cantidad == '0' || numero.cantidad < apartadoBase.cantidad) {
-								res.status(500).send({ message: 'No existen suficientes productos en el inventario' });
-								throw numero.cantidad;
-							} else {
-								let cantidad = numero.cantidad - apartadoBase.cantidad;
-								await Producto.updateOne(
-									{
-										'numeros._id': numero._id
-									},
-									{
-										$set: {
-											'numeros.$': {
-												numero: numero.numero,
-												cantidad: cantidad
-											}
-										}
-									},
-									async (err, response) => {
-										if (err) {
-											res.status(500).send({ message: 'Ups algo paso al restar la talla' });
-											throw err;
-										} else {
-											if (!response) {
-												res.status(500).send({ message: 'Ups algo paso al restar la talla' });
-												throw err;
-											} else {
-												const productoNuevo = await Producto.findById(apartadoBase.producto);
-												let contador = 0;
-												for (let i = 0; i < productoNuevo.numeros.length; i++) {
-													contador += productoNuevo.numeros[i].cantidad;
-												}
-												console.log(contador);
-												if (contador === 0) {
-													productoNuevo.activo = false;
-													await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
-												}
-											}
-										}
-									}
-								);
-							}
-						}
-					});
-				} else {
-					/* console.log('y es talla'); */
-					producto.tallas.map(async (talla) => {
-						if (talla.talla == apartadoBase.medida[0].talla) {
-							if (talla.cantidad == '0' || talla.cantidad < apartadoBase.cantidad) {
-								res.status(500).send({ message: 'No existen suficientes productos en el inventario' });
-								throw talla.cantidad;
-							} else {
-								let cantidad = talla.cantidad - apartadoBase.cantidad;
-								await Producto.updateOne(
-									{
-										'tallas._id': talla._id
-									},
-									{
-										$set: {
-											'tallas.$': {
-												talla: talla.talla,
-												cantidad: cantidad
-											}
-										}
-									},
-									async (err, response) => {
-										if (err) {
-											res.status(500).send({ message: 'Ups algo paso al restar la talla' });
-											throw err;
-										} else {
-											if (!response) {
-												res.status(500).send({ message: 'Ups algo paso al restar la talla' });
-												throw err;
-											} else {
-												const productoNuevo = await Producto.findById(apartadoBase.producto);
-												let contador = 0;
-												for (let i = 0; i < productoNuevo.tallas.length; i++) {
-													contador += productoNuevo.tallas[i].cantidad;
-												}
-												console.log(contador);
-												if (contador === 0) {
-													productoNuevo.activo = false;
-													await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
-												}
-											}
-										}
-									}
-								);
-							}
-						}
-					});
-				}
-			}
-			break;
-		case 'RECHAZADO':
-			color = '#F7401B';
-			mensaje = 'Tu apartado fue rechazado, puedes ponete en contacto para mas detalle.';
-			if (apartadoBase.estado === 'ACEPTADO' || apartadoBase.estado === 'ENVIADO') {
+			if(apartadoBase.apartadoMultiple.length > 0){	
+				actualizarApartadoMultiple(apartadoBase.apartadoMultiple,0);
+			}else{
 				if (apartadoBase.medida.length === 0) {
 					/* console.log('no hay medida'); */
-					newProducto.cantidad = parseInt(producto.cantidad) + parseInt(apartadoBase.cantidad);
-					await Producto.findByIdAndUpdate(apartadoBase.producto, newProducto, async (err, userStored) => {
-						if (err) {
-							throw userStored;
-						} else {
-							if (!userStored) {
+					if (producto.cantidad == 0 || producto.cantidad < apartadoBase.cantidad) {
+						res.status(500).send({ message: 'No existen suficientes en el inventario' });
+						throw error;
+					} else {
+						newProducto.cantidad = parseInt(producto.cantidad) - parseInt(apartadoBase.cantidad);
+						await Producto.findByIdAndUpdate(apartadoBase.producto, newProducto, async (err, userStored) => {
+							if (err) {
 								throw userStored;
 							} else {
-								const productoNuevo = await Producto.findById(apartadoBase.producto);
-								console.log(productoNuevo.cantidad);
-								if (productoNuevo.cantidad === 0) {
-									productoNuevo.activo = false;
-									await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+								if (!userStored) {
+									throw userStored;
+								} else {
+									const productoNuevo = await Producto.findById(apartadoBase.producto);
+									console.log(productoNuevo.cantidad);
+									if (productoNuevo.cantidad === 0) {
+										productoNuevo.activo = false;
+										await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+									}
 								}
 							}
-						}
-					});
+						});
+					}
 				} else {
 					/* console.log('hay medida'); */
 					if (apartadoBase.medida[0].numero) {
 						/* console.log('y es numero'); */
 						producto.numeros.map(async (numero) => {
 							if (numero.numero == apartadoBase.medida[0].numero) {
-								let cantidad = numero.cantidad + apartadoBase.cantidad;
-								await Producto.updateOne(
-									{
-										'numeros._id': numero._id
-									},
-									{
-										$set: {
-											'numeros.$': {
-												numero: numero.numero,
-												cantidad: cantidad
+								if (numero.cantidad == '0' || numero.cantidad < apartadoBase.cantidad) {
+									res.status(500).send({ message: 'No existen suficientes productos en el inventario' });
+									throw numero.cantidad;
+								} else {
+									let cantidad = numero.cantidad - apartadoBase.cantidad;
+									await Producto.updateOne(
+										{
+											'numeros._id': numero._id
+										},
+										{
+											$set: {
+												'numeros.$': {
+													numero: numero.numero,
+													cantidad: cantidad
+												}
 											}
-										}
-									},
-									async (err, response) => {
-										if (err) {
-											res.status(500).send({ message: 'Ups algo paso al restar la talla' });
-											throw err;
-										} else {
-											if (!response) {
+										},
+										async (err, response) => {
+											if (err) {
 												res.status(500).send({ message: 'Ups algo paso al restar la talla' });
 												throw err;
 											} else {
-												const productoNuevo = await Producto.findById(apartadoBase.producto);
-												let contador = 0;
-												for (let i = 0; i < productoNuevo.numeros.length; i++) {
-													contador += productoNuevo.numeros[i].cantidad;
-												}
-												console.log(contador);
-												if (contador === 0) {
-													productoNuevo.activo = false;
-													await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+												if (!response) {
+													res.status(500).send({ message: 'Ups algo paso al restar la talla' });
+													throw err;
+												} else {
+													const productoNuevo = await Producto.findById(apartadoBase.producto);
+													let contador = 0;
+													for (let i = 0; i < productoNuevo.numeros.length; i++) {
+														contador += productoNuevo.numeros[i].cantidad;
+													}
+													console.log(contador);
+													if (contador === 0) {
+														productoNuevo.activo = false;
+														await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+													}
 												}
 											}
 										}
-									}
-								);
+									);
+								}
 							}
 						});
 					} else {
 						/* console.log('y es talla'); */
 						producto.tallas.map(async (talla) => {
 							if (talla.talla == apartadoBase.medida[0].talla) {
-								let cantidad = talla.cantidad + apartadoBase.cantidad;
-								await Producto.updateOne(
-									{
-										'tallas._id': talla._id
-									},
-									{
-										$set: {
-											'tallas.$': {
-												talla: talla.talla,
-												cantidad: cantidad
+								if (talla.cantidad == '0' || talla.cantidad < apartadoBase.cantidad) {
+									res.status(500).send({ message: 'No existen suficientes productos en el inventario' });
+									throw talla.cantidad;
+								} else {
+									let cantidad = talla.cantidad - apartadoBase.cantidad;
+									await Producto.updateOne(
+										{
+											'tallas._id': talla._id
+										},
+										{
+											$set: {
+												'tallas.$': {
+													talla: talla.talla,
+													cantidad: cantidad
+												}
 											}
-										}
-									},
-									async (err, response) => {
-										if (err) {
-											res.status(500).send({ message: 'Ups algo paso al restar la talla' });
-											throw err;
-										} else {
-											if (!response) {
+										},
+										async (err, response) => {
+											if (err) {
 												res.status(500).send({ message: 'Ups algo paso al restar la talla' });
 												throw err;
 											} else {
-												const productoNuevo = await Producto.findById(apartadoBase.producto);
-												let contador = 0;
-												for (let i = 0; i < productoNuevo.tallas.length; i++) {
-													contador += productoNuevo.tallas[i].cantidad;
-												}
-												console.log(contador);
-												if (contador === 0) {
-													productoNuevo.activo = false;
-													await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+												if (!response) {
+													res.status(500).send({ message: 'Ups algo paso al restar la talla' });
+													throw err;
+												} else {
+													const productoNuevo = await Producto.findById(apartadoBase.producto);
+													let contador = 0;
+													for (let i = 0; i < productoNuevo.tallas.length; i++) {
+														contador += productoNuevo.tallas[i].cantidad;
+													}
+													console.log(contador);
+													if (contador === 0) {
+														productoNuevo.activo = false;
+														await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+													}
 												}
 											}
 										}
-									}
-								);
+									);
+								}
 							}
 						});
 					}
 				}
+			}
+
+			break;
+		case 'RECHAZADO':
+			color = '#F7401B';
+			mensaje = 'Tu apartado fue rechazado, puedes ponete en contacto para mas detalle.';
+			if (apartadoBase.estado === 'ACEPTADO' || apartadoBase.estado === 'ENVIADO') {
+				if(apartadoBase.apartadoMultiple.length > 0){
+					actualizarApartadoMultiple(apartadoBase.apartadoMultiple,1);
+				}else{
+					if (apartadoBase.medida.length === 0) {
+						/* console.log('no hay medida'); */
+						newProducto.cantidad = parseInt(producto.cantidad) + parseInt(apartadoBase.cantidad);
+						await Producto.findByIdAndUpdate(apartadoBase.producto, newProducto, async (err, userStored) => {
+							if (err) {
+								throw userStored;
+							} else {
+								if (!userStored) {
+									throw userStored;
+								} else {
+									const productoNuevo = await Producto.findById(apartadoBase.producto);
+									console.log(productoNuevo.cantidad);
+									if (productoNuevo.cantidad === 0) {
+										productoNuevo.activo = false;
+										await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+									}
+								}
+							}
+						});
+					} else {
+						/* console.log('hay medida'); */
+						if (apartadoBase.medida[0].numero) {
+							/* console.log('y es numero'); */
+							producto.numeros.map(async (numero) => {
+								if (numero.numero == apartadoBase.medida[0].numero) {
+									let cantidad = numero.cantidad + apartadoBase.cantidad;
+									await Producto.updateOne(
+										{
+											'numeros._id': numero._id
+										},
+										{
+											$set: {
+												'numeros.$': {
+													numero: numero.numero,
+													cantidad: cantidad
+												}
+											}
+										},
+										async (err, response) => {
+											if (err) {
+												res.status(500).send({ message: 'Ups algo paso al restar la talla' });
+												throw err;
+											} else {
+												if (!response) {
+													res.status(500).send({ message: 'Ups algo paso al restar la talla' });
+													throw err;
+												} else {
+													const productoNuevo = await Producto.findById(apartadoBase.producto);
+													let contador = 0;
+													for (let i = 0; i < productoNuevo.numeros.length; i++) {
+														contador += productoNuevo.numeros[i].cantidad;
+													}
+													console.log(contador);
+													if (contador === 0) {
+														productoNuevo.activo = false;
+														await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+													}
+												}
+											}
+										}
+									);
+								}
+							});
+						} else {
+							/* console.log('y es talla'); */
+							producto.tallas.map(async (talla) => {
+								if (talla.talla == apartadoBase.medida[0].talla) {
+									let cantidad = talla.cantidad + apartadoBase.cantidad;
+									await Producto.updateOne(
+										{
+											'tallas._id': talla._id
+										},
+										{
+											$set: {
+												'tallas.$': {
+													talla: talla.talla,
+													cantidad: cantidad
+												}
+											}
+										},
+										async (err, response) => {
+											if (err) {
+												res.status(500).send({ message: 'Ups algo paso al restar la talla' });
+												throw err;
+											} else {
+												if (!response) {
+													res.status(500).send({ message: 'Ups algo paso al restar la talla' });
+													throw err;
+												} else {
+													const productoNuevo = await Producto.findById(apartadoBase.producto);
+													let contador = 0;
+													for (let i = 0; i < productoNuevo.tallas.length; i++) {
+														contador += productoNuevo.tallas[i].cantidad;
+													}
+													console.log(contador);
+													if (contador === 0) {
+														productoNuevo.activo = false;
+														await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+													}
+												}
+											}
+										}
+									);
+								}
+							});
+						}
+					}
+				}
+
 			}
 			break;
 		case 'ENVIADO':
@@ -749,133 +885,141 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 			mensaje = 'Tu apartado fue aceptado, tu apartado ya esta en camino, esperalo pronto.';
 			/* 			const producto = await Producto.findById(apartadoBase.producto);
 			const newProducto = producto; */
-			if (apartadoBase.medida.length === 0) {
-				/* console.log('no hay medida'); */
-				if (producto.cantidad == 0 || producto.cantidad < apartadoBase.cantidad) {
-					res.status(500).send({ message: 'No existen suficientes en el inventario' });
-					throw error;
-				} else {
-					newProducto.cantidad = parseInt(producto.cantidad) - parseInt(apartadoBase.cantidad);
-					await Producto.findByIdAndUpdate(apartadoBase.producto, newProducto, async (err, userStored) => {
-						if (err) {
-							throw userStored;
-						} else {
-							if (!userStored) {
+			if(apartadoBase.apartadoMultiple.length > 0){
+				actualizarApartadoMultiple(apartadoBase.apartadoMultiple,0);
+			}else{
+				if (apartadoBase.medida.length === 0) {
+					/* console.log('no hay medida'); */
+					if (producto.cantidad == 0 || producto.cantidad < apartadoBase.cantidad) {
+						res.status(500).send({ message: 'No existen suficientes en el inventario' });
+						throw error;
+					} else {
+						newProducto.cantidad = parseInt(producto.cantidad) - parseInt(apartadoBase.cantidad);
+						await Producto.findByIdAndUpdate(apartadoBase.producto, newProducto, async (err, userStored) => {
+							if (err) {
 								throw userStored;
 							} else {
-								const productoNuevo = await Producto.findById(apartadoBase.producto);
-								console.log(productoNuevo.cantidad);
-								if (productoNuevo.cantidad === 0) {
-									productoNuevo.activo = false;
-									await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+								if (!userStored) {
+									throw userStored;
+								} else {
+									const productoNuevo = await Producto.findById(apartadoBase.producto);
+									console.log(productoNuevo.cantidad);
+									if (productoNuevo.cantidad === 0) {
+										productoNuevo.activo = false;
+										await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+									}
 								}
 							}
-						}
-					});
-				}
-			} else {
-				/* console.log('hay medida'); */
-				if (apartadoBase.medida[0].numero) {
-					/* console.log('y es numero'); */
-					producto.numeros.map(async (numero) => {
-						if (numero.numero == apartadoBase.medida[0].numero) {
-							if (numero.cantidad == '0' || numero.cantidad < apartadoBase.cantidad) {
-								res.status(500).send({ message: 'No existen suficientes productos en el inventario' });
-								throw numero.cantidad;
-							} else {
-								let cantidad = numero.cantidad - apartadoBase.cantidad;
-								await Producto.updateOne(
-									{
-										'numeros._id': numero._id
-									},
-									{
-										$set: {
-											'numeros.$': {
-												numero: numero.numero,
-												cantidad: cantidad
-											}
-										}
-									},
-									async (err, response) => {
-										if (err) {
-											res.status(500).send({ message: 'Ups algo paso al restar la talla' });
-											throw err;
-										} else {
-											if (!response) {
-												res.status(500).send({ message: 'Ups algo paso al restar la talla' });
-												throw err;
-											} else {
-												const productoNuevo = await Producto.findById(apartadoBase.producto);
-												let contador = 0;
-												for (let i = 0; i < productoNuevo.numeros.length; i++) {
-													contador += productoNuevo.numeros[i].cantidad;
-												}
-												console.log(contador);
-												if (contador === 0) {
-													productoNuevo.activo = false;
-													await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
-												}
-											}
-										}
-									}
-								);
-							}
-						}
-					});
+						});
+					}
 				} else {
-					/* console.log('y es talla'); */
-					producto.tallas.map(async (talla) => {
-						if (talla.talla == apartadoBase.medida[0].talla) {
-							if (talla.cantidad == '0' || talla.cantidad < apartadoBase.cantidad) {
-								res.status(500).send({ message: 'No existen suficientes productos en el inventario' });
-								throw talla.cantidad;
-							} else {
-								let cantidad = talla.cantidad - apartadoBase.cantidad;
-								await Producto.updateOne(
-									{
-										'tallas._id': talla._id
-									},
-									{
-										$set: {
-											'tallas.$': {
-												talla: talla.talla,
-												cantidad: cantidad
+					/* console.log('hay medida'); */
+					if (apartadoBase.medida[0].numero) {
+						/* console.log('y es numero'); */
+						producto.numeros.map(async (numero) => {
+							if (numero.numero == apartadoBase.medida[0].numero) {
+								if (numero.cantidad == '0' || numero.cantidad < apartadoBase.cantidad) {
+									res.status(500).send({ message: 'No existen suficientes productos en el inventario' });
+									throw numero.cantidad;
+								} else {
+									let cantidad = numero.cantidad - apartadoBase.cantidad;
+									await Producto.updateOne(
+										{
+											'numeros._id': numero._id
+										},
+										{
+											$set: {
+												'numeros.$': {
+													numero: numero.numero,
+													cantidad: cantidad
+												}
 											}
-										}
-									},
-									async (err, response) => {
-										if (err) {
-											res.status(500).send({ message: 'Ups algo paso al restar la talla' });
-											throw err;
-										} else {
-											if (!response) {
+										},
+										async (err, response) => {
+											if (err) {
 												res.status(500).send({ message: 'Ups algo paso al restar la talla' });
 												throw err;
 											} else {
-												const productoNuevo = await Producto.findById(apartadoBase.producto);
-												let contador = 0;
-												for (let i = 0; i < productoNuevo.tallas.length; i++) {
-													contador += productoNuevo.tallas[i].cantidad;
-												}
-												console.log(contador);
-												if (contador === 0) {
-													productoNuevo.activo = false;
-													await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+												if (!response) {
+													res.status(500).send({ message: 'Ups algo paso al restar la talla' });
+													throw err;
+												} else {
+													const productoNuevo = await Producto.findById(apartadoBase.producto);
+													let contador = 0;
+													for (let i = 0; i < productoNuevo.numeros.length; i++) {
+														contador += productoNuevo.numeros[i].cantidad;
+													}
+													console.log(contador);
+													if (contador === 0) {
+														productoNuevo.activo = false;
+														await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+													}
 												}
 											}
 										}
-									}
-								);
+									);
+								}
 							}
-						}
-					});
+						});
+					} else {
+						/* console.log('y es talla'); */
+						producto.tallas.map(async (talla) => {
+							if (talla.talla == apartadoBase.medida[0].talla) {
+								if (talla.cantidad == '0' || talla.cantidad < apartadoBase.cantidad) {
+									res.status(500).send({ message: 'No existen suficientes productos en el inventario' });
+									throw talla.cantidad;
+								} else {
+									let cantidad = talla.cantidad - apartadoBase.cantidad;
+									await Producto.updateOne(
+										{
+											'tallas._id': talla._id
+										},
+										{
+											$set: {
+												'tallas.$': {
+													talla: talla.talla,
+													cantidad: cantidad
+												}
+											}
+										},
+										async (err, response) => {
+											if (err) {
+												res.status(500).send({ message: 'Ups algo paso al restar la talla' });
+												throw err;
+											} else {
+												if (!response) {
+													res.status(500).send({ message: 'Ups algo paso al restar la talla' });
+													throw err;
+												} else {
+													const productoNuevo = await Producto.findById(apartadoBase.producto);
+													let contador = 0;
+													for (let i = 0; i < productoNuevo.tallas.length; i++) {
+														contador += productoNuevo.tallas[i].cantidad;
+													}
+													console.log(contador);
+													if (contador === 0) {
+														productoNuevo.activo = false;
+														await Producto.findByIdAndUpdate(productoNuevo._id, productoNuevo);
+													}
+												}
+											}
+										}
+									);
+								}
+							}
+						});
+					}
 				}
 			}
+
 			break;
 		case 'CANCELADO':
 			color = '#F7401B';
 			mensaje = 'Tu apartado fue rechazado, puedes ponete en contacto para mas detalle.';
 			if (apartadoBase.estado === 'ACEPTADO' || apartadoBase.estado === 'ENVIADO') {
+				if(apartadoBase.apartadoMultiple.length > 0){
+					actualizarApartadoMultiple(apartadoBase.apartadoMultiple,1);
+				}
 				if (apartadoBase.medida.length === 0) {
 					/* console.log('no hay medida'); */
 					newProducto.cantidad = parseInt(producto.cantidad) + parseInt(apartadoBase.cantidad);
@@ -989,11 +1133,9 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 			break;
 	}
 
-	if(apartadoBase.apartadoMultiple.length){
-
+	/* if(apartadoBase.apartadoMultiple.length){
 		let pedidos = ``;
 		let subTotal = 0;
-
 		for(let i = 0; i < apartadoMultiple.length; i++){
 			const product = await Producto.findById(apartadoMultiple[i].producto);
 			subTotal += parseFloat(apartadoMultiple[i].precio);
@@ -1013,7 +1155,6 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 			</tr>
 			`;
 		}
-		
 		const htmlContentUser = `
 		<div>
 			<div style="margin:auto; max-width: 550px; height: 100px;">
@@ -1040,14 +1181,12 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 			</div>
 		</div>
 		`;
-
 		email.sendEmail(
 			apartadoBase.cliente.email,
 			`Apartado ${apatadoActualizado.estado}`,
 			htmlContentUser,
 			tienda[0].nombre
 		);
-
 	}else{
 		const htmlContentUser = `
 		<div>
@@ -1074,14 +1213,13 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 			</div>
 		</div>
 		`;
-	
 		email.sendEmail(
 			apartadoBase.cliente.email,
 			`Apartado ${apatadoActualizado.estado}`,
 			htmlContentUser,
 			tienda[0].nombre
 		);
-	}
+	} */
 };
 
 apartadoCtrl.eliminarApartado = async (req, res) => {

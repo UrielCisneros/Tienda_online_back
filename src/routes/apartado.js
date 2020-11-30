@@ -16,7 +16,7 @@ const {
 } = require('../controllers/apartado.controllers');
 
 
-router.route('/multiple/').post(auth,createApartadoMultiple);
+router.route('/multiple/').post(createApartadoMultiple);
 
 router.route('/')
     .get(auth,obtenerApartados)
@@ -32,7 +32,7 @@ router.route('/cliente/apartados/:idCliente')
     
 router.route('/:idApartado')
     .get(auth,obtenerApartado)
-    .put(auth,actualizarApartado)
+    .put(actualizarApartado)
     .delete(auth,eliminarApartado)
 
 router.route('/traer/:id').get(auth,obtenerUnApartado)
