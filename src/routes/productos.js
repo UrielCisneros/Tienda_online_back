@@ -32,7 +32,8 @@ const {
 	getProductosFiltrosDividos,
 	getProductoSinPaginacion,
 	getProductosIndividuales,
-	actualizarInventario
+	actualizarInventario,
+	getProductosFiltradosAdmin
 } = require('../controllers/productos.controllers');
 const auth = require('../middleware/auth');
 
@@ -57,6 +58,8 @@ router.route('/promociones/').get(getPromocionesPaginadas)
 router.route('/').get(getProductos).post(auth,subirImagen, createProducto);
 
 router.route('/search').get(getProductosFiltrados);
+
+router.route('/search/admin').get(getProductosFiltradosAdmin);
 
 router.route('/filter').get(getProductosFiltrosDividos);
 

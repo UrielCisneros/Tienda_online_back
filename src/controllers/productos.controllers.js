@@ -631,6 +631,50 @@ productosCtrl.getProductosFiltrados = async (req, res) => {
 	}
 };
 
+productosCtrl.getProductosFiltradosAdmin = async (req, res) => {
+	const { codigo, nombre, categoria, subcategoria, genero, color } = req.query
+	try {
+		await Producto.aggregate(
+			[
+				{
+					$lookup: {
+						from: 'promocions',
+						localField: '_id',
+						foreignField: 'productoPromocion',
+						as: 'promocion'
+					}
+				},
+				{
+					$match: {
+						$or: [
+							{ codigo: { $regex: '.*' + codigo + '.*', $options: 'i' } },
+							{ nombre: { $regex: '.*' + nombre + '.*', $options: 'i' } },
+							{ categoria: { $regex: '.*' + categoria + '.*', $options: 'i' } },
+							{ subCategoria: { $regex: '.*' + subcategoria + '.*', $options: 'i' } },
+							{ genero: { $regex: '.*' + genero + '.*', $options: 'i' } },
+							{ color: { $regex: '.*' + color + '.*', $options: 'i' } }
+						]
+						
+					}
+				}
+			],
+			(err, postStored) => {
+				if (err) {
+					res.status(500).json({ message: 'Error en el servidor', err });
+				} else {
+					if (!postStored) {
+						res.status(404).json({ message: 'Error al mostrar Productos' });
+					} else {
+						res.status(200).json({ posts: postStored });
+					}
+				}
+			}
+		);
+	} catch (err) {
+		res.status(500).json({ message: 'Error en el servidor', err });
+	}
+};
+
 productosCtrl.getProductosIndividuales = async (req, res) => {
 	try {
 		const { page = 1, limit = 20 } = req.query;
