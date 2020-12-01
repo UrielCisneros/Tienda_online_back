@@ -11,6 +11,6 @@ router.route('/')
 router.route('/:id')
     .put(auth,updatePoliticas)//Update a admin
 
-router.route('/estados/').post(createEstados).get(getEstados).put(editEstados);
+router.route('/estados/').post(auth,createEstados).get(getEstados).put(editEstados);
 
 module.exports = router;
