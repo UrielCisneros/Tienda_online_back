@@ -25,19 +25,23 @@ const {
 	getProductosFiltrados,
 	crecarFiltrosNavbar,
 	categoriasAgrupadas,
+	tipoCategoriasAgrupadas,
 	subCategorias,
 	getPromocionesPaginadas,
 	importacionExcel,
 	getProductosFiltrosDividos,
 	getProductoSinPaginacion,
 	getProductosIndividuales,
-	actualizarInventario
+	actualizarInventario,
+	getProductosFiltradosAdmin
 } = require('../controllers/productos.controllers');
 const auth = require('../middleware/auth');
 
 router.route('/agrupar/generos').get(generosAgrupados);
 
 router.route('/categorias/').get(auth,categoriasAgrupadas);
+
+router.route('/tipoCategorias/').get(auth,tipoCategoriasAgrupadas);
 
 router.route('/Subcategorias/:idCategoria').get(auth,subCategorias);
 
@@ -54,6 +58,8 @@ router.route('/promociones/').get(getPromocionesPaginadas)
 router.route('/').get(getProductos).post(auth,subirImagen, createProducto);
 
 router.route('/search').get(getProductosFiltrados);
+
+router.route('/search/admin').get(getProductosFiltradosAdmin);
 
 router.route('/filter').get(getProductosFiltrosDividos);
 
