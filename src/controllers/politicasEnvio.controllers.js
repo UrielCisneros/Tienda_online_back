@@ -61,13 +61,15 @@ politicasCtrl.createEstados = async (req,res) => {
         res.status(200).json({ message: 'Estado registrado' });
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: "Error en el servidor",err })
+        res.status(500).json({ message: "Error en el servidor",err });
     }
 }
 
 politicasCtrl.editEstados = async (req,res) => {
     try {
-        
+        const newEstado = req.body;
+        await estadosModel.findByIdAndUpdate(req.params.idEstado, newEstado);
+        res.status(200).json({ message: 'Estado actualizado' });
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "Error en el servidor",err })
@@ -76,7 +78,13 @@ politicasCtrl.editEstados = async (req,res) => {
 
 politicasCtrl.deleteEstados = async (req,res) => {
     try {
-        
+        const estadoEliminado = await estadosModel.findById(req.params.idEstado);
+        if(estadoEliminado){
+            await estadosModel.findByIdAndDelete(req.params.idEstado);
+            res.status(200).json({ message: 'Estado eliminado.' });
+        }else{
+            res.status(404).json({ message: "El estado no existe." });
+        }
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "Error en el servidor",err })
