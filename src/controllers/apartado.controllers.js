@@ -1202,7 +1202,7 @@ apartadoCtrl.actualizarApartado = async (req, res) => {
 				<img style="max-width: 200px; display:block; margin:auto;" class="" src="https://prueba-imagenes-uploads.s3.us-west-1.amazonaws.com/${apartadoBase.producto.imagen}" />
 				<p style="text-align: center; font-family: sans-serif;" ><span style="font-weight: bold;">Producto:</span> ${apartadoBase.producto.nombre}</p>
 				<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Cantidad:</span> ${apartadoBase.cantidad}</p>
-				${apartadoBase.medida
+				${apartadoBase.medida.length
 					? apartadoBase.medida[0].numero
 						? `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${apartadoBase.medida[0].numero}</p>`
 						: `<p style="text-align: center; font-family: sans-serif;"><span style="font-weight: bold;">Medida:</span> ${apartadoBase.medida[0].talla}</p>`
