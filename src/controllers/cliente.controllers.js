@@ -564,7 +564,7 @@ clienteCtrl.authCliente = async (req, res, next) => {
 						res.json({ token });
 					}
 				}else{
-					res.status(500).json({ message: 'Este usuario esta registrado con firebase.', err });
+					res.status(500).json({ message: 'Este usuario esta registrado con firebase.'});
 				}
 
 			}
