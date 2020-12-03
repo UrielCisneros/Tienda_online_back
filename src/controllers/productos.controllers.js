@@ -45,6 +45,7 @@ productosCtrl.getPromociones = async (req, res,next) => {
 		next();
 	}
 };
+
 productosCtrl.getPromocionesPaginadas = async (req, res) => {
 	try {
 		const { page = 1, limit = 10 } = req.query;
@@ -474,6 +475,7 @@ productosCtrl.subirImagen = (req, res, next) => {
 		res.status(500).json({ message: "Error en el servidor",err })
 	}
 }; */
+
 productosCtrl.getProductoSinPaginacion = async (req, res) => {
 	try {
 		await Producto.aggregate(
