@@ -542,7 +542,7 @@ clienteCtrl.authCliente = async (req, res, next) => {
 			} else {
 				console.log(cliente);
 				console.log(cliente.tipoSesion);
-				if(cliente.tipoSesion.equals('APIRestAB')){
+				if(cliente.tipoSesion === 'APIRestAB'){
 					if (!bcrypt.compareSync(contrasena, cliente.contrasena)) {
 						console.log('entro');
 						res.status(500).json({ message: 'Contraseña incorrecta' });
