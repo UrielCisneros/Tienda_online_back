@@ -11,7 +11,7 @@ router.route('/:idBanner')
     .put(auth,subirImagen,editBanner)
     .delete(auth,deleteBanner)
 
-router.route('/imagen/:idBanner').put(auth,eliminarImagen);
+router.route('/imagen/:idBanner').detete(auth,eliminarImagen);
 
 
 module.exports = router;
