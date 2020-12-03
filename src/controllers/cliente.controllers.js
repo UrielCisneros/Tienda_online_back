@@ -536,12 +536,13 @@ clienteCtrl.authCliente = async (req, res, next) => {
 	} else {
 		try {
 			const cliente = await clienteModel.findOne({ email });
-			console.log(cliente, contrasena);
+			
 			if (!cliente) {
 				res.status(404).json({ message: 'Este usuario no existe' });
 			} else {
+				console.log(cliente);
 				console.log(cliente.tipoSesion);
-				if(cliente.tipoSesion === "APIRestAB"){
+				if(cliente.tipoSesion.equals('APIRestAB')){
 					if (!bcrypt.compareSync(contrasena, cliente.contrasena)) {
 						console.log('entro');
 						res.status(500).json({ message: 'Contraseña incorrecta' });
