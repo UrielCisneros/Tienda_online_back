@@ -93,6 +93,7 @@ politicasCtrl.deleteEstados = async (req,res) => {
 
 politicasCtrl.compararEstados = async (req,res) => {
     try {
+        console.log(req.params.idMunicipio);
         const estadosMunicipios = await estadosModel.find({'municipios.municipio': req.params.idMunicipio});
         console.log(estadosMunicipios);
         res.status(200).json(estadosMunicipios);

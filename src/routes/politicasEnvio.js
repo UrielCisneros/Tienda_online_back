@@ -15,6 +15,6 @@ router.route('/estados/').post(auth,createEstados).get(getEstados);
 
 router.route('/estados/:idEstado').put(editEstados).delete(deleteEstados);
 
-router.route('/estado/municipio/:idMunicipio').get(compararEstados)
+router.route('/estado/municipio/:idMunicipio').get(compararEstados);
 
 module.exports = router;
