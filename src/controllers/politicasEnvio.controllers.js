@@ -87,7 +87,18 @@ politicasCtrl.deleteEstados = async (req,res) => {
         }
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: "Error en el servidor",err })
+        res.status(500).json({ message: "Error en el servidor",err });
+    }
+}
+
+politicasCtrl.compararEstados = async (req,res) => {
+    try {
+        const estadosMunicipios = await estadosModel.find({'municipios.municipio': req.params.idMunicipio});
+        console.log(estadosMunicipios);
+        res.status(200).json(estadosMunicipios);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error en el servidor",err });
     }
 }
 

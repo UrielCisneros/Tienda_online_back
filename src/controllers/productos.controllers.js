@@ -909,7 +909,6 @@ productosCtrl.deleteProducto = async (req, res, next) => {
 
 		await Producto.findByIdAndUpdate(idProducto,newProducto);
 
-
 		const galeriaProducto = await galeriaModel.findOne({producto: idProducto});
 		console.log(galeriaProducto);
 		if(galeriaProducto){
