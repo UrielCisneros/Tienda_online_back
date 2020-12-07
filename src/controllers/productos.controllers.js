@@ -2,6 +2,10 @@ const productosCtrl = {};
 const imagen = require('./uploadFile.controllers');
 const Producto = require('../models/Producto');
 const promocionModel = require('../models/PromocionProducto');
+const sugerenciaModel = require('../models/Sugerencia');
+const galeriaModel = require('../models/Galeria');
+const corouselModel = require('../models/Carousel');
+const carritoModel = require('../models/Carrito');
 const mongoose = require('mongoose')
 const util = require('util')
 const sleep = util.promisify(setTimeout);
@@ -880,14 +884,68 @@ productosCtrl.updateProducto = async (req, res, next) => {
 
 productosCtrl.deleteProducto = async (req, res, next) => {
 	try {
-		const productoDeBase = await Producto.findById(req.params.id);
-		if (productoDeBase.imagen) {
-			await imagen.eliminarImagen(productoDeBase.imagen);
+		const idProducto = req.params.id;
+		const ProductoBase = await Producto.findById(idProducto);
+		const newProducto = ProductoBase;
+		
+		newProducto.eliminado = true;
+
+		await Producto.findByIdAndUpdate(idProducto,newProducto);
+
+
+		const galeriaProducto = await galeriaModel.findOne({producto: idProducto});
+		console.log(galeriaProducto);
+		if(galeriaProducto){
+			if(galeriaProducto.imagenes.length > 0){
+				galeriaProducto.imagenes.map(async (imagenGaleria) => {
+					await imagen.eliminarImagen(imagenGaleria.url);
+				})
+			}
+			await galeriaModel.findByIdAndDelete(galeriaProducto._id);
 		}
 
-		const producto = await Producto.findByIdAndDelete(req.params.id);
-		if (!producto) {
-			res.status(500).json({ message: 'Este producto no existe' });
+		const promocionProducto = await promocionModel.findOne({productoPromocion: idProducto})
+		console.log(promocionProducto);
+		if(promocionProducto){
+			await promocionModel.findByIdAndDelete(promocionProducto._id);
+		}
+
+		const carouselProducto = await corouselModel.findOne({producto: idProducto});
+		console.log(carouselProducto);
+		if(carouselProducto){
+			await corouselModel.findByIdAndDelete(carouselProducto._id);
+		}
+
+		const sugerenciaProducto = await sugerenciaModel.findOne({producto: idProducto});
+		console.log(sugerenciaProducto);
+		if(sugerenciaProducto){
+			await sugerenciaModel.findByIdAndDelete(sugerenciaProducto._id);
+		}
+
+		const sugerenciaDesugerenciaProducto = await sugerenciaModel.findOne({'sugerencias.producto': idProducto});
+		console.log(sugerenciaDesugerenciaProducto);
+		if(sugerenciaDesugerenciaProducto){
+			await sugerenciaModel.findByIdAndDelete(sugerenciaDesugerenciaProducto._id);
+		}
+
+		const carritoProducto = await carritoModel.find({'articulos.idarticulo': idProducto});
+		console.log(carritoProducto);
+
+		if(carritoProducto.length > 0){
+			carritoProducto.map((carrito) => {
+				if(carrito.articulos.length > 0){
+					carrito.articulos.map(async (articulo) => {
+						if(articulo.idarticulo.equals(idProducto)){
+							await carritoModel.updateOne(
+								{
+									cliente: carrito.cliente
+								},
+								{ $pull: { articulos: { _id: articulo._id } } }
+							);
+						}
+					});
+				}
+			})
 		}
 		res.status(200).json({ message: 'Producto eliminado' });
 	} catch (err) {
