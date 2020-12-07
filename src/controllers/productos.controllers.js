@@ -945,7 +945,7 @@ productosCtrl.deleteProducto = async (req, res, next) => {
 			await sugerenciaModel.findByIdAndDelete(sugerenciaDesugerenciaProducto._id);
 		}
 
-		const carritoProducto = await carritoModel.find({'articulos.idarticulo': idProducto});
+		/* const carritoProducto = await carritoModel.find({'articulos.idarticulo': idProducto});
 		console.log(carritoProducto);
 
 		if(carritoProducto.length > 0){
@@ -963,7 +963,7 @@ productosCtrl.deleteProducto = async (req, res, next) => {
 					});
 				}
 			})
-		}
+		} */
 		res.status(200).json({ message: 'Producto eliminado' });
 	} catch (err) {
 		res.status(500).json({ message: 'Error en el servidor', err });
