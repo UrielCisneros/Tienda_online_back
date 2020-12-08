@@ -110,4 +110,6 @@ politicasCtrl.compararEstados = async (req,res) => {
 
 
 
+
+
 module.exports = politicasCtrl;
