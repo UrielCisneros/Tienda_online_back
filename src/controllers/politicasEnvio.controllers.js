@@ -67,8 +67,12 @@ politicasCtrl.createEstados = async (req,res) => {
 
 politicasCtrl.editEstados = async (req,res) => {
     try {
-        const newEstado = req.body;
-        await estadosModel.findByIdAndUpdate(req.params.idEstado, newEstado);
+        if(req.params.idEstado === "todos"){
+
+        }else{
+            const newEstado = req.body;
+            await estadosModel.findByIdAndUpdate(req.params.idEstado, newEstado);
+        }
         res.status(200).json({ message: 'Estado actualizado' });
     } catch (err) {
         console.log(err);
