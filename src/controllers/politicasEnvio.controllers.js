@@ -57,7 +57,7 @@ politicasCtrl.createEstados = async (req,res) => {
     try {
         const estadosMunicipios = await estadosModel.find({});
         if(estadosMunicipios.length > 0){
-            await estadosModel.deleteMany();
+            await estadosModel.deleteOne({todos: true});
             const newEstado = new estadosModel(req.body);
             await newEstado.save();
         }else{
