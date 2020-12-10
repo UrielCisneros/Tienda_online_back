@@ -55,9 +55,15 @@ politicasCtrl.getEstados = async (req,res) => {
 
 politicasCtrl.createEstados = async (req,res) => {
     try {
-        console.log(req.body);
-        const newEstado = new estadosModel(req.body);
-        await newEstado.save();
+        const estadosMunicipios = await estadosModel.find({});
+        if(estadosMunicipios.length > 0){
+            await estadosModel.deleteMany();
+            const newEstado = new estadosModel(req.body);
+            await newEstado.save();
+        }else{
+            const newEstado = new estadosModel(req.body);
+            await newEstado.save();
+        }
         res.status(200).json({ message: 'Estado registrado' });
     } catch (err) {
         console.log(err);
