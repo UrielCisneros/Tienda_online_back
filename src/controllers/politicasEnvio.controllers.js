@@ -68,11 +68,9 @@ politicasCtrl.createEstados = async (req,res) => {
 politicasCtrl.editEstados = async (req,res) => {
     try {
         if(req.params.idEstado === "todos"){
-            await estadosModel.find({},async function (err, docs) {
-                docs.remove(); //Remove all the documents that match!
-                const newEstado = new estadosModel({todos: true});
-                await newEstado.save();
-         })
+            await estadosModel.deleteMany();
+            const newEstado = new estadosModel({todos: true});
+            await newEstado.save();
         }else{
             const newEstado = req.body;
             await estadosModel.findByIdAndUpdate(req.params.idEstado, newEstado);
