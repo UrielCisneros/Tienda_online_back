@@ -112,7 +112,6 @@ politicasCtrl.compararEstados = async (req,res) => {
         }else{
             res.status(404).json({ message: "No hay envios a tu municipio, estamos trabajando para hacerlo!!" });
         }
-        
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "Error en el servidor",err });
